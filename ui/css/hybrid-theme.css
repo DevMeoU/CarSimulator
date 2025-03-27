@@ -1,0 +1,731 @@
+/* Hybrid Sport-Classic Theme Styles */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: 'Arial', sans-serif;
+    background-color: #000;
+    color: white;
+}
+
+.container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    transform-origin: center center;
+    background-color: #000;
+}
+
+/* Wood Trim and Chrome Accents */
+.wood-trim {
+    background: linear-gradient(to bottom, #5a3825 0%, #8b5a2b 50%, #5a3825 100%);
+    border: 1px solid #a67c52;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.wood-trim::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0 0C20 10 40 30 60 10C80 -10 100 20 100 50C100 80 80 90 60 100C40 110 20 80 0 100Z" fill="none" stroke="%23a67c52" stroke-width="0.5" opacity="0.3"/></svg>');
+    background-size: 100px 100px;
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+.chrome-accent {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #333 0%, #222 100%);
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.5);
+    position: relative;
+}
+
+.chrome-accent::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
+    pointer-events: none;
+}
+
+/* Hybrid Dashboard */
+.hybrid-dashboard {
+    position: relative;
+    width: 90%;
+    max-width: 1000px;
+    height: 80vh;
+    max-height: 600px;
+    margin: 2vh auto;
+    background-color: #0a1a2a;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Top Panel */
+.top-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    height: 60px;
+    z-index: 10;
+}
+
+.app-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.author-info {
+    display: flex;
+    align-items: center;
+}
+
+.author-label {
+    margin-right: 10px;
+    opacity: 0.8;
+}
+
+.time-display {
+    font-size: 24px;
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 5px;
+}
+
+/* Main Dashboard Content */
+.dashboard-content {
+    flex: 1;
+    display: flex;
+    padding: 20px;
+    background: linear-gradient(to bottom, #0a1a2a 0%, #0d2035 100%);
+    position: relative;
+}
+
+.dashboard-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="%23111"/><rect x="0" y="0" width="20" height="20" fill="%23222"/><rect x="20" y="20" width="20" height="20" fill="%23222"/></svg>');
+    background-size: 8px 8px;
+    opacity: 0.1;
+    pointer-events: none;
+}
+
+/* Left Section - Battery */
+.dashboard-left {
+    width: 25%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.battery-display {
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    color: #fff;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+}
+
+.battery-vertical {
+    width: 40px;
+    height: 200px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    position: relative;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.battery-level {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, #ff3b30 0%, #ff9500 50%, #4cd964 100%);
+    border-radius: 0 0 5px 5px;
+    transition: height 0.5s ease;
+}
+
+.battery-percentage {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.range-info {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.range-icon {
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.range-value {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Center Section - Speedometer */
+.dashboard-center {
+    width: 50%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.drive-mode-buttons {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.mode-button {
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.mode-button.eco {
+    background-color: rgba(76, 217, 100, 0.2);
+    color: #4cd964;
+}
+
+.mode-button.eco.active {
+    background-color: rgba(76, 217, 100, 0.8);
+    color: white;
+    box-shadow: 0 0 15px rgba(76, 217, 100, 0.5);
+}
+
+.mode-button.sport {
+    background-color: rgba(255, 59, 48, 0.2);
+    color: #ff3b30;
+}
+
+.mode-button.sport.active {
+    background-color: rgba(255, 59, 48, 0.8);
+    color: white;
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+}
+
+.speedometer {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.speedometer-arc {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 150px 150px 0 0;
+}
+
+.speedometer-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 150px;
+    background: linear-gradient(to right, #4cd964 0%, #ff9500 50%, #ff3b30 100%);
+    border-radius: 150px 150px 0 0;
+    transform-origin: bottom center;
+    transition: transform 0.5s ease;
+}
+
+.speed-value {
+    font-size: 80px;
+    font-weight: bold;
+    margin-top: 50px;
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.speed-unit {
+    font-size: 20px;
+    opacity: 0.7;
+}
+
+.gear-display {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.gear {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gear:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.gear.active {
+    background-color: rgba(76, 217, 100, 0.8);
+    box-shadow: 0 0 15px rgba(76, 217, 100, 0.5);
+}
+
+/* Right Section - Temperature */
+.dashboard-right {
+    width: 25%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+.temperature-display {
+    padding: 15px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.temp-row {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.temp-icon {
+    margin-right: 10px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.temp-label {
+    margin-right: 10px;
+    opacity: 0.7;
+}
+
+.temp-value {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.ac-controls {
+    margin-top: 30px;
+}
+
+.ac-label {
+    opacity: 0.7;
+    margin-bottom: 5px;
+}
+
+.ac-value {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.fan-level {
+    display: flex;
+    justify-content: space-between;
+}
+
+.fan-bar {
+    width: 20%;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+.fan-bar.active {
+    background-color: rgba(0, 122, 255, 0.8);
+    box-shadow: 0 0 10px rgba(0, 122, 255, 0.5);
+}
+
+/* Warning Indicators */
+.warning-indicators {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 20px;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.indicator.active {
+    opacity: 1;
+}
+
+.indicator-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.indicator-label {
+    font-size: 12px;
+}
+
+#handbrake-indicator.active .indicator-icon {
+    background-color: rgba(255, 59, 48, 0.8);
+    box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+}
+
+#seatbelt-indicator.active .indicator-icon {
+    background-color: rgba(255, 149, 0, 0.8);
+    box-shadow: 0 0 10px rgba(255, 149, 0, 0.5);
+}
+
+#door-indicator.active .indicator-icon {
+    background-color: rgba(0, 122, 255, 0.8);
+    box-shadow: 0 0 10px rgba(0, 122, 255, 0.5);
+}
+
+#warning-indicator.active .indicator-icon {
+    background-color: rgba(255, 59, 48, 0.8);
+    box-shadow: 0 0 10px rgba(255, 59, 48, 0.5);
+    animation: pulse 1s infinite;
+}
+
+/* Bottom Panel */
+.bottom-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    height: 60px;
+    z-index: 10;
+}
+
+.odometer {
+    display: flex;
+    align-items: center;
+}
+
+.odometer-label {
+    margin-right: 10px;
+    opacity: 0.8;
+}
+
+.odometer-value {
+    font-weight: bold;
+}
+
+.status-display {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+}
+
+.help-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.help-button:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Car Visualization for Hybrid Dashboard */
+.car-visualization-hybrid {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 100px;
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+.car-silhouette {
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200"><path d="M150,150 C150,130 200,80 300,80 L500,80 C600,80 650,130 650,150 L650,170 C650,180 640,190 630,190 L170,190 C160,190 150,180 150,170 Z" fill="%23fff"/></svg>');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.1); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(0, 122, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 122, 255, 0.8); }
+    100% { box-shadow: 0 0 5px rgba(0, 122, 255, 0.5); }
+}
+
+.glow-effect {
+    animation: glow 2s infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .hybrid-dashboard {
+        width: 95%;
+    }
+    
+    .speedometer {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .speed-value {
+        font-size: 60px;
+    }
+}
+
+@media (max-width: 992px) {
+    .dashboard-content {
+        flex-direction: column;
+    }
+    
+    .dashboard-left, .dashboard-center, .dashboard-right {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    
+    .battery-vertical {
+        width: 200px;
+        height: 30px;
+    }
+    
+    .battery-level {
+        height: 100% !important;
+        width: auto;
+        transition: width 0.5s ease;
+    }
+    
+    .speedometer {
+        margin: 20px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .warning-indicators {
+        flex-wrap: wrap;
+    }
+    
+    .indicator {
+        margin: 10px;
+    }
+    
+    .bottom-panel {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .odometer, .status-display, .help-button {
+        margin: 5px 0;
+    }
+}
+
+/* Help Overlay */
+.help-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.help-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.help-content {
+    background-color: rgba(30, 30, 30, 0.9);
+    border-radius: 15px;
+    padding: 30px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.help-content h2 {
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: white;
+}
+
+.help-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.help-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+}
+
+.help-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.help-close {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.help-close button {
+    background-color: rgba(255, 59, 48, 0.8);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.help-close button:hover {
+    background-color: rgba(255, 59, 48, 1);
+    transform: translateY(-2px);
+}
+
+/* Button Press Animation */
+.button-press {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 100;
+}
+
+.button-press.visible {
+    opacity: 1;
+    animation: fadeInOut 2s forwards;
+}
+
+.button-press-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
+
+.button-press-text {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    20% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+}

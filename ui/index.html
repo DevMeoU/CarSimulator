@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô phỏng xe điện</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/modern-theme.css">
+    <link rel="stylesheet" href="css/hybrid-theme.css">
+    <link rel="stylesheet" href="css/textures.css">
+</head>
+<body>
+    <div class="container">
+        <div class="background"></div>
+        <div class="carbon-fiber-bg"></div>
+        
+        <!-- Modern Dashboard -->
+        <div class="modern-dashboard">
+            <!-- Top Navigation Bar -->
+            <div class="nav-bar">
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
+                        <path d="M13 7h-2v5.414l3.293 3.293 1.414-1.414L13 11.586z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="nav-item">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" fill="currentColor"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <!-- Main Content Area -->
+            <div class="main-content">
+                <!-- Drive Mode Section -->
+                <div class="drive-mode-section">
+                    <div class="drive-mode-info">
+                        <div class="drive-mode-title">Sport</div>
+                        <div class="drive-mode-subtitle">Drive Mode</div>
+                    </div>
+                    <div class="torque-mode-info">
+                        <div class="torque-mode-title">3 - High</div>
+                        <div class="torque-mode-subtitle">Torque Mode</div>
+                    </div>
+                </div>
+                
+                <!-- Car Visualization -->
+                <div class="car-visualization">
+                    <div class="car-glow"></div>
+                    <svg class="car-svg" viewBox="0 0 800 200">
+                        <defs>
+                            <linearGradient id="car-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#FF9500;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#007AFF;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                        <path class="car-body" d="M150,150 C150,130 200,80 300,80 L500,80 C600,80 650,130 650,150 L650,170 C650,180 640,190 630,190 L170,190 C160,190 150,180 150,170 Z" />
+                        <path class="car-window" d="M300,80 L500,80 C450,50 350,50 300,80 Z" />
+                        <circle class="car-wheel" cx="250" cy="190" r="30" />
+                        <circle class="car-wheel" cx="550" cy="190" r="30" />
+                        <path class="car-light" d="M650,150 L670,140 L670,160 L650,170 Z" />
+                        <path class="car-light" d="M150,150 L130,140 L130,160 L150,170 Z" />
+                    </svg>
+                </div>
+                
+                <!-- Performance Metrics -->
+                <div class="performance-metrics">
+                    <div class="metric">
+                        <div class="metric-value">54</div>
+                        <div class="metric-unit">mpg</div>
+                        <div class="metric-label">Fuel Efficiency</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">85</div>
+                        <div class="metric-unit">%</div>
+                        <div class="metric-label">Battery Charge Level</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">90</div>
+                        <div class="metric-unit">kW</div>
+                        <div class="metric-label">Power Output</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">89</div>
+                        <div class="metric-unit">kW</div>
+                        <div class="metric-label">Torque Output</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">179</div>
+                        <div class="metric-unit">kW</div>
+                        <div class="metric-label">Energy Consumption</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Bottom Control Bar -->
+            <div class="control-bar">
+                <div class="control-button">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="temperature-control">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M7 13v-2h2v2H7zm0 4v-2h2v2H7zm4-6v-2h2v2h-2zm0 4v-2h2v2h-2zm4-4v-2h2v2h-2zm0 4v-2h2v2h-2z" fill="currentColor"/>
+                    </svg>
+                    <div class="temperature-value">67°</div>
+                </div>
+                <div class="control-button">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="control-button">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="control-button">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
+                    </svg>
+                </div>
+                <div class="temperature-control">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M7 13v-2h2v2H7zm0 4v-2h2v2H7zm4-6v-2h2v2h-2zm0 4v-2h2v2h-2zm4-4v-2h2v2h-2zm0 4v-2h2v2h-2z" fill="currentColor"/>
+                    </svg>
+                    <div class="temperature-value">67°</div>
+                </div>
+                <div class="control-button">
+                    <svg class="control-icon" viewBox="0 0 24 24">
+                        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z" fill="currentColor"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Classic-Sport Hybrid Dashboard -->
+        <div class="hybrid-dashboard">
+            <!-- Top Panel with Wood Trim -->
+            <div class="top-panel wood-trim">
+                <div class="app-title">Mô phòng xe điện</div>
+                <div class="author-info">
+                    <div class="author-label">Tác giả:</div>
+                    <div id="author">Deesol</div>
+                </div>
+                <div class="time-display chrome-accent" id="time">00:00</div>
+            </div>
+            
+            <!-- Main Dashboard Area -->
+            <div class="dashboard-content">
+                <!-- Left Section - Battery Info -->
+                <div class="dashboard-left">
+                    <div class="battery-display chrome-accent">
+                        <div class="section-title">Pin</div>
+                        <div class="battery-vertical">
+                            <div class="battery-level" id="battery-level" style="height: 60%"></div>
+                        </div>
+                        <div class="battery-percentage">60%</div>
+                        <div class="range-info">
+                            <div class="range-icon">
+                                <svg viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="range-value">125 km</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Center Section - Speedometer -->
+                <div class="dashboard-center">
+                    <div class="drive-mode-buttons">
+                        <div class="mode-button eco active" id="eco-mode">ECO</div>
+                        <div class="mode-button sport" id="sport-mode">SPORT</div>
+                    </div>
+                    
+                    <div class="speedometer chrome-accent">
+                        <div class="speedometer-arc">
+                            <div class="speedometer-fill" id="speed-fill" style="width: 0%"></div>
+                        </div>
+                        <div class="speed-value" id="speed-value">0</div>
+                        <div class="speed-unit">km/h</div>
+                    </div>
+                    
+                    <div class="gear-display">
+                        <div class="gear active" id="gear-p" data-key="P">P</div>
+                        <div class="gear" id="gear-r">R</div>
+                        <div class="gear" id="gear-n">N</div>
+                        <div class="gear" id="gear-d">D</div>
+                    </div>
+                </div>
+                
+                <!-- Right Section - Temperature -->
+                <div class="dashboard-right">
+                    <div class="temperature-display chrome-accent">
+                        <div class="section-title">Nhiệt độ</div>
+                        <div class="temp-row">
+                            <div class="temp-icon">
+                                <svg viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="M12 2c1.1 0 2 .9 2 2v10.5c1.2.7 2 2 2 3.5 0 2.2-1.8 4-4 4s-4-1.8-4-4c0-1.5.8-2.8 2-3.5V4c0-1.1.9-2 2-2zm0 2c-.6 0-1 .4-1 1v3h2V5c0-.6-.4-1-1-1z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="temp-label">Cabin:</div>
+                            <div class="temp-value">22°C</div>
+                        </div>
+                        <div class="temp-row">
+                            <div class="temp-icon">
+                                <svg viewBox="0 0 24 24" width="24" height="24">
+                                    <path d="M19 19H5V5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="temp-label">Ngoài:</div>
+                            <div class="temp-value">31°C</div>
+                        </div>
+                        <div class="ac-controls">
+                            <div class="ac-label">Điều hòa:</div>
+                            <div class="ac-value">24°C</div>
+                            <div class="fan-level">
+                                <div class="fan-bar active"></div>
+                                <div class="fan-bar active"></div>
+                                <div class="fan-bar"></div>
+                                <div class="fan-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Warning Indicators -->
+            <div class="warning-indicators">
+                <div class="indicator" id="handbrake-indicator">
+                    <div class="indicator-icon">P</div>
+                    <div class="indicator-label">Phanh tay</div>
+                </div>
+                <div class="indicator" id="seatbelt-indicator">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" fill="currentColor"/>
+                    </svg>
+                    <div class="indicator-label">Dây an toàn</div>
+                </div>
+                <div class="indicator" id="door-indicator">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" fill="currentColor"/>
+                    </svg>
+                    <div class="indicator-label">Khóa cửa</div>
+                </div>
+                <div class="indicator" id="warning-indicator">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z" fill="currentColor"/>
+                    </svg>
+                    <div class="indicator-label">Cảnh báo</div>
+                </div>
+            </div>
+            
+            <!-- Bottom Panel -->
+            <div class="bottom-panel wood-trim">
+                <div class="odometer">
+                    <div class="odometer-label">Tổng quãng đường:</div>
+                    <div class="odometer-value">10015 km</div>
+                </div>
+                <div class="status-display" id="status">Xe đứng yên, phanh tay đang kéo</div>
+                <div class="help-button" id="help-button">
+                    <svg viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z" fill="currentColor"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading Screen -->
+        <div class="loading-overlay" id="loading-overlay">
+            <div class="loading-spinner"></div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="js/dashboard.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/simulation.js"></script>
+    <script src="js/driving-modes.js"></script>
+    <script src="js/climate-battery.js"></script>
+    <script src="js/warning-indicators.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

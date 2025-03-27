@@ -1,0 +1,262 @@
+/* Controls Styles */
+.controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.control-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.control-button {
+    width: 150px;
+    height: 60px;
+    margin: 0 10px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
+}
+
+.control-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.control-button:active, .control-button.pressed {
+    transform: translateY(1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    background-color: rgba(76, 217, 100, 0.6);
+}
+
+.control-button.active {
+    background-color: rgba(76, 217, 100, 0.8);
+    box-shadow: 0 0 15px rgba(76, 217, 100, 0.5);
+}
+
+.pedal {
+    width: 120px;
+    height: 120px;
+    border-radius: 60px;
+    margin: 0 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.accelerator {
+    background-color: rgba(76, 217, 100, 0.6);
+    border: 2px solid rgba(76, 217, 100, 0.8);
+}
+
+.accelerator:hover {
+    background-color: rgba(76, 217, 100, 0.8);
+    transform: scale(1.05);
+}
+
+.accelerator.pressed {
+    background-color: rgba(76, 217, 100, 1);
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(76, 217, 100, 0.7);
+}
+
+.brake {
+    background-color: rgba(255, 59, 48, 0.6);
+    border: 2px solid rgba(255, 59, 48, 0.8);
+}
+
+.brake:hover {
+    background-color: rgba(255, 59, 48, 0.8);
+    transform: scale(1.05);
+}
+
+.brake.pressed {
+    background-color: rgba(255, 59, 48, 1);
+    transform: scale(0.95);
+    box-shadow: 0 0 20px rgba(255, 59, 48, 0.7);
+}
+
+.gear-controls {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.gear-button {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
+}
+
+.gear-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-2px);
+}
+
+.gear-button.active {
+    background-color: rgba(76, 217, 100, 0.8);
+    box-shadow: 0 0 15px rgba(76, 217, 100, 0.5);
+}
+
+.mode-controls {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.mode-button {
+    padding: 10px 25px;
+    border-radius: 25px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    margin: 0 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
+}
+
+.mode-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-2px);
+}
+
+.mode-button.active {
+    background-color: rgba(76, 217, 100, 0.8);
+    box-shadow: 0 0 15px rgba(76, 217, 100, 0.5);
+}
+
+.auxiliary-controls {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.handbrake-button, .door-lock-button {
+    padding: 12px 25px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    margin: 0 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    user-select: none;
+    width: 220px;
+    text-align: center;
+}
+
+.handbrake-button:hover, .door-lock-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: translateY(-2px);
+}
+
+.handbrake-button.active {
+    background-color: rgba(255, 59, 48, 0.8);
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.5);
+}
+
+.door-lock-button.active {
+    background-color: rgba(0, 122, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 122, 255, 0.5);
+}
+
+.keyboard-shortcuts {
+    margin-top: 30px;
+    background-color: rgba(0, 0, 0, 0.6);
+    padding: 15px;
+    border-radius: 10px;
+    max-width: 600px;
+}
+
+.keyboard-shortcuts h3 {
+    margin-top: 0;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.shortcuts-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px;
+}
+
+.shortcut-item {
+    display: flex;
+    align-items: center;
+}
+
+.key {
+    background-color: rgba(255, 255, 255, 0.2);
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 10px;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .control-button {
+        width: 120px;
+        font-size: 14px;
+    }
+    
+    .pedal {
+        width: 100px;
+        height: 100px;
+        margin: 0 20px;
+    }
+    
+    .gear-button {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+    
+    .mode-button {
+        padding: 8px 20px;
+        font-size: 16px;
+    }
+    
+    .handbrake-button, .door-lock-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        width: 180px;
+    }
+}
