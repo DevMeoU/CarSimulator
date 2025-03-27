@@ -50,6 +50,7 @@ body {
     text-align: center;
     padding: 0 40px;
     position: relative;
+    flex: 3;
 }
 
 .right-panel {
@@ -103,27 +104,22 @@ body {
     font-size: 1.2rem;
 }
 
-.signal-icon {
-    width: 20px;
-    height: 20px;
-    background: #4CAF50;
-    border-radius: 50%;
-}
-
 .signal-left {
     position: absolute;
     top: 10px;
     left: 20px;
-    font-size: 1.5rem;
-    color: #4CAF50;
+    width: 24px;
+    height: 24px;
+    background-position: 0 0;
 }
 
 .signal-right {
     position: absolute;
     top: 10px;
     right: 20px;
-    font-size: 1.5rem;
-    color: #4CAF50;
+    width: 24px;
+    height: 24px;
+    background-position: -24px 0;
 }
 
 @keyframes blink {
@@ -133,9 +129,11 @@ body {
 
 .signal-left, .signal-right {
     opacity: 0;
+    z-index: 999;
 }
 
 .signal-left.active, .signal-right.active {
     animation: blink 1s infinite;
     opacity: 1;
+    z-index: 999;
 }
