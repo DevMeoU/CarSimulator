@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+  <defs>
+    <linearGradient id="speed-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF9500"/>
+      <stop offset="100%" style="stop-color:#FF2D55"/>
+    </linearGradient>
+    <linearGradient id="battery-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4CD964"/>
+      <stop offset="100%" style="stop-color:#007AFF"/>
+    </linearGradient>
+    <linearGradient id="temp-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF3B30"/>
+      <stop offset="100%" style="stop-color:#FF9500"/>
+    </linearGradient>
+    <linearGradient id="sport-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#FF2D55"/>
+      <stop offset="100%" style="stop-color:#FF3B30"/>
+    </linearGradient>
+    <linearGradient id="eco-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4CD964"/>
+      <stop offset="100%" style="stop-color:#5856D6"/>
+    </linearGradient>
+    <linearGradient id="car-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#007AFF"/>
+      <stop offset="100%" style="stop-color:#5856D6"/>
+    </linearGradient>
+  </defs>
+</svg>
