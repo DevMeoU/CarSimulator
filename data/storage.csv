@@ -1,0 +1,18 @@
+Key, Value,
+speed, 67,
+mode, eco,
+battery, 50,
+battery-temp, 25,
+gear, D,
+estimated-distance, 00,
+distance-traveled, 00,
+signal-left, 0,
+signal-right, 1,
+wind, 5,
+air condition, 24,
+plug-in, 0,
+door-lock, 0,
+seat-belt, 0,
+park, 1,
+
+

@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tesla-style Dashboard</title>
-    <link rel="stylesheet" href="css/variables.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -14,8 +12,13 @@
         <div class="top-bar">
             <div class="time">10:23</div>
             <div class="status-item">
-                <img src="images/battery-icon.svg" alt="Battery Status" class="status-icon" />
-                <span>100%</span>
+                <span class="battery-item"><i class="fas fa-battery-full"></i></span><!-- 100% -->
+                <span class="battery-percentage">100%</span>
+                <span class="status-label"><i class="fas fa-temperature-high"></i></span>
+                <span>25°C</span>
+                <!-- <span class="status-icon"><i class="fas fa-wifi"></i></span>
+                <span class="status-label"><i class="fas fa-bolt"></i></span>
+                <span class="status-label"><i class="fas fa-signal"></i></span> -->
             </div>
         </div>
 
@@ -26,8 +29,8 @@
                     <div class="gear-label">GEAR</div>
                 </div>
                 <div class="odo-section">
-                    <div class="odo">ODO: 00 km</div>
-                    <div class="trip">TRIP: 00 km</div>
+                    <div class="odo"><i class="fas fa-road"></i>: 00 km Dự Kiến</div>
+                    <div class="trip"><i class="fas fa-car-side"></i>: 00 km Odo</div>
                 </div>
             </div>
 
@@ -52,15 +55,24 @@
 
             <div class="right-panel">
                 <ul class="option-list">
-                    <li class="option-item" title="Temperature Control">
-                        <img src="images/temperature-icon.svg" alt="Temperature" class="option-icon" />
+                    <li class="option-item" title="Gió">
+                        <span class="option-icon">💨</span>
                     </li>
-                    <li class="option-item" title="Battery Status">
-                        <img src="images/battery-icon.svg" alt="Battery" class="option-icon" />
+                    <li class="option-item" title="Điều hòa">
+                        <span class="option-icon">❄️</span>
                     </li>
-                    <li class="option-item" title="Sport Mode">
-                        <img src="images/sport-mode-icon.svg" alt="Sport Mode" class="option-icon" />
+                    <li class="option-item" title="Nhiệt độ pin">
+                        <span class="option-icon">🌡️</span>
                     </li>
+                    <!-- <li class="option-item" title="Đỗ">
+                        <span class="option-icon">🅿️</span>
+                    </li>
+                    <li class="option-item" title="Thắt dây an toàn">
+                        <span class="option-icon">🛑</span>
+                    </li>
+                    <li class="option-item" title="Khóa cửa">
+                        <span class="option-icon">🔐</span>
+                    </li> -->
                 </ul>
             </div>
 
@@ -69,6 +81,10 @@
                     <i class="fas fa-exclamation-triangle warning-icon"></i>
                 </div>
                 <div class="total-distance">Tổng quãng đường: 0 km</div>
+                <div class="battery-low-warning">Pin thấp dưới 20%</div>
+                
+                <div class="total-distance">Tổng quãng đường: 0 km</div>
+
                 <button class="help-button" title="Trợ giúp">?</button>
             </div>
         </div>

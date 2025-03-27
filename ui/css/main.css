@@ -1,0 +1,16 @@
+@import 'base/variables.css';
+@import 'layouts/layout.css';
+@import 'components/components.css';
+
+/* Global reset và font chữ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--primary-font);
+}
+
+body {
+  background: #000;
+  color: var(--text-color);
+}

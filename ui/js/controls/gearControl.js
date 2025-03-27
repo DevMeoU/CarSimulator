@@ -1,4 +1,4 @@
-import { updateODO } from './odoDisplay.js';
+import OdoDisplay from '../display/odoDisplay.js';
 
 export function initGearControl() {
     let currentGear = 'P';
@@ -6,19 +6,22 @@ export function initGearControl() {
     document.addEventListener('keydown', (e) => {
         const gearKeys = {'p':'P','r':'R','n':'N','d':'D'};
         if(Object.keys(gearKeys).includes(e.key.toLowerCase())) {
+            e.preventDefault();
             currentGear = gearKeys[e.key.toLowerCase()];
             updateGearDisplay();
-            updateODO(currentGear);
         }
     });
 
     function updateGearDisplay() {
         const gearElement = document.querySelector('.gear-indicator');
         gearElement.textContent = currentGear;
-        currentGear === 'D'? gearElement.style.color = '#4CAF50' : 
-        currentGear === 'P'? gearElement.style.color = '#1B10B5' :
-        currentGear === 'N'? gearElement.style.color = '#FFF' :
-        currentGear === 'R'? gearElement.style.color = '#FF0000' : '#FFF';
+            const GEAR_COLORS = {
+            'D': '#4CAF50',
+            'P': '#1B10B5',
+            'N': '#FFF',
+            'R': '#FF0000'
+        };
+        gearElement.style.color = GEAR_COLORS[currentGear] || '#FFF';
     }
 
 }
