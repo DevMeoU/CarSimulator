@@ -1,0 +1,25 @@
+:root {
+    /* Màu sắc chính */
+    --primary-font: 'Roboto', sans-serif;
+    --dashboard-bg: linear-gradient(135deg, #0a0f1a 0%, #1a2234 100%);
+    --text-color: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(42, 47, 58, 0.8);
+    
+    /* Màu trạng thái */
+    --status-normal: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);
+    --status-warning: linear-gradient(135deg, #FFA000 0%, #FFB74D 100%);
+    --status-danger: linear-gradient(135deg, #E53935 0%, #EF5350 100%);
+    
+    /* Màu giao diện */
+    --panel-bg: rgba(20, 25, 35, 0.85);
+    --option-bg: rgba(30, 36, 48, 0.9);
+    --option-hover: rgba(42, 50, 65, 0.95);
+    
+    /* Hiệu ứng */
+    --transition-speed: 0.3s;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    --hover-transform: scale(1.02);
+    --backdrop-blur: 10px;
+}
