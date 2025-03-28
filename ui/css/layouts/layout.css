@@ -39,19 +39,22 @@ body {
 
 .main-content {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 2fr 1fr;
     grid-template-rows: min-content 1fr min-content;
     grid-template-areas:
-        "top-bar-panel"
-        "control-panel"
-        "bottom-panel";
+    "top-left-control-panel top-center-control-panel top-right-control-panel"
+    "mid-left-control-panel mid-center-control-panel mid-right-control-panel"
+    "bottom-left-control-panel bottom-center-control-panel bottom-right-control-panel";
+    width: 100%;
     height: 100%;
     gap: 1rem;
     flex: 1;
 }
 
-.left-panel {
-    grid-area: left-panel;
+.top-left-panel, .top-right-panel,
+.mid-left-panel,.mid-center-panel,.mid-right-panel,
+.bottom-left-panel,.bottom-center-panel,.bottom-right-panel {
+    grid-area: top-left-control-panel;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -60,8 +63,16 @@ body {
     padding: 20px;
 }
 
-.center-panel {
-    grid-area: center-panel;
+.top-center-panel {
+   grid-area: top-center-control-panel;
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   width: 100%;
+}
+
+/* .top-center-panel, .top-right-panel  {
+    grid-area: top-center-control-panel;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -69,9 +80,9 @@ body {
     text-align: center;
     padding: 20px;
     position: relative;
-}
+} */
 
-.right-panel {
+/* .right-panel {
     grid-area: right-panel;
     display: flex;
     flex-direction: column;
@@ -83,7 +94,7 @@ body {
 
 .bottom-panel {
     grid-area: bottom-panel;
-}
+} */
 
 .top-bar {
     display: flex;

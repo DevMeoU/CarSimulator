@@ -78,7 +78,7 @@
     margin-bottom: 30px;
 }
 
-.speed-display {
+.speed-indicator {
     text-align: center;
 }
 
@@ -94,7 +94,7 @@
     opacity: 0.8;
 }
 
-.power-display {
+.power-indicator {
     text-align: center;
     margin-top: 20px;
 }

@@ -15,7 +15,7 @@ export function initGearControl() {
     function updateGearDisplay() {
         const gearElement = document.querySelector('.gear-indicator');
         gearElement.textContent = currentGear;
-            const GEAR_COLORS = {
+        const GEAR_COLORS = {
             'D': '#4CAF50',
             'P': '#1B10B5',
             'N': '#FFF',

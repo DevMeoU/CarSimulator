@@ -31,31 +31,104 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
 /***************************************************************
  * Dashboard Mid Position Indicators 
  ***************************************************************/
- .speed-container {
-     display: flex;
+#signal-control {
+    grid-area: top-center-control-panel;
+    display: flex;
+    flex-direction: row;
+    padding: 12px 18px;
+}
+
+#signal-left,
+#signal-right {
+    grid-area: top-center-control-panel;
+    display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
+    font-size: 32px;
+    color: whitesmoke;
+    margin-top: 10px;
+}
+
+#signal-left {
+    justify-content: flex-start;
+    flex: 1;
+}
+
+#signal-right {
+    justify-content: flex-end;
+    flex: 1;
+    margin-left: auto;
+}
+
+#signal-left.active,
+#signal-right.active {
+    color: rgb(26, 236, 26);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}
+
+#speed-control {
+    grid-area: mid-center-control-panel;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 30px;
 }
 
-.speed-display {
+.speed-indicator {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
     text-align: center;
-}
-
-.speed {
-    font-size: 72px;
+    font-family: var(--primary-font);
+    font-size: 102px;
     font-weight: bold;
     line-height: 1;
     margin-bottom: 5px;
+    text-shadow: var(--text-shadow);
+    transition: color 0.2s ease-in-out;
+    color: var(--text-color);
 }
-
 .speed-unit {
+    grid-area: mid-center-control-panel;
     font-size: 24px;
     opacity: 0.8;
+    margin-left: 5px;
+    margin-top: 45px;
 }
 
-.gear-section, .odo-section {
+.power-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.power-indicator {
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.power-unit {
+    font-size: 24px;
+    opacity: 0.8;
+    margin-left: 5px;
+    margin-top: 15px;
+}
+
+.gear-section,
+.odo-section {
     background: var(--panel-bg);
     padding: 15px;
     border-radius: var(--border-radius);
@@ -64,6 +137,7 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
 }
 
 .gear-indicator {
+    color: #4CAF50;
     font-size: 48px;
     font-weight: bold;
     text-align: center;
@@ -76,13 +150,20 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     opacity: 0.8;
 }
 
-.odo, .trip {
+.odo,
+.trip {
     margin: 5px 0;
     font-size: 16px;
     color: var(--secondary-text);
     text-shadow: var(--text-shadow);
     transition: color 0.2s ease-in-out;
 }
+
+.odo:hover,
+.trip:hover {
+    color: var(--text-color);
+}
+
 /***************************************************************
  * Dashboard Bottom Position Indicators 
  ***************************************************************/

@@ -1,12 +1,15 @@
 import { updateBatteryIcon } from '../display/batteryDisplay.js';
 import { updateBatteryTempIcon } from '../display/batteryTemperatureDisplay.js';
+import { initSignalDisplay } from '../display/signalDisplay.js';
+import { initSpeedDisplay } from '../display/speedDisplay.js';
+import { initGearDisplay } from '../display/gearDisplay.js';
 
 var share_data = {
     speed: 0,
     mode: "eco",
     battery: 100,
     battery_temp: 25,
-    gear: 'P',
+    gear: 'N',
     estimated_distance: 0,
     distance_traveled: 0,
     signal_left: 0,
@@ -19,6 +22,7 @@ var share_data = {
     parking_brake: 0,
 }
 export default share_data;
+export const default_data = share_data;
 
 // Bản đồ chuyển đổi tên khóa từ data sang share_data
 const keyMapping = {
@@ -60,14 +64,17 @@ function mappingData(data) {
 }
 
 export const updateShareData = (data) => {
-    mappingData(data);
+    if(data != share_data)
+    {
+        mappingData(data);
+    }   
     console.log('Share_data', share_data);
     // document.querySelector('.speed').innerText = share_data.speed;
     
-    // initGearControl();
-    // initSignalControl();
     updateBatteryIcon(share_data.battery);
     updateBatteryTempIcon(share_data.battery_temp);
-    // odoDisplay.update(0);
+    initSignalDisplay(share_data.signal_left, share_data.signal_right);
+    initSpeedDisplay(share_data.speed);
+    initGearDisplay(share_data.gear);
 }
 
