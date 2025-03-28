@@ -1,0 +1,30 @@
+.status-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    vertical-align: middle;
+    transition: all var(--transition-speed);
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.status-item {
+    display: flex;
+    background: var(--panel-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border: 1px solid var(--border-color);
+    transition: all var(--transition-speed);
+    backdrop-filter: blur(var(--backdrop-blur));
+    cursor: pointer;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    margin-right: 5%;
+    gap: var(--spacing-md, 10px);
+}
+
+.status-item:hover {
+    background: var(--option-hover);
+    transform: var(--hover-transform);
+    box-shadow: 0 6px 25px rgba(0,0,0,0.25);
+}

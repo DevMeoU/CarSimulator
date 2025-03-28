@@ -41,7 +41,7 @@
 .status-item {
     display: flex;
     align-items: center;
-    padding: 10px 15px; /* Adjusted padding for better alignment */
+    padding: 12px 18px; /* Adjusted padding for visual balance */
     background: var(--panel-bg);
     border-radius: var(--border-radius);
     transition: all var(--transition-speed);
@@ -49,8 +49,6 @@
     backdrop-filter: blur(var(--backdrop-blur));
     border: 1px solid var(--border-color);
     cursor: pointer;
-    /* Adjusted padding for better alignment */
-    padding: 12px 18px;
 }
 
 .status-item:hover {
@@ -169,4 +167,45 @@
 @keyframes blink {
     0%, 100% { opacity: 1; }
     50% { opacity: 0; }
+}
+
+/* Footer styles */
+footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    background: var(--panel-bg);
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.information, .contact, .copyright {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.information i,
+.contact i {
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.8);
+}
+
+.copyright p {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+@media (max-width: 768px) {
+    footer {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px 20px;
+    }
+    
+    .contact {
+        flex-direction: column;
+        text-align: center;
+    }
 }

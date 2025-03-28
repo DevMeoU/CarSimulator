@@ -11,6 +11,18 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding-bottom: 60px;
+}
+
+.bottom-panel {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin-top: 0;
+    background: linear-gradient(to right, var(--panel-bg), rgba(20, 25, 35, 0.4));
+    padding: 1rem 1.5rem;
 }
 
 .dashboard {
@@ -27,11 +39,15 @@ body {
 
 .main-content {
     display: grid;
-    grid-template-columns: 280px 1fr 280px;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 1fr min-content;
     grid-template-areas:
-        "left-panel center-panel right-panel"
-        "bottom-panel bottom-panel bottom-panel";
+        "top-bar-panel"
+        "control-panel"
+        "bottom-panel";
+    height: 100%;
+    gap: 1rem;
+    flex: 1;
 }
 
 .left-panel {
@@ -67,17 +83,6 @@ body {
 
 .bottom-panel {
     grid-area: bottom-panel;
-    position: relative;
-    margin-top: auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background: linear-gradient(to right, var(--panel-bg), rgba(20, 25, 35, 0.4));
-    border-radius: var(--border-radius);
-    backdrop-filter: blur(5px);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    transition: all var(--transition-speed);
 }
 
 .top-bar {

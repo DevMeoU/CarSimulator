@@ -1,0 +1,88 @@
+/***************************************************************
+ * Dashboard Top Position Indicators 
+ ***************************************************************/
+/* 
+Các thuộc tính CSS này dùng để căn chỉnh layout:
+
+1. align-items: Căn item theo trục dọc trong container flex
+2. align-content: Căn khoảng cách giữa các hàng trong flex-wrap
+3. text-align: Căn nội dung text theo chiều ngang
+4. justify-content: Phân bổ khoảng trống ngang trong container
+5. justify-items: Căn item theo trục ngang trong grid
+- `display: flex` : Sử dụng flexbox để căn chỉnh các phần tử con theo hàng ngang
+- `background: var(--panel-bg)` : Màu nền lấy từ biến theme để đồng bộ giao diện
+- `border-radius: var(--border-radius)` : Bo góc đồng nhất với các component khác
+- `box-shadow: var(--box-shadow)` : Hiệu ứng đổ bóng theo cấu hình chung
+- `border: 1px solid var(--border-color)` : Viền mảnh với màu từ biến theme
+- `padding: 12px 18px` : Khoảng cách đệm cân đối theo tỷ lệ vàng
+- `transition: all var(--transition-speed)` : Tạo hiệu ứng mượt khi hover/focus
+- `backdrop-filter: blur(...)` : Làm mờ nền để tạo chiều sâu không gian
+- `cursor: pointer` : Thể hiện tính tương tác khi hover
+*/
+
+.time {
+    font-size: 32px;
+    font-family: var(--primary-font);
+    font-weight: bold;
+    margin: 5px;
+    text-shadow: var(--text-shadow);
+    transition: all 0.3s ease-in-out;
+}
+/***************************************************************
+ * Dashboard Mid Position Indicators 
+ ***************************************************************/
+ .speed-container {
+     display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 30px;
+}
+
+.speed-display {
+    text-align: center;
+}
+
+.speed {
+    font-size: 72px;
+    font-weight: bold;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.speed-unit {
+    font-size: 24px;
+    opacity: 0.8;
+}
+
+.gear-section, .odo-section {
+    background: var(--panel-bg);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.gear-indicator {
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.gear-label {
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.odo, .trip {
+    margin: 5px 0;
+    font-size: 16px;
+    color: var(--secondary-text);
+    text-shadow: var(--text-shadow);
+    transition: color 0.2s ease-in-out;
+}
+/***************************************************************
+ * Dashboard Bottom Position Indicators 
+ ***************************************************************/

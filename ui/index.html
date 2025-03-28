@@ -12,84 +12,50 @@
         <div class="top-bar">
             <div class="time">10:23</div>
             <div class="status-item">
-                <span class="battery-item"><i class="fas fa-battery-full"></i></span><!-- 100% -->
-                <span class="battery-percentage" id="battery-level">100%</span>
-                <span class="status-label"><i class="fas fa-temperature-high"></i></span>
-                <span id="battery-temp">25°C</span>
-                <!-- <span class="status-icon"><i class="fas fa-wifi"></i></span>
-                <span class="status-label"><i class="fas fa-bolt"></i></span>
-                <span class="status-label"><i class="fas fa-signal"></i></span> -->
-            </div>
-        </div>
-
-        <div class="main-content">
-            <div class="left-panel">
-                <div class="gear-section">
-                    <div class="gear-indicator">D</div>
-                    <div class="gear-label">GEAR</div>
+                <div class="battery-capacity">
+                    <span class="battery-icons"><i class="fas fa-battery-full"></i></span> <!-- 100% -->
+                    <span class="battery-icons"><i class="fas fa-battery-three-quarters"></i></span> <!-- >=80% -->
+                    <span class="battery-icons"><i class="fas fa-battery-half"></i></span> <!-- >=50% -->
+                    <span class="battery-icons"><i class="fas fa-battery-quarter"></i></span> <!-- >=20% -->
+                    <span class="battery-icons"><i class="fas fa-battery-empty"></i></span> <!-- 0% -->
+                    
+                    <span class="battery-capacity" id="battery-level">100%</span>
                 </div>
-                <div class="odo-section">
-                    <div class="odo"><i class="fas fa-road"></i>: 00 km Dự Kiến</div>
-                    <div class="trip"><i class="fas fa-car-side"></i>: 00 km Odo</div>
+                <div class="battery-affect">
+                    <span class="battery-temp-icons"><i class="fas fa-temperature-full"></i></span> <!-- 100% -->
+                    <span class="battery-temp-icons"><i class="fas fa-temperature-three-quarters"></i></span>
+                    <span class="battery-temp-icons"><i class="fas fa-temperature-half"></i></span>
+                    <span class="battery-temp-icons"><i class="fas fa-temperature-quarter"></i></span>
+                    <span class="battery-temp-icons"><i class="fas fa-temperature-empty"></i></span>
+                    <span id="battery-temp">25°C</span>
                 </div>
-            </div>
-
-            <div class="center-panel">
-                <div class="speed-container">
-                    <div class="signal-left">
-                        <i class="fas fa-circle-left fa-2x"></i>
-                    </div>
-                    <div class="speed-display">
-                        <div class="speed">63</div>
-                        <div class="speed-unit">KM/H</div>
-                    </div>
-                    <div class="signal-right">
-                        <i class="fas fa-circle-right fa-2x"></i>
-                    </div>
-                </div>
-                <div class="power-display">
-                    <div class="power">260</div>
-                    <div class="power-unit">HP</div>
-                </div>
-            </div>
-
-            <div class="right-panel">
-                <ul class="option-list">
-                    <li class="option-item" title="Gió">
-                        <span class="option-icon">💨</span>
-                    </li>
-                    <li class="option-item" title="Điều hòa">
-                        <span class="option-icon">❄️</span>
-                    </li>
-                    <li class="option-item" title="Nhiệt độ pin">
-                        <span class="option-icon">🌡️</span>
-                    </li>
-                    <!-- <li class="option-item" title="Đỗ">
-                        <span class="option-icon">🅿️</span>
-                    </li>
-                    <li class="option-item" title="Thắt dây an toàn">
-                        <span class="option-icon">🛑</span>
-                    </li>
-                    <li class="option-item" title="Khóa cửa">
-                        <span class="option-icon">🔐</span>
-                    </li> -->
-                </ul>
-            </div>
-
-            <div class="bottom-panel">
-                <div class="warning-area">
-                    <i class="fas fa-exclamation-triangle warning-icon"></i>
-                </div>
-                <div class="total-distance">Tổng quãng đường: 0 km</div>
-                <div class="battery-low-warning">Pin thấp dưới 20%</div>
-                
-                <div class="total-distance">Tổng quãng đường: 0 km</div>
-
-                <button class="help-button" title="Trợ giúp">?</button>
             </div>
         </div>
     </div>
+        </div>
+</div>
 
-    <script src="js/app_main.js" type="module"></script>
+<!-- Footer HTML -->
+<footer class="bottom-panel">
+    <div class="contact">
+        <div id="mail_logo">
+            <i class="fas fa-envelope"></i>
+            <span>ducson9112k@gmail.com</span>
+        </div>
+        <div class="font-awesome">
+            <i class="fas fa-phone-alt"></i>
+            <span>0387364029</span>
+        </div>
+        <div class="information">
+            <i class="fas fa-info-circle"></i>
+            <span>Version: 1.0.0</span>
+        </div>
+        <div class="copyright">
+            <p>&copy; 2025 Deesol. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="js/app_main.js" type="module"></script>
 </body>
 </html>
