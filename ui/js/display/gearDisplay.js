@@ -1,16 +1,32 @@
 export function initGearDisplay(gear) {
-    const gearDisplay = document.querySelector('.gear-indicator');
-    if (gearDisplay) {
-        gearDisplay.textContent = gear;
-        const GEAR_COLORS = {
-            'D': '#4CAF50',
-            'P': '#1B10B5',
-            'N': '#FFF',
-            'R': '#FF0000'
-        };
-        gearDisplay.style.color = GEAR_COLORS[gear] || '#FFF';
+    const gearIndicators = {
+        'P': document.querySelector('.gear-p-indicator'),
+        'R': document.querySelector('.gear-r-indicator'),
+        'N': document.querySelector('.gear-n-indicator'),
+        'D': document.querySelector('.gear-d-indicator')
+    };
+
+    const GEAR_COLORS = {
+        'D': '#4CAF50',
+        'P': '#1B10B5',
+        'N': '#FFF',
+        'R': '#FF0000'
+    };
+
+    // Remove active class from all indicators
+    Object.values(gearIndicators).forEach(indicator => {
+        if (indicator) {
+            indicator.classList.remove('active');
+            indicator.style.color = '#FFF';
+        }
+    });
+
+    // Set active class and color for the selected gear
+    const selectedIndicator = gearIndicators[gear];
+    if (selectedIndicator) {
+        selectedIndicator.classList.add('active');
+        selectedIndicator.style.color = '#2ecc71' || '#FFF';
     } else {
-        console.error('ERROR: #gear-indicator element not found in DOM');
-        console.log('Check HTML for element with this class');
+        console.error('ERROR: Gear indicator not found for gear:', gear);
     }
 }

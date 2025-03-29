@@ -31,6 +31,26 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
 /***************************************************************
  * Dashboard Mid Position Indicators 
  ***************************************************************/
+
+.distance-travelled-icon {
+    margin-bottom: 5px; 
+}
+
+.distance-travelled-unit {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
+
+.distance-estimate-icon {
+    margin-bottom: 5px;
+}
+
+.distance-estimate-unit {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 4px;
+}
 #signal-control {
     grid-area: top-center-control-panel;
     display: flex;
@@ -127,6 +147,20 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     margin-top: 15px;
 }
 
+.gear-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 15px;
+    border-radius: 5px;
+    box-sizing: border-box;
+    width: 100%;
+    gap: 10px;
+}
+
+
 .gear-section,
 .odo-section {
     background: var(--panel-bg);
@@ -136,20 +170,38 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     width: 100%;
 }
 
-.gear-indicator {
-    color: #4CAF50;
-    font-size: 48px;
+.gear-p-indicator, .gear-r-indicator,
+.gear-n-indicator, .gear-d-indicator {
+    color: #d5e6dc;
+    font-size: 28px;
+    text-align: center;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.gear-p-indicator:hover, .gear-r-indicator:hover,
+.gear-n-indicator:hover, .gear-d-indicator:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: rgba(46, 204, 113, 0.5);
+}
+
+.gear-p-indicator.active, .gear-r-indicator.active,
+.gear-n-indicator.active, .gear-d-indicator.active {
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(46, 204, 113, 0.8);
     font-weight: bold;
-    text-align: center;
-    margin-bottom: 5px;
+    transform: scale(1.05);
 }
-
-.gear-label {
-    text-align: center;
-    font-size: 14px;
-    opacity: 0.8;
-}
-
 .odo,
 .trip {
     margin: 5px 0;

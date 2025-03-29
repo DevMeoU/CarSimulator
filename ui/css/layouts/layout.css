@@ -51,15 +51,13 @@ body {
     flex: 1;
 }
 
-.top-left-panel, .top-right-panel,
-.mid-left-panel,.mid-center-panel,.mid-right-panel,
-.bottom-left-panel,.bottom-center-panel,.bottom-right-panel {
+.top-left-panel {
     grid-area: top-left-control-panel;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-start;
-    border-right: 1px solid var(--border-color);
+    justify-content: center;
+    align-items: center;
+    border-right: 2px solid var(--border-color);
     padding: 20px;
 }
 
@@ -69,32 +67,47 @@ body {
    flex-direction: row;
    justify-content: space-between;
    width: 100%;
+   padding: 20px;
+   border-right: 2px solid var(--border-color);
 }
 
-/* .top-center-panel, .top-right-panel  {
-    grid-area: top-center-control-panel;
+.mid-center-panel {
+    grid-area: mid-left-control-panel;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    border-right: 2px solid var(--border-color);
+    padding: 0px 50px 0px 50px;
+}
+
+.distance-travelled-contains {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    text-align: center;
-    padding: 20px;
-    position: relative;
-} */
-
-/* .right-panel {
-    grid-area: right-panel;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    border-left: 1px solid var(--border-color);
-    padding: 20px;
 }
 
-.bottom-panel {
-    grid-area: bottom-panel;
-} */
+.distance-travelled-indicator-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.2rem;
+}
+
+.distance-estimate-contains {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.distance-estimate-indicator-box {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.2rem;
+}
 
 .top-bar {
     display: flex;
