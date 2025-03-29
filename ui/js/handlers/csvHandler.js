@@ -1,8 +1,6 @@
 import { updateShareData } from './shareJsonData.js';
 
-function initCsvHandler() {
-    // Đăng ký sự kiện khi người dùng chọn file
-    document.addEventListener('keydown', async (e) => {
+async function initCsvHandler() {
     try {
         let parsedData = await csvDetect();
         console.log('Dữ liệu CSV:', parsedData);
@@ -12,7 +10,6 @@ function initCsvHandler() {
     } catch (error) {
         console.error('Lỗi xử lý CSV:', error);
     }
-    });
 }
 
 export { initCsvHandler };
@@ -33,22 +30,30 @@ function parseCSV(csvString) {
     return result;
 }
 
-function csvDetect() {
-    return fetch('../data/storage.csv')
-    .then(response => {
-        if (!response.ok) {
-        throw new Error('Network response was not ok');
+async function csvDetect() {
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 1000; // 1 second
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            const response = await fetch('/data/storage.csv'
+                , {
+                   method: 'GET', 
+                }
+            );
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const text = await response.text();
+            return parseCSV(text);
+        } catch (error) {
+            console.error(`Lần thử ${attempt}/${MAX_RETRIES} - Lỗi khi tải file CSV:`, error);
+            if (attempt === MAX_RETRIES) {
+                throw new Error(`Không thể tải file CSV sau ${MAX_RETRIES} lần thử`);
+            }
+            await new Promise(resolve => setTimeout(resolve, RETRY_DELAY));
         }
-        return response.text();
-    })
-    .then(text => {
-        const parsedData = parseCSV(text);
-        return parsedData;
-    })
-    .catch(error => {
-        console.error('Có lỗi xảy ra khi tải file CSV:', error);
-        throw error;
-    }); 
+    }
 }
 
 const convertToJson = (parsedData) => {

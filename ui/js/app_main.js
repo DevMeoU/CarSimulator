@@ -1,3 +1,4 @@
+// Using core-js features directly without import
 import { updateTime } from './time/time.js';
 import { initCsvHandler } from './handlers/csvHandler.js';
 
@@ -10,9 +11,4 @@ function initMain() {
 
 // Gọi hàm xử lý dữ liệu ở đây
 initMain();
-// Gọi hàm xử lý dữ liệu ở đây
-document.addEventListener('DOMContentLoaded', () => {
-    updateTime();
-    // Gọi hàm xử lý dữ liệu ở đây
-    initCsvHandler();
-});
+setInterval(() => initCsvHandler(), 1000);
