@@ -1,25 +1,7 @@
-/***************************************************************
- * Dashboard Top Position Indicators 
- ***************************************************************/
-/* 
-Các thuộc tính CSS này dùng để căn chỉnh layout:
-
-1. align-items: Căn item theo trục dọc trong container flex
-2. align-content: Căn khoảng cách giữa các hàng trong flex-wrap
-3. text-align: Căn nội dung text theo chiều ngang
-4. justify-content: Phân bổ khoảng trống ngang trong container
-5. justify-items: Căn item theo trục ngang trong grid
-- `display: flex` : Sử dụng flexbox để căn chỉnh các phần tử con theo hàng ngang
-- `background: var(--panel-bg)` : Màu nền lấy từ biến theme để đồng bộ giao diện
-- `border-radius: var(--border-radius)` : Bo góc đồng nhất với các component khác
-- `box-shadow: var(--box-shadow)` : Hiệu ứng đổ bóng theo cấu hình chung
-- `border: 1px solid var(--border-color)` : Viền mảnh với màu từ biến theme
-- `padding: 12px 18px` : Khoảng cách đệm cân đối theo tỷ lệ vàng
-- `transition: all var(--transition-speed)` : Tạo hiệu ứng mượt khi hover/focus
-- `backdrop-filter: blur(...)` : Làm mờ nền để tạo chiều sâu không gian
-- `cursor: pointer` : Thể hiện tính tương tác khi hover
-*/
-
+/*
+ * TIME INDICATOR
+ * Style cho hiển thị thời gian trên dashboard
+ */
 .time {
     font-size: 32px;
     font-family: var(--primary-font);
@@ -28,10 +10,10 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     text-shadow: var(--text-shadow);
     transition: all 0.3s ease-in-out;
 }
-/***************************************************************
- * Dashboard Mid Position Indicators 
- ***************************************************************/
-
+/*
+ * DISTANCE TRAVELLED INDICATOR
+ * Style cho hiển thị quãng đường đã đi
+ */
 .distance-travelled-icon {
     margin-bottom: 5px; 
 }
@@ -42,6 +24,10 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     margin-top: 4px;
 }
 
+/*
+ * DISTANCE ESTIMATE INDICATOR
+ * Style cho hiển thị quãng đường ước tính
+ */
 .distance-estimate-icon {
     margin-bottom: 5px;
 }

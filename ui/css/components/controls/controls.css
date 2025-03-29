@@ -1,3 +1,7 @@
+/*
+ * OPTION ICON STYLES
+ * Style cho các icon trong control panel
+ */
 .option-icon {
     width: 32px;
     height: 32px;
@@ -6,6 +10,10 @@
     margin: 10px 0;
 }
 
+/*
+ * OPTION ITEM STYLES
+ * Style cho các item trong control panel
+ */
 .option-item {
     display: flex;
     justify-content: center;
@@ -19,6 +27,10 @@
     flex-direction: row;
 }
 
+/*
+ * OPTION ITEM HOVER EFFECTS
+ * Hiệu ứng khi hover vào các item
+ */
 .option-item:hover {
     background: var(--option-hover);
     transform: var(--hover-transform);
@@ -28,6 +40,10 @@
     filter: brightness(1.2) drop-shadow(0 4px 8px rgba(0,0,0,0.3));
 }
 
+/*
+ * OPTION LIST CONTAINER
+ * Style cho container chứa danh sách các option
+ */
 .option-list {
     list-style: none;
     display: flex;

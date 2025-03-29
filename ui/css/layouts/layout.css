@@ -1,40 +1,105 @@
+/*
+ * GLOBAL RESET & BASE STYLES
+ * Thiết lập các style cơ bản và reset cho toàn bộ trang
+ */
 * {
+    /* Box Model */
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    
+    /* Typography */
     font-family: 'Roboto', sans-serif;
 }
 
+/*
+ * BODY LAYOUT
+ * Thiết lập layout chính cho body
+ */
 body {
+    /* Background */
     background: #000;
+    
+    /* Flex Layout */
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    
+    /* Spacing */
     padding-bottom: 60px;
 }
 
+/*
+ * BOTTOM PANEL
+ * Style cho panel cố định ở dưới cùng
+ */
 .bottom-panel {
+    /* Positioning */
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     width: 100%;
-    margin-top: 0;
+    z-index: 100;
+    
+    /* Background & Effects */
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    
+    /* Borders & Spacing */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 0;
+
+    .contact {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        color: #fff;
+
+        div {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+
+            i {
+                color: var(--primary-color);
+            }
+        }
+
+        .copyright {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+    }
     background: linear-gradient(to right, var(--panel-bg), rgba(20, 25, 35, 0.4));
     padding: 1rem 1.5rem;
 }
 
+/*
+ * DASHBOARD CONTAINER
+ * Style chính cho khung dashboard
+ */
 .dashboard {
-    background: var(--dashboard-bg);
+    /* Dimensions */
     width: 900px;
     height: 500px;
+    position: relative;
+    
+    /* Background & Colors */
+    background: var(--dashboard-bg);
+    color: var(--text-color);
+    
+    /* Flex Layout */
     display: flex;
     flex-direction: column;
+    
+    /* Borders & Spacing */
     border-radius: 20px;
     padding: 20px;
-    color: var(--text-color);
-    position: relative;
 }
 
 .main-content {

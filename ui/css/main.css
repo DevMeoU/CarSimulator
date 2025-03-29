@@ -1,3 +1,9 @@
+/*
+ * Import các file CSS theo thứ tự từ tổng quan đến chi tiết:
+ * 1. Biến toàn cục
+ * 2. Layout chính
+ * 3. Các component theo thứ tự từ trên xuống dưới trong giao diện
+ */
 @import 'base/variables.css';
 @import 'layouts/layout.css';
 @import 'components/status/status.css';
@@ -6,7 +12,10 @@
 @import 'components/pedals/pedals.css';
 @import 'components/modes/modes.css';
 
-/* Global reset và font chữ */
+/* 
+ * RESET & BASE STYLES
+ * Thiết lập các style cơ bản và reset cho toàn bộ trang
+ */
 * {
   margin: 0;
   padding: 0;
@@ -14,11 +23,19 @@
   font-family: var(--primary-font);
 }
 
+/* 
+ * BODY STYLES
+ * Thiết lập style chung cho body
+ */
 body {
   background: #000;
   color: var(--text-color);
 }
 
+/* 
+ * FOOTER STYLES
+ * Thiết lập style cho footer
+ */
 footer {
   background: #000;
   color: var(--text-color);

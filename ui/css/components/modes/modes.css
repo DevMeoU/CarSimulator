@@ -1,3 +1,7 @@
+/*
+ * MODE INDICATOR CONTAINER
+ * Style cho container chứa các mode indicator
+ */
 .mode-indicator {
     display: flex;
     flex-direction: row;
@@ -7,6 +11,10 @@
     margin-top: 20px;
 }
 
+/*
+ * MODE INDICATOR BASE STYLES
+ * Style cơ bản cho các mode indicator
+ */
 .mode-eco-indicator,
 .mode-sport-indicator {
     width: 100px;
@@ -24,6 +32,10 @@
     overflow: hidden;
 }
 
+/*
+ * ECO MODE INDICATOR
+ * Style cho chế độ Eco
+ */
 .mode-eco-indicator {
     border-color: #27ae60;
 }
@@ -40,6 +52,10 @@
     transform: scale(1.1);
 }
 
+/*
+ * SPORT MODE INDICATOR
+ * Style cho chế độ Sport
+ */
 .mode-sport-indicator {
     border-color: #e67e22;
 }
