@@ -21,11 +21,16 @@ class DataManager {
         };
 
         this.keyMapping = {
+            "speed": "speed",
+            "mode": "mode",
+            "battery": "battery",
             "battery-temp": "battery_temp",
+            "gear": "gear",
             "estimated-distance": "estimated_distance",
             "distance-traveled": "distance_traveled",
             "signal-left": "signal_left",
             "signal-right": "signal_right",
+            "wind": "wind",
             "air-condition": "air_condition",
             "plug-in": "plug_in",
             "door-lock": "door_lock",

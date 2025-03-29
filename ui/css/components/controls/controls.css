@@ -52,3 +52,20 @@
     padding: 0;
     margin: 0;
 }
+
+/*
+ * DOOR LOCK ICONS STYLES
+ * Style cho các icon khóa cửa
+ */
+#door-locked-icon.active {
+    color: #ff0000;
+}
+
+#door-unlocked-icon.active {
+    color: #00ff00;
+}
+
+.option-icon.active {
+    filter: brightness(1.5) drop-shadow(0 4px 8px rgba(0,0,0,0.4));
+    transform: scale(1.1);
+}

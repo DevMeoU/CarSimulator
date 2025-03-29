@@ -35,7 +35,7 @@
         </div>
         <!-- mid dashboard -->
         <div class="main-content">
-            <div class="top-panel">
+            <div class="left-panel">
                 <div class="top-left-panel" id="gear-section">
                     <div class="gear-box">
                         <div class="gear-p-indicator active">P</div>
@@ -91,6 +91,50 @@
                 <div class="power-indicator">
                     <div class="power-indicator">256</div>
                     <div class="power-unit">HP</div>
+                </div>
+            </div>
+            <div class="right-panel">
+                <div class="fan-contains">
+                    <div class="fan-icon">
+                        <i class="fas fa-fan"></i>
+                    </div>
+                    <div class="fan-label">
+                        <span>Mức gió:</span>
+                    </div>
+                    <div class="fan-speed">
+                        <span>0</span>
+                    </div>
+                </div>
+                <div class="fan-levels">
+                    <span class="fan-level level-1"></span>
+                    <span class="fan-level level-2"></span>
+                    <span class="fan-level level-3"></span>
+                    <span class="fan-level level-4"></span>
+                    <span class="fan-level level-5"></span>
+                </div>
+                <div class="air-condition-contains">
+                    <div class="air-condition-icon">
+                        <i class="fas fa-snowflake"></i>
+                    </div>
+                    <div class="air-condition-label">
+                        <span>Điều hòa:</span>
+                    </div>
+                    <div class="air-condition-level">
+                        <span class="cold">0</span>
+                    </div>
+                    <div class="air-condition-unit">
+                        <span>°C</span>
+                    </div>
+                </div>
+                <div class="door-lock-contains">
+                    <div class="door-lock-icons">
+                        <i class="fas fa-unlock" id="door-unlocked-icon"></i>
+                        <i class="fas fa-lock active" id="door-locked-icon"></i>
+                    </div>
+                    <div class="door-lock-status">
+                        <span id="door-locked" class="active">DOOR LOCKED</span>
+                        <span id="door-unlocked">DOOR UNLOCKED</span>
+                    </div>
                 </div>
             </div>
         </div>

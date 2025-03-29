@@ -197,3 +197,44 @@ body {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
     transition: all var(--transition-speed);
 }
+
+.right-panel {
+    .fan-contains,
+    .air-condition-contains,
+    .door-lock-contains {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .fan-contains {
+        grid-area: top-right-control-panel;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 20px 20px 10px 20px;
+        gap: 0.5rem;
+        justify-content: flex-start;
+    }
+    .fan-levels {
+        grid-area: top-right-control-panel;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 0px 20px 0px 20px;
+        justify-content: flex-start;
+    }
+   .air-condition-contains {
+        grid-area: mid-right-control-panel;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 0.5rem;
+        justify-content: flex-start;
+    } 
+    .door-lock-contains {
+        grid-area: bottom-right-control-panel;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 20px;
+        gap: 0.5rem;
+        justify-content: flex-start;
+    } 
+}

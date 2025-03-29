@@ -29,3 +29,22 @@
     transform: var(--hover-transform);
     box-shadow: 0 6px 25px rgba(0,0,0,0.25);
 }
+
+/* 
+ * AIR CONDITION STYLES 
+ * Thiết lập style cho các mức nhiệt độ 
+ */
+.hot {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.cold {
+    color: #0066ff;
+    font-weight: bold;
+}
+
+.normal {
+    color: #00ff00;
+    font-weight: bold;
+}
