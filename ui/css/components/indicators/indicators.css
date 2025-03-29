@@ -95,6 +95,7 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     }
 }
 
+
 #speed-control {
     grid-area: mid-center-control-panel;
     display: flex;
@@ -159,7 +160,6 @@ Các thuộc tính CSS này dùng để căn chỉnh layout:
     width: 100%;
     gap: 10px;
 }
-
 
 .gear-section,
 .odo-section {

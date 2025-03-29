@@ -4,6 +4,7 @@
 @import 'components/controls/controls.css';
 @import 'components/indicators/indicators.css';
 @import 'components/pedals/pedals.css';
+@import 'components/modes/modes.css';
 
 /* Global reset và font chữ */
 * {

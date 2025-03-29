@@ -1,0 +1,57 @@
+.mode-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.mode-eco-indicator,
+.mode-sport-indicator {
+    width: 100px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--panel-bg);
+    border: 2px solid var(--border-color);
+    box-shadow: var(--box-shadow);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.mode-eco-indicator {
+    border-color: #27ae60;
+}
+
+.mode-eco-indicator:hover {
+    background: rgba(39, 174, 96, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.mode-eco-indicator.active {
+    background: rgba(39, 174, 96, 0.2);
+    border-width: 3px;
+    transform: scale(1.1);
+}
+
+.mode-sport-indicator {
+    border-color: #e67e22;
+}
+
+.mode-sport-indicator:hover {
+    background: rgba(230, 126, 34, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+.mode-sport-indicator.active {
+    background: rgba(230, 126, 34, 0.2);
+    border-width: 3px;
+    transform: scale(1.1);
+}
