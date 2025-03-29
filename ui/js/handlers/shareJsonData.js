@@ -3,6 +3,9 @@ import { updateBatteryTempIcon } from '../display/batteryTemperatureDisplay.js';
 import { initSignalDisplay } from '../display/signalDisplay.js';
 import { initSpeedDisplay } from '../display/speedDisplay.js';
 import { initGearDisplay } from '../display/gearDisplay.js';
+import { initPedalDisplay } from '../display/pedalDisplay.js';
+import { initOdoDisplay } from '../display/odoDisplay.js';
+import { initModeDisplay } from '../display/modeDisplay.js';
 
 var share_data = {
     speed: 0,
@@ -20,6 +23,8 @@ var share_data = {
     door_lock: 0,
     seat_belt: 0,
     parking_brake: 0,
+    brake: 0,
+    gas: 0
 }
 export default share_data;
 export const default_data = share_data;
@@ -35,7 +40,9 @@ const keyMapping = {
     "plug-in": "plug_in",
     "door-lock": "door_lock",
     "seat-belt": "seat_belt",
-    "park": "parking_brake"
+    "brake": "brake",
+    "gas": "gas",
+    "parking-brake": "parking_brake"
 };
 
 function mappingData(data) {
@@ -76,5 +83,8 @@ export const updateShareData = (data) => {
     initSignalDisplay(share_data.signal_left, share_data.signal_right);
     initSpeedDisplay(share_data.speed);
     initGearDisplay(share_data.gear);
+    initPedalDisplay(share_data.brake, share_data.gas);
+    initOdoDisplay(share_data.distance_traveled, share_data.estimated_distance);
+    initModeDisplay(share_data.mode);
 }
 

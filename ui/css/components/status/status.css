@@ -19,7 +19,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    margin-right: 5%;
+    margin-left: 1%;
+    margin-right: 1%;
     gap: var(--spacing-md, 10px);
 }
 

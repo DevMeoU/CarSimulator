@@ -3,6 +3,7 @@
 @import 'components/status/status.css';
 @import 'components/controls/controls.css';
 @import 'components/indicators/indicators.css';
+@import 'components/pedals/pedals.css';
 
 /* Global reset và font chữ */
 * {

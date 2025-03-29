@@ -1,34 +1,12 @@
-class OdoDisplay {
-    constructor() {
-        this.odometer = 0;
-        this.display = document.getElementById('odometer');
+export function initOdoDisplay(traveled, estimated) {
+    const odo_traveled = document.getElementsByClassName('distance-travelled-indicator')[0];
+    const odo_estimated = document.getElementsByClassName('distance-estimate-indicator')[0];
+
+    if (odo_traveled && typeof traveled !== 'undefined') {
+        odo_traveled.textContent = traveled.toString();
     }
 
-    // Update odometer reading
-    update(distance) {
-        this.odometer += distance;
-        this.render();
-    }
-
-    // Reset odometer to 0
-    reset() {
-        this.odometer = 0;
-        this.render();
-    }
-
-    // Display current odometer reading
-    render() {
-        if (this.display) {
-            // Format to 1 decimal place
-            const formattedDistance = this.odometer.toFixed(1);
-            this.display.textContent = `${formattedDistance} km`;
-        }
-    }
-
-    // Get current odometer value
-    getValue() {
-        return this.odometer;
+    if (odo_estimated && typeof estimated !== 'undefined') {
+        odo_estimated.textContent = estimated.toString();
     }
 }
-
-export default OdoDisplay;

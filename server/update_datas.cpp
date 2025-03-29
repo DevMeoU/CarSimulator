@@ -50,6 +50,8 @@ std::unordered_map<std::string, std::string> generate_random_data() {
     data["door-lock"] = std::to_string(random_int(0, 1));
     data["seat-belt"] = std::to_string(random_int(0, 1));
     data["park"] = std::to_string(random_int(0, 1));
+    data["brake"] = std::to_string(random_int(0, 1));
+    data["gas"] = std::to_string(random_int(0, 1));
     return data;
 }
 
@@ -88,7 +90,9 @@ void write_csv(const std::string &filename, const std::unordered_map<std::string
          << "plug-in, " << data.at("plug-in") << ",\n"
          << "door-lock, " << data.at("door-lock") << ",\n"
          << "seat-belt, " << data.at("seat-belt") << ",\n"
-         << "park, " << data.at("park") << ",\n";
+         << "park, " << data.at("park") << ",\n"
+         << "brake, " << data.at("brake") << ",\n"
+         << "gas, " << data.at("gas") << ",\n";
 
     file.close();
 }
