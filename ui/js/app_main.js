@@ -1,14 +1,16 @@
-// Using core-js features directly without import
-import { updateTime } from './time/time.js';
-import { initCsvHandler } from './handlers/csvHandler.js';
+import AppManager from './managers/AppManager.js';
+import GearControl from './controls/gearControl.js';
+import ModeControl from './controls/modeControl.js';
+import SignalControl from './controls/signalControl.js';
 
-function initMain() {
-    updateTime();
-    import('./handlers/shareJsonData.js').then((module) => {
-        module.updateShareData(module.default_data);
-    });
+class AppMain {
+    constructor() {
+        this.appManager = new AppManager();
+        this.gearControl = new GearControl();
+        this.modeControl = new ModeControl();
+        this.signalControl = new SignalControl();
+    }
 }
 
-// Gọi hàm xử lý dữ liệu ở đây
-initMain();
-setInterval(() => initCsvHandler(), 1000);
+// Khởi tạo ứng dụng
+const app = new AppMain();

@@ -1,39 +1,52 @@
-export function initSignalControl() {
-    console.log('[SIGNAL] Initializing signal system');
+import SignalDisplay from '../display/signalDisplay.js';
 
-    let isLeftSignalActive = false;
-    let isRightSignalActive = false;
+class SignalControl {
+    constructor() {
+        this.isLeftSignalActive = false;
+        this.isRightSignalActive = false;
+        this.signalDisplay = new SignalDisplay();
+        this.initKeyboardEvents();
+    }
 
-    // Check event listener conflicts
-    console.log('[SIGNAL] Registering keydown event listener');
-    document.addEventListener('keydown', handleSignalKeyPress);
-
-    function handleSignalKeyPress(e){
-        console.log(`[DEBUG] Key pressed: ${e.key}, Code: ${e.code}`);
-        console.log(`Signal states before processing - Left: ${isLeftSignalActive}, Right: ${isRightSignalActive}`);
-    
-        if (e.key.toLowerCase() === 'v') {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            isLeftSignalActive = !isLeftSignalActive;
-            const signal = document.querySelector('#signal-left');
-            if (signal) {
-                signal.classList.toggle('active', isLeftSignalActive);
-            } else {
-                console.error('ERROR: #signal-left element not found in DOM');
-                console.log('Check HTML for element with this class');
+    initKeyboardEvents() {
+        document.addEventListener('keydown', (e) => {
+            console.log(`[DEBUG] Key pressed: ${e.key}, Code: ${e.code}`);
+            
+            if (e.key.toLowerCase() === 'v') {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                this.toggleLeftSignal();
+            } else if (e.key.toLowerCase() === 'b') {
+                e.stopImmediatePropagation();
+                e.preventDefault();
+                this.toggleRightSignal();
             }
-        } else if (e.key.toLowerCase() === 'b') {
-            e.stopImmediatePropagation();
-            e.preventDefault();
-            isRightSignalActive = !isRightSignalActive;
-            const signal = document.querySelector('#signal-right');
-            if (signal) {
-                signal.classList.toggle('active', isRightSignalActive);
-            } else {
-                console.error('ERROR: #signal-right element not found in DOM');
-                console.log('Check HTML for element with this class');
-            }
-        }
-    };
+        });
+    }
+
+    toggleLeftSignal() {
+        this.isLeftSignalActive = !this.isLeftSignalActive;
+        this.updateSignalDisplay();
+    }
+
+    toggleRightSignal() {
+        this.isRightSignalActive = !this.isRightSignalActive;
+        this.updateSignalDisplay();
+    }
+
+    updateSignalDisplay() {
+        this.signalDisplay.update(
+            this.isLeftSignalActive ? 1 : 0,
+            this.isRightSignalActive ? 1 : 0
+        );
+    }
+
+    getSignalStates() {
+        return {
+            left: this.isLeftSignalActive,
+            right: this.isRightSignalActive
+        };
+    }
 }
+
+export default SignalControl;
