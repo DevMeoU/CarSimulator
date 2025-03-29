@@ -136,8 +136,9 @@ void random_update_thread(const std::string &url, const std::string &csv_filenam
 int main() {
     // Thiết lập HTTP server để xử lý POST /update_csv, chỉ trả về phản hồi đơn giản
     httplib::Server svr;
-    svr.set_mount_point("/", "../ui");
-    svr.Post("/csv_update", [&](const httplib::Request &req, httplib::Response &res) {
+
+    // Endpoint POST: ghi dữ liệu nhận được từ auto-post vào CSV
+    svr.Post("/data", [&](const httplib::Request &req, httplib::Response &res) {
         std::string response = "Data received: ";
         for (const auto &p : req.params) {
             response += p.first + "=" + p.second + "; ";
@@ -159,7 +160,7 @@ int main() {
     const int num_threads = 3;
     std::vector<std::thread> threads;
     for (int i = 0; i < num_threads; ++i) {
-        threads.emplace_back(random_update_thread, "/csv_update", "../data/storage.csv", i);
+        threads.emplace_back(random_update_thread, "/data", "../data/storage.csv", i);
     }
 
     for (auto &t : threads) {
