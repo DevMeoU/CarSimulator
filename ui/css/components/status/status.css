@@ -22,6 +22,8 @@
     margin-left: 1%;
     margin-right: 1%;
     gap: var(--spacing-md, 10px);
+    width: 200px;
+    height: 55px;
 }
 
 .status-item:hover {
@@ -47,4 +49,36 @@
 .normal {
     color: #00ff00;
     font-weight: bold;
+}
+
+/* WARNING ALERT STYLES */
+.warning-alert {
+    display: flex;
+    align-items: center;
+    background-color: rgba(255, 204, 0, 0.2);
+    border: 1px solid #ffcc00;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin: 10px 0;
+    animation: pulse 2s infinite;
+}
+
+.warning-alert i {
+    color: #ffcc00;
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+.warning-message {
+    color: #ffcc00;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; font-size: 0.8em; }
+    25% { opacity: 0.85; font-size: 0.85em; }
+    50% { opacity: 1; font-size: 1em; }
+    75% { opacity: 0.85; font-size: 0.85em; }
+    100% { opacity: 0.8; font-size: 0.8em; }
 }
