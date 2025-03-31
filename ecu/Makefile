@@ -1,24 +1,20 @@
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -I./system/SynchronizedQueue -I./keyboard
+CXXFLAGS := -std=c++17 -Wall -Wextra -I.
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Linux)
 CXXFLAGS += -DPLATFORM_LINUX
-LDFLAGS := -lncurses
+LDFLAGS := -lncurses -lpthread
 else
 CXXFLAGS += -DPLATFORM_WINDOWS
-LDFLAGS := -luser32 -lws2_32 -mconsole
+LDFLAGS := -luser32 -lws2_32 -mconsole -lpthread
 endif
 
 SRC_DIR := .
 BUILD_DIR := build
 
-SRCS := $(SRC_DIR)/system/test/SynchronizedQueueTestKeyboard.cpp \
-	$(SRC_DIR)/keyboard/kb.cpp \
-	$(SRC_DIR)/base/queue/SynchronizedQueue.cpp
+SRCS := $(SRC_DIR)/test/test_keyboard_windows.cpp
 
-TEST_TARGET := system/test/SynchronizedQueueTestKeyboard.exe
-KEYBOARD_TEST_TARGET := keyboard/kb.exe
-QUEUE_TEST_TARGET := system/SynchronizedQueue/SynchronizedQueueTest.exe
+TEST_TARGET := test/test_keyboard_windows.exe
 
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 
