@@ -9,6 +9,7 @@ import OdoDisplay from '../display/odoDisplay.js';
 import PedalDisplay from '../display/pedalDisplay.js';
 import SignalDisplay from '../display/signalDisplay.js';
 import SpeedDisplay from '../display/speedDisplay.js';
+import WarningDisplay from '../display/WarningDisplay.js';
 
 class DisplayManager {
     constructor() {
@@ -23,6 +24,7 @@ class DisplayManager {
         this.airConditionDisplay = new AirConditionDisplay();
         this.fanDisplay = new FanDisplay();
         this.modeDisplay = new ModeDisplay();
+        this.warningDisplay = new WarningDisplay();
     }
 
     updates(data) {
@@ -37,6 +39,7 @@ class DisplayManager {
         this.airConditionDisplay.update(data.air_condition);
         this.fanDisplay.update(data.wind);
         this.modeDisplay.update(data.mode);
+        this.warningDisplay.update(data.warning);
     }
 }
 

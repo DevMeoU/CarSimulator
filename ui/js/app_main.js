@@ -10,6 +10,7 @@ import AirConditionDisplay from './display/AirConditionDisplay.js';
 import FanDisplay from './display/FanDisplay.js';
 import BatteryDisplay from './display/batteryDisplay.js';
 import BatteryTempDisplay from './display/batteryTempDisplay.js';
+import WarningDisplay from './display/WarningDisplay.js';
 
 
 class AppMain {
@@ -27,6 +28,7 @@ class AppMain {
         this.doorLockDisplay = new DoorLockDisplay();
         this.batteryDisplay = new BatteryDisplay();
         this.batteryTempDisplay = new BatteryTempDisplay();
+        this.warningDisplay = new WarningDisplay();
     }
 }
 

@@ -17,7 +17,8 @@ class DataManager {
             seat_belt: 0,
             parking_brake: 0,
             brake: 0,
-            gas: 0
+            gas: 0,
+            warning: 0,
         };
 
         this.keyMapping = {
@@ -37,7 +38,8 @@ class DataManager {
             "seat-belt": "seat_belt",
             "brake": "brake",
             "gas": "gas",
-            "parking-brake": "parking_brake"
+            "parking-brake": "parking_brake",
+            "warning": "warning",
         };
     }
 

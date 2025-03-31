@@ -53,14 +53,16 @@
 
 /* WARNING ALERT STYLES */
 .warning-alert {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
     background-color: rgba(255, 204, 0, 0.2);
     border: 1px solid #ffcc00;
     border-radius: 8px;
-    padding: 12px 16px;
     margin: 10px 0;
     animation: pulse 2s infinite;
+    white-space: nowrap;
 }
 
 .warning-alert i {
@@ -73,6 +75,11 @@
     color: #ffcc00;
     font-weight: bold;
     font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
 @keyframes pulse {
