@@ -1,10 +1,14 @@
-#include "../../keyboard/keycodes.hpp"
-#include "../system/windows/queue/SynchronizedQueue.hpp"
+#include <winsock2.h>
 #include <Windows.h>
 #include <iostream>
 #include <thread>
 #include <atomic>
 #include <string>
+#include <chrono>
+#include <cstdlib>
+#include "../../keyboard/keycodes.hpp"
+#include "../system/windows/queue/SynchronizedQueue.hpp"
+#include "../../server/cpp-httplib/httplib.h"
 
 namespace car_sim {
 
@@ -184,28 +188,67 @@ void keyboard_thread() {
 }
 
 void process_thread() {
+    const int MAX_RETRIES = 3;
+    const int RETRY_DELAY_MS = 100; // Giảm thời gian chờ giữa các lần retry
+    const std::string SERVER_URL = "http://localhost:8080";
+    
+    httplib::Client cli(SERVER_URL);
+    cli.set_connection_timeout(1); // Giảm timeout xuống 1 giây
+    cli.set_read_timeout(1);
+    cli.set_write_timeout(1);
+    
     while (running) {
         try {
-            CarStateData data = data_queue.dequeue();
-            std::cout << "Key data: " << data.to_string() << std::endl;
-        } catch (...) {
-            // Handle error
+            while (data_queue.size() > 0) { // Xử lý tất cả dữ liệu trong queue
+                CarStateData data = data_queue.dequeue();
+                std::string json_data = data.to_string();
+                
+                bool sent = false;
+                for (int retry = 0; retry < MAX_RETRIES && !sent; ++retry) {
+                    try {
+                        // Gửi dữ liệu ngay lập tức không cần kiểm tra server
+                        auto res = cli.Post("/data", json_data, "application/json");
+                        
+                        if (res && res->status == 200) {
+                            sent = true;
+                        } else if (retry < MAX_RETRIES - 1) {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(RETRY_DELAY_MS));
+                        }
+                    } catch (const std::exception& e) {
+                        if (retry < MAX_RETRIES - 1) {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(RETRY_DELAY_MS));
+                        }
+                    }
+                }
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Giảm thời gian sleep
+        } catch (const std::exception& e) {
+            std::cerr << "Error in process thread: " << e.what() << std::endl;
         }
     }
 }
 
 int main() {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        std::cerr << "Failed to initialize Winsock" << std::endl;
+        return 1;
+    }
+
     std::thread kb_thread(keyboard_thread);
     std::thread proc_thread(process_thread);
-    
-    while (true) {
-        std::cout << "Main thread running..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+    std::cout << "Press 'Q' to quit..." << std::endl;
+    while (running) {
+        if (GetAsyncKeyState('Q') & 0x8000) {
+            running = false;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    
-    running = false;
+
     kb_thread.join();
     proc_thread.join();
     
+    WSACleanup();
     return 0;
 }

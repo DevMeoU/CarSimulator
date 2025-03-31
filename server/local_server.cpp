@@ -34,6 +34,36 @@ int main() {
     httplib::Server svr;
     svr.set_mount_point("/", "../ui");
     svr.set_mount_point("/data", "../data");
+
+    // Biến lưu trữ dữ liệu JSON từ client
+    std::string stored_json_data;
+
+    // Add POST handler for /data endpoint
+    svr.Post("/data", [&stored_json_data](const httplib::Request& req, httplib::Response& res) {
+        if (!req.has_header("Content-Type") || req.get_header_value("Content-Type") != "application/json") {
+            res.status = 400;
+            res.set_content("Invalid Content-Type", "text/plain");
+            return;
+        }
+
+        try {
+            // Lưu trữ dữ liệu JSON
+            stored_json_data = req.body;
+            res.status = 200;
+            res.set_content("Data received", "text/plain");
+        } catch (const std::exception& e) {
+            res.status = 400;
+            res.set_content("Invalid JSON data", "text/plain");
+        }
+    });
+
+    // Add GET handler for /data endpoint
+    svr.Get("/data", [&stored_json_data](const httplib::Request& req, httplib::Response& res) {
+        res.status = 200;
+        res.set_header("Content-Type", "application/json");
+        res.set_content(stored_json_data.empty() ? "{}" : stored_json_data, "application/json");
+    });
+
     // User defined file extension and MIME type mappings
     svr.set_file_extension_and_mimetype_mapping("html", "text/html");
     svr.set_file_extension_and_mimetype_mapping("css", "text/css");
