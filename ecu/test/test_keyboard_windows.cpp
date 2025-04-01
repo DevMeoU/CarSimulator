@@ -222,7 +222,7 @@ void process_thread() {
             
             while (data_queue.size() > 0 && running) {
                 CarStateData data = data_queue.dequeue();
-                std::string json_data = "[" + data.to_string() + "]";
+                std::string json_data = data.to_string();
                 bool sent = false;
                 
                 for (int retry = 0; retry < MAX_RETRIES && !sent && running; ++retry) {
