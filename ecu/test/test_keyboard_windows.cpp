@@ -112,24 +112,24 @@ struct CarState {
 
     std::string to_string() const {
         std::string result = "{";
-        if (speed) result += "\"speed\":" + std::to_string(speed) + ",";
-        if (!mode.empty()) result += "\"mode\":" + mode + ",";
-        if (battery) result += "\"battery\":" + std::to_string(battery) + ",";
-        if (battery_temp) result += "\"battery_temp\":" + std::to_string(battery_temp) + ",";
-        if (!gear.empty()) result += "\"gear\":" + gear + ",";
-        if (estimated_distance) result += "\"estimated_distance\":" + std::to_string(estimated_distance) + ",";
-        if (distance_traveled) result += "\"distance_traveled\":" + std::to_string(distance_traveled) + ",";
-        if (signal_left) result += "\"signal_left\":" + std::to_string(signal_left) + ",";
-        if (signal_right) result += "\"signal_right\":" + std::to_string(signal_right) + ",";
-        if (wind) result += "\"wind\":" + std::to_string(wind) + ",";
-        if (air_condition) result += "\"air_condition\":" + std::to_string(air_condition) + ",";
-        if (plug_in) result += "\"plug_in\":" + std::to_string(plug_in) + ",";
-        if (door_lock) result += "\"door_lock\":" + std::to_string(door_lock) + ",";
-        if (seat_belt) result += "\"seat_belt\":" + std::to_string(seat_belt) + ",";
-        if (park) result += "\"park\":" + std::to_string(park) + ",";
-        if (brake) result += "\"brake\":" + std::to_string(brake) + ",";
-        if (gas) result += "\"gas\":" + std::to_string(gas) + ",";
-        if (!warning.empty()) result += "\"warning\":\"" + warning + "\",";
+        result += "\"speed\":" + std::to_string(speed) + ",";
+        result += "\"mode\":\"" + mode + "\",";
+        result += "\"battery\":" + std::to_string(battery) + ",";
+        result += "\"battery_temp\":" + std::to_string(battery_temp) + ",";
+        result += "\"gear\":\"" + gear + "\",";
+        result += "\"estimated_distance\":" + std::to_string(estimated_distance) + ",";
+        result += "\"distance_traveled\":" + std::to_string(distance_traveled) + ",";
+        result += "\"signal_left\":" + std::to_string(signal_left) + ",";
+        result += "\"signal_right\":" + std::to_string(signal_right) + ",";
+        result += "\"wind\":" + std::to_string(wind) + ",";
+        result += "\"air_condition\":" + std::to_string(air_condition) + ",";
+        result += "\"plug_in\":" + std::to_string(plug_in) + ",";
+        result += "\"door_lock\":" + std::to_string(door_lock) + ",";
+        result += "\"seat_belt\":" + std::to_string(seat_belt) + ",";
+        result += "\"park\":" + std::to_string(park) + ",";
+        result += "\"brake\":" + std::to_string(brake) + ",";
+        result += "\"gas\":" + std::to_string(gas) + ",";
+        result += "\"warning\":\"" + warning + "\"";
         result += "}";
         return result;
     }
@@ -188,42 +188,79 @@ void keyboard_thread() {
 }
 
 void process_thread() {
-    const int MAX_RETRIES = 3;
-    const int RETRY_DELAY_MS = 100; // Giảm thời gian chờ giữa các lần retry
     const std::string SERVER_URL = "http://localhost:8080";
+    const int MAX_RETRIES = 3;  // Giảm số lần thử lại
+    const int BASE_RETRY_DELAY_MS = 200;  // Giảm thời gian chờ giữa các lần thử
+    const int MAX_CONSECUTIVE_FAILURES = 3;  // Giảm số lần thất bại liên tiếp tối đa
     
     httplib::Client cli(SERVER_URL);
-    cli.set_connection_timeout(1); // Giảm timeout xuống 1 giây
-    cli.set_read_timeout(1);
-    cli.set_write_timeout(1);
+    cli.set_connection_timeout(3);  // Giảm thời gian timeout
+    cli.set_read_timeout(3);
+    cli.set_write_timeout(3);
+    cli.set_keep_alive(true);
+    
+    bool had_error = false;
+    int consecutive_failures = 0;
+    
+    auto check_server = [&cli]() -> bool {
+        auto res = cli.Get("/");
+        return res && (res->status == 200 || res->status == 404);
+    };
     
     while (running) {
         try {
-            while (data_queue.size() > 0) { // Xử lý tất cả dữ liệu trong queue
+            if (had_error) {
+                if (!check_server()) {
+                    std::cerr << "Server unavailable. Waiting for connection..." << std::endl;
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    continue;
+                }
+                had_error = false;
+                consecutive_failures = 0;
+                std::cout << "Successfully reconnected to server!" << std::endl;
+            }
+            
+            while (data_queue.size() > 0 && running) {
                 CarStateData data = data_queue.dequeue();
-                std::string json_data = data.to_string();
-                
+                std::string json_data = "[" + data.to_string() + "]";
                 bool sent = false;
-                for (int retry = 0; retry < MAX_RETRIES && !sent; ++retry) {
-                    try {
-                        // Gửi dữ liệu ngay lập tức không cần kiểm tra server
-                        auto res = cli.Post("/data", json_data, "application/json");
-                        
-                        if (res && res->status == 200) {
-                            sent = true;
-                        } else if (retry < MAX_RETRIES - 1) {
-                            std::this_thread::sleep_for(std::chrono::milliseconds(RETRY_DELAY_MS));
-                        }
-                    } catch (const std::exception& e) {
-                        if (retry < MAX_RETRIES - 1) {
-                            std::this_thread::sleep_for(std::chrono::milliseconds(RETRY_DELAY_MS));
-                        }
+                
+                for (int retry = 0; retry < MAX_RETRIES && !sent && running; ++retry) {
+                    if (retry > 0) {
+                        int delay = BASE_RETRY_DELAY_MS * (1 << retry);
+                        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+                        std::cout << "Retrying attempt " << retry + 1 << "..." << std::endl;
+                    }
+                    
+                    auto res = cli.Post("/data", json_data, "application/json");
+                    if (res && res->status == 200) {
+                        std::cout << "Data sent successfully: " << json_data << std::endl;
+                        sent = true;
+                    } else {
+                        std::cerr << "Error sending data (attempt " << retry + 1 << "/" << MAX_RETRIES
+                                  << "): " << (res ? std::to_string(res->status) : "unable to connect") << std::endl;
                     }
                 }
+                
+                if (!sent) {
+                    consecutive_failures++;
+                    std::cerr << "Failed to send data. Consecutive failures: " << consecutive_failures << std::endl;
+                    if (consecutive_failures >= MAX_CONSECUTIVE_FAILURES) {
+                        std::cerr << "Too many consecutive failures. Checking connection..." << std::endl;
+                        had_error = true;
+                        break;
+                    }
+                    data_queue.enqueue(data);
+                }
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Giảm thời gian sleep
+            
+            std::this_thread::sleep_for(std::chrono::milliseconds(5));  // Giảm thời gian chờ
         } catch (const std::exception& e) {
-            std::cerr << "Error in process thread: " << e.what() << std::endl;
+            if (!had_error) {
+                std::cerr << "Error during processing: " << e.what() << std::endl;
+                had_error = true;
+            }
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
 }
@@ -243,7 +280,7 @@ int main() {
         if (GetAsyncKeyState('Q') & 0x8000) {
             running = false;
         }
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
     }
 
     kb_thread.join();

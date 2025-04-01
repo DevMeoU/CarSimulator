@@ -48,24 +48,29 @@ class DataManager {
     }
 
     mappingData(data) {
-        data.forEach(item => {
-            let key = item.Key;
-            let value = item.Value;
+        if (!Array.isArray(data) || data.length === 0) return;
         
-            if (this.keyMapping.hasOwnProperty(key)) {
-                key = this.keyMapping[key];
-            }
-            
-            if (this.share_data.hasOwnProperty(key)) {
-                if (typeof this.share_data[key] === 'number') {
-                    this.share_data[key] = parseFloat(value);
-                } else {
-                    this.share_data[key] = value;
+        const item = data[0];
+        for (const [key, value] of Object.entries(item)) {
+            const mappedKey = this.keyMapping[key] || key;
+            if (this.share_data.hasOwnProperty(mappedKey)) {
+                if (value === null || value === undefined) {
+                    this.share_data[mappedKey] = typeof this.share_data[mappedKey] === 'number' ? 0 : '';
+                    continue;
                 }
-            } else {
-                this.share_data[key] = value;
+                
+                if (mappedKey === 'gear') {
+                    const validGears = ['P', 'R', 'N', 'D'];
+                    const gearValue = value.toString().toUpperCase();
+                    this.share_data[mappedKey] = validGears.includes(gearValue) ? gearValue : 'N';
+                } else if (typeof this.share_data[mappedKey] === 'number') {
+                    const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
+                    this.share_data[mappedKey] = isNaN(numValue) ? 0 : numValue;
+                } else {
+                    this.share_data[mappedKey] = value.toString();
+                }
             }
-        });
+        }
     }
 
     updateData(data) {
