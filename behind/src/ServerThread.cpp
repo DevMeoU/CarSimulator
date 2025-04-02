@@ -1,17 +1,23 @@
 #ifdef _WIN32
-#define _WINSOCKAPI_ // Prevent inclusion of Winsock 1.x
-#include <windows.h>
-#include <winsock2.h>
-#include <ws2tcpip.h>
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0600  // Windows Vista trở lên
+    #endif
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <Windows.h>
+    #pragma comment(lib, "ws2_32.lib")
+#else
+    #include <sys/socket.h>
+    #include <netdb.h>
 #endif
 
-#include "../include/ServerThread.h"
-#include "../include/VehicleData.h"
+#include "ServerThread.h"
+#include "VehicleData.h"
 #include <thread>
 #include <chrono>
 
 #include <httplib.h>
-#include "../include/external/nlohmann/json.hpp"
+#include "json.hpp"
 
 using json = nlohmann::json;
 

@@ -210,3 +210,9 @@ std::string Engine::getStatusString() const {
     
     return ss.str();
 }
+
+void Engine::adjustPerformanceForAltitude(double altitude) {
+    // Reduce power output by 5% per 1000m altitude as per documentation
+    double altitudeFactor = 1.0 - (altitude / 1000.0) * 0.05;
+    currentPower *= std::max(0.7, altitudeFactor);  // Don't reduce below 70% power
+}

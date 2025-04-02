@@ -13,16 +13,6 @@ EnvironmentalCondition::EnvironmentalCondition()
       weather(WeatherType::CLEAR) {
 }
 
-EnvironmentalCondition::EnvironmentalCondition(double temp, double alt, WeatherType weather)
-    : temperature(temp),
-      altitude(alt),
-      slope(0.0),
-      roughness(0.0),
-      load(0.0),
-      windSpeed(0.0),
-      weather(weather) {
-}
-
 EnvironmentalCondition::~EnvironmentalCondition() {
     // Cleanup if needed
 }
@@ -30,6 +20,10 @@ EnvironmentalCondition::~EnvironmentalCondition() {
 // Getters
 double EnvironmentalCondition::getTemperature() const {
     return temperature;
+}
+
+double EnvironmentalCondition::getHumidity() const {
+    return humidity;
 }
 
 double EnvironmentalCondition::getAltitude() const {
@@ -59,6 +53,10 @@ WeatherType EnvironmentalCondition::getWeather() const {
 // Setters
 void EnvironmentalCondition::setTemperature(double temp) {
     this->temperature = temp;
+}
+
+void EnvironmentalCondition::setHumidity(double humidity) {
+    this->humidity = humidity;
 }
 
 void EnvironmentalCondition::setAltitude(double alt) {

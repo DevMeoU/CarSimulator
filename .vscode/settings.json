@@ -97,5 +97,6 @@
         "*.rh": "cpp",
         "cinttypes": "cpp"
     },
-    "C_Cpp.default.compilerPath": "C:/cygwin64/bin/g++.exe"
+    "C_Cpp.default.compilerPath": "C:/cygwin64/bin/g++.exe",
+    "Flags": "-Wall -Wextra -Werror -std=c++17 _WIN32",
 }

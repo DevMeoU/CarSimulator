@@ -1,12 +1,22 @@
+#ifdef _WIN32
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0600  // Windows Vista trở lên
+    #endif
+    #include <winsock2.h>
+    #include <ws2tcpip.h>
+    #include <Windows.h>
+    #pragma comment(lib, "ws2_32.lib")
+#else
+    #include <sys/socket.h>
+    #include <netdb.h>
+#endif
 #include <iostream>
 #include <atomic>
 #include <thread>
-#include <winsock2.h>
-#include <Windows.h>
-#include "include/Vehicle.h"
-#include "../server/cpp-httplib/httplib.h"
-#include "include/external/nlohmann/json.hpp"
-#include "include/ServerThread.h"
+#include "Vehicle.h"
+#include "httplib.h"
+#include "json.hpp"
+#include "ServerThread.h"
 
 using namespace std;
 

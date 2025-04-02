@@ -24,6 +24,7 @@ public:
 
 private:
     double temperature;     // Celsius
+    double humidity;        // percentage (0-100)
     double altitude;        // meters
     double slope;           // percentage (0-100)
     double roughness;       // road roughness factor (0-1)
@@ -52,6 +53,7 @@ public:
     
     // Getters
     double getTemperature() const;
+    double getHumidity() const;
     double getAltitude() const;
     double getSlope() const;
     double getRoughness() const;
@@ -61,6 +63,7 @@ public:
     
     // Setters
     void setTemperature(double temp);
+    void setHumidity(double humidity);
     void setAltitude(double alt);
     void setSlope(double slope);
     void setRoughness(double roughness);
@@ -116,11 +119,7 @@ public:
      */
     double calculateAmbientTemperature() const;
 
-    /**
-     * @brief Get current humidity level
-     * @return Humidity percentage (0-100)
-     */
-    double getHumidity() const;
+
 
     /**
      * @brief Calculate battery temperature according to SAE J2931 standard

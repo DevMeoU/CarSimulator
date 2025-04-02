@@ -99,6 +99,13 @@ bool Vehicle::changeDrivingMode(DrivingModeType mode) {
     return drivingMode.changeMode(mode, getSpeed());
 }
 
+void Vehicle::updateEnvironment(double temperature, double humidity, double windSpeed, double altitude) {
+    environment.setTemperature(temperature);
+    environment.setHumidity(humidity);
+    environment.setWindSpeed(windSpeed);
+    environment.setAltitude(altitude);
+}
+
 double Vehicle::getCurrentMaxSpeed() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return drivingMode.getMaxSpeedLimit();

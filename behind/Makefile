@@ -1,6 +1,17 @@
 CXX := g++
+WINDOWS_LIB = -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt" \
+			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um" \
+			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared" \
+			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\cppwinrt" \
+			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\winrt"
+
 CXXFLAGS := -std=c++17 -Wall -I./include -I../server/cpp-httplib -I./include/external/nlohmann
-LDFLAGS := -lstdc++ -lpthread
+
+ifeq ($(OS),Windows_NT)
+	LDFLAGS := -lstdc++ -lpthread -lws2_32
+else
+	LDFLAGS := -lstdc++ -lpthread
+endif
 
 SRC_DIR := src
 BUILD_DIR := build

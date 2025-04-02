@@ -46,12 +46,6 @@ public:
     double getTemperature() const;
     bool isOverheated() const;
     
-    /**
-     * @brief Adjust engine performance based on altitude
-     * @param altitude Current altitude in meters
-     */
-    void adjustPerformanceForAltitude(double altitude);
-    
     // Setters
     void setPower(double power);
     void setMaxTorque(double torque);
@@ -106,6 +100,12 @@ public:
      * @return Status string
      */
     std::string getStatusString() const;
+    
+    /**
+     * @brief Adjust engine performance based on altitude
+     * @param altitude Current altitude in meters
+     */
+    void adjustPerformanceForAltitude(double altitude);
 };
 
 #endif // ENGINE_H
