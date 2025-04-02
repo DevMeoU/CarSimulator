@@ -106,3 +106,7 @@ void ServerThread::sendDataToServer(const json& data) {
 bool ServerThread::isRunning() const {
     return running;
 }
+
+ServerThread::~ServerThread() {
+    stop();
+}

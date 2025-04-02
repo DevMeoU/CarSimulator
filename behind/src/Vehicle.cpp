@@ -121,6 +121,11 @@ double Vehicle::getDistanceTraveled() const {
     return distanceTraveled;
 }
 
+double Vehicle::getBatteryLoad() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    return battery.getCurrentLoad();
+}
+
 double Vehicle::getBrakePressTime() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return brakePressTime;

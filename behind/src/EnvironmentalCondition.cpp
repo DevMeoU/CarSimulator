@@ -46,6 +46,16 @@ double EnvironmentalCondition::getWindSpeed() const {
     return windSpeed;
 }
 
+double EnvironmentalCondition::calculateAmbientTemperature() const {
+    // Base temperature adjusted by altitude (-0.6°C per 100m)
+    return temperature - (altitude / 100.0 * 0.6);
+}
+
+double EnvironmentalCondition::calculateBatteryTempSAEJ2931(double currentTemp, double chargeRate) const {
+    // SAE J2931 battery temperature model
+    return currentTemp + (chargeRate * 0.1) + (temperature * 0.05);
+}
+
 WeatherType EnvironmentalCondition::getWeather() const {
     return weather;
 }

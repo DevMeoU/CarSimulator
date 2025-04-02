@@ -47,6 +47,10 @@ void Battery::updateCharge(double deltaTime, double speed) {
     currentCharge = std::max(0.0, std::min(currentCharge, capacity));
 }
 
+double Battery::getCurrentLoad() const {
+    return currentCharge * 100;
+}
+
 double Battery::getChargeLevel() const {
     return currentCharge;
 }
