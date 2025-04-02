@@ -52,7 +52,8 @@ public:
      * @param fault Type of fault to simulate
      * @return Vector of effects caused by the fault
      */
-    std::vector<std::string> simulateFault(FaultType fault);
+    void simulateFault(FaultType fault, double severity);
+    void resetFaults();
     
     /**
      * @brief Clear current fault

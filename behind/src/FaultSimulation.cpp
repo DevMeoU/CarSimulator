@@ -8,8 +8,20 @@ FaultSimulation::FaultSimulation()
       faultActive(false) {
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 FaultSimulation::~FaultSimulation() {
     // Cleanup if needed
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 // Getters
@@ -17,8 +29,20 @@ FaultType FaultSimulation::getCurrentFault() const {
     return currentFault;
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 bool FaultSimulation::isFaultActive() const {
     return faultActive;
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 // Setters
@@ -26,11 +50,28 @@ void FaultSimulation::setCurrentFault(FaultType fault) {
     currentFault = fault;
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 void FaultSimulation::setFaultActive(bool state) {
     faultActive = state;
 }
 
-std::vector<std::string> FaultSimulation::simulateFault(FaultType fault) {
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
+std::vector<std::string> FaultSimulation::simulateFault(FaultType fault, double severity) {
+    std::vector<std::string> effects;
+    
+    // Set current fault and activate it
+    currentFaults.push_back({fault, severity});
+    faultActive = true;
     std::vector<std::string> effects;
     
     // Set current fault and activate it
@@ -70,8 +111,20 @@ std::vector<std::string> FaultSimulation::simulateFault(FaultType fault) {
             faultActive = false;
             break;
     }
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
     
     return effects;
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 void FaultSimulation::clearFault() {
@@ -79,10 +132,22 @@ void FaultSimulation::clearFault() {
     faultActive = false;
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 std::vector<std::string> FaultSimulation::handleFault(Vehicle& vehicle) {
     if (!faultActive) {
         return {"No fault to handle"};
     }
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
     
     // Handle fault based on type
     switch (currentFault) {
@@ -102,6 +167,18 @@ std::vector<std::string> FaultSimulation::handleFault(Vehicle& vehicle) {
         default:
             return {"No fault to handle"};
     }
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 std::vector<std::string> FaultSimulation::handleSensorDisconnect(Vehicle& vehicle) {
@@ -121,6 +198,12 @@ std::vector<std::string> FaultSimulation::handleSensorDisconnect(Vehicle& vehicl
     return actions;
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 std::vector<std::string> FaultSimulation::handleEngineOverheat(Vehicle& vehicle) {
     (void)vehicle;
     std::vector<std::string> actions;
@@ -135,6 +218,12 @@ std::vector<std::string> FaultSimulation::handleEngineOverheat(Vehicle& vehicle)
     // vehicle.getDisplay().addMessage("Engine overheating - Power reduced", MessageType::WARNING);
     
     return actions;
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 std::vector<std::string> FaultSimulation::handleBatteryFault(Vehicle& vehicle) {
@@ -155,6 +244,12 @@ std::vector<std::string> FaultSimulation::handleBatteryFault(Vehicle& vehicle) {
     return actions;
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 std::vector<std::string> FaultSimulation::handleBrakeFailure(Vehicle& vehicle) {
     (void)vehicle;
     std::vector<std::string> actions;
@@ -171,6 +266,12 @@ std::vector<std::string> FaultSimulation::handleBrakeFailure(Vehicle& vehicle) {
     return actions;
 }
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+
 std::string FaultSimulation::getFaultString(FaultType fault) {
     switch (fault) {
         case FaultType::SENSOR_DISCONNECT:
@@ -185,10 +286,28 @@ std::string FaultSimulation::getFaultString(FaultType fault) {
         default:
             return "None";
     }
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
+}
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 std::string FaultSimulation::getCurrentFaultString() const {
     return getFaultString(currentFault);
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }
 
 std::string FaultSimulation::getStatusString() const {
@@ -198,4 +317,10 @@ std::string FaultSimulation::getStatusString() const {
     ss << "  Fault Active: " << (faultActive ? "Yes" : "No") << std::endl;
     
     return ss.str();
+}
+
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+    currentFault = FaultType::NONE;
 }

@@ -92,6 +92,9 @@ public:
      * @return Status string
      */
     std::string getStatusString() const;
+
+    void showWarning(const std::string& message);
+    void showStatus(double speed, double batteryPercent, double distance);
 };
 
 #endif // DISPLAY_H

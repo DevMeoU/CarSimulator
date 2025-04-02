@@ -43,6 +43,9 @@ public:
     double getCapacity() const;
     double getVoltage() const;
     double getCurrentCharge() const;
+    double getChargeLevel() const;
+    void updateCharge(double deltaTime, double speed);
+    double getChargePercentage() const;
     double getTemperature() const;
     double getRange() const;
     bool isCharging() const;

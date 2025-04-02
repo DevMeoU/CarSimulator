@@ -94,7 +94,8 @@
         "text_encoding": "cpp",
         "valarray": "cpp",
         "bitset": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "cinttypes": "cpp"
     },
     "C_Cpp.default.compilerPath": "C:/cygwin64/bin/g++.exe"
 }

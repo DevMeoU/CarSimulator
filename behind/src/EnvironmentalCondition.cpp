@@ -93,9 +93,15 @@ double EnvironmentalCondition::calculatePowerImpact() const {
     double powerFactor = 1.0;
     
     // Temperature impact as per Database.md
-    if (temperature < 0) {
-        // Cold temperature reduces battery efficiency but not directly engine power
+    if (temperature < -10) {
+        // Extreme cold temperature reduces battery efficiency significantly
+        powerFactor *= 0.85;
+    } else if (temperature < 0) {
+        // Cold temperature reduces battery efficiency
         powerFactor *= 0.95;
+    } else if (temperature > 40) {
+        // Extreme heat: Reduce engine performance by 15%
+        powerFactor *= 0.85;
     } else if (temperature > 35) {
         // Above 35°C: Reduce engine performance by 10%
         powerFactor *= 0.9;
@@ -113,8 +119,14 @@ double EnvironmentalCondition::calculateRangeImpact() const {
     double rangeFactor = 1.0;
     
     // Temperature impact
-    if (temperature < 0) {
+    if (temperature < -10) {
+        // Extreme cold: Reduce range by 40-50%
+        rangeFactor *= 0.6;
+    } else if (temperature < 0) {
         // Below 0°C: Reduce range by 20-30%
+        rangeFactor *= 0.75;
+    } else if (temperature > 40) {
+        // Extreme heat: Reduce range by 25%
         rangeFactor *= 0.75;
     } else if (temperature > 35) {
         // Above 35°C: Reduce range slightly

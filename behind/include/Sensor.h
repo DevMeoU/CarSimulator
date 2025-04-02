@@ -13,7 +13,8 @@ enum class SensorType {
     VOLTAGE,
     CURRENT,
     PROXIMITY,
-    ACCELERATION
+    ACCELERATION,
+    ALTITUDE
 };
 
 /**
@@ -65,6 +66,12 @@ public:
      * @return Current sensor value with noise if connected, -1 otherwise
      */
     double read() const;
+    
+    /**
+     * @brief Read sensor value (alias for read())
+     * @return Current sensor value with noise if connected, -1 otherwise
+     */
+    double readValue() const { return read(); }
     
     /**
      * @brief Update sensor with new real value

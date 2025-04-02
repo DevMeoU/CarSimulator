@@ -3515,7 +3515,7 @@ socket_t create_socket(const std::string &host, const std::string &ip, int port,
 inline void set_nonblocking(socket_t sock, bool nonblocking) {
 #ifdef _WIN32
   auto flags = nonblocking ? 1UL : 0UL;
-  ioctlsocket(sock, FIONBIO, &flags);
+  ioctlsocket(sock, FIONBIO, (unsigned long*)&flags);
 #else
   auto flags = fcntl(sock, F_GETFL, 0);
   fcntl(sock, F_SETFL,

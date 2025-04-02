@@ -1,208 +1,205 @@
-#include "../include/Vehicle.h"
-#include <iostream>
-#include <sstream>
-#include <iomanip>
+#include "Vehicle.h"
+#include "Battery.h"
+#include "Engine.h"
+#include "DrivingMode.h"
+#include "SafetySystem.h"
+#include "EnvironmentalCondition.h"
+#include "FaultSimulation.h"
+#include "Sensor.h"
+#include "Display.h"
+#include <string>
+#include <atomic>
+#include <mutex>
 
-Vehicle::Vehicle()
-    : sensor(SensorType::SPEED),
-      speed(0.0), distanceTraveled(0.0), brakePressTime(0.0),
-      doorLocked(false), seatbeltOn(false), engineRunning(false),
-      brakeActive(false), acceleratorActive(false),
-      leftSignalOn(false), rightSignalOn(false) {
-}
+Vehicle::Vehicle() :
+    vehicleData(std::make_shared<VehicleData>()),
+    sensor(SensorType::SPEED, 1.0),
+    speed(0),
+    distanceTraveled(0),
+    brakePressTime(0),
+    doorLocked(true),
+    seatbeltOn(false), 
+    engineRunning(false), 
+    brakeActive(false),
+    acceleratorActive(false), 
+    leftSignalOn(false), 
+    rightSignalOn(false),
+    sensor(SensorType::SPEED, 1.0) {}
 
-Vehicle::~Vehicle() {
-}
+Vehicle::~Vehicle() {}
 
 void Vehicle::update(double deltaTime) {
-    // Update vehicle systems
-    double throttlePosition = acceleratorActive ? 1.0 : 0.0;
-    engine.updatePower(throttlePosition, drivingMode.getCurrentMode());
-    battery.discharge(engine.getCurrentPower() * deltaTime / battery.getCapacity());
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
-    // Update speed based on acceleration/braking
-    if (brakeActive) {
-        // Apply braking
-        double deceleration = 10.0; // m/s^2
-        speed = std::max(0.0, speed - (deceleration * 3.6 * deltaTime)); // Convert m/s^2 to km/h/s
-        
-        // Regenerative braking - recover some energy
-        if (speed > 5.0) { // Only apply regenerative braking above 5 km/h
-            double recoveryFactor = 0.2; // 20% energy recovery
-            double recoveredEnergy = engine.getCurrentPower() * deltaTime * recoveryFactor;
-            battery.charge(recoveredEnergy / battery.getCapacity());
-        }
-        
-        brakeActive = false; // Reset brake flag after applying
+    // Update vehicle speed based on acceleration/brake state
+    if (acceleratorActive && !brakeActive) {
+        speed += engine.getThrottle() * deltaTime;
+    } else if (brakeActive && !acceleratorActive) {
+        speed -= safetySystem.getBrakePower() * deltaTime;
     }
     
-    if (acceleratorActive && engineRunning) {
-        // Apply acceleration
-        double acceleration = 5.0; // m/s^2
-        double maxSpeed = getCurrentMaxSpeed();
-        speed = std::min(maxSpeed, speed + (acceleration * 3.6 * deltaTime)); // Convert m/s^2 to km/h/s
-        
-        acceleratorActive = false; // Reset accelerator flag after applying
-    }
+    // Apply speed limits
+    speed = std::max(0.0, std::min(speed, drivingMode.getMaxSpeedLimit()));
     
     // Update distance traveled
-    distanceTraveled += (speed / 3600.0) * deltaTime; // km/h * h = km
+    distanceTraveled += speed * deltaTime / 3600; // Convert from km/h to km/s
     
-    // Check safety systems
-    if (speed > 0 && !seatbeltOn) {
-        display.addMessage("Please fasten seatbelt", MessageType::WARNING);
-    }
+    // Update battery state
+    battery.updateCharge(deltaTime, speed);
     
-    if (speed > 120.0) {
-        display.addMessage("High speed warning", MessageType::WARNING);
-    }
-    
-    // Update sensors with current state
+    // Update sensor readings
     sensor.update(speed);
     
-    // Update engine and battery temperature
-    engine.updateTemperature(environment.getTemperature(), throttlePosition);
-    battery.updateTemperature(environment.getTemperature(), throttlePosition);
-    
-    // Check for faults
-    if (faultSim.isFaultActive()) {
-        auto actions = faultSim.handleFault(*this);
-        for (const auto& action : actions) {
-            display.addMessage(action, MessageType::CRITICAL);
-        }
-    }
+    // Update display
+    display.showStatus(speed, battery.getChargePercentage(), distanceTraveled);
 }
 
 bool Vehicle::startEngine() {
-    if (!doorLocked) {
-        display.addMessage("Cannot start engine: Doors not locked", MessageType::ERROR_MSG);
-        return false;
-    }
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
-    if (brakePressTime < 3.0) {
-        display.addMessage("Cannot start engine: Press brake for 3 seconds", MessageType::ERROR_MSG);
+    // Check safety conditions
+    if (!safetySystem.checkStartConditions(*vehicleData)) {
         return false;
     }
     
     engineRunning = true;
-    display.addMessage("Engine started", MessageType::INFO);
+    engine.start();
     return true;
 }
 
 void Vehicle::stopEngine() {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    
     engineRunning = false;
-    speed = 0.0;
-    display.addMessage("Engine stopped", MessageType::INFO);
+    engine.stop();
+    speed = 0;
 }
 
 void Vehicle::pressBrake(double seconds) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     brakePressTime = seconds;
-    brake(1.0); // Apply full brake
-}
-
-void Vehicle::brake(double intensity) {
-    if (intensity < 0.0 || intensity > 1.0) {
-        std::cerr << "Brake intensity must be between 0 and 1" << std::endl;
-        return;
-    }
-    
     brakeActive = true;
 }
 
-void Vehicle::accelerate(double intensity) {
-    if (intensity < 0.0 || intensity > 1.0) {
-        std::cerr << "Acceleration intensity must be between 0 and 1" << std::endl;
-        return;
-    }
+void Vehicle::brake(double intensity) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
-    if (!engineRunning) {
-        display.addMessage("Cannot accelerate: Engine not running", MessageType::ERROR_MSG);
-        return;
-    }
+    brakeActive = true;
+    safetySystem.applyBrake(intensity);
+}
+
+void Vehicle::accelerate(double intensity) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
     acceleratorActive = true;
+    engine.setThrottle(intensity);
 }
 
 bool Vehicle::changeDrivingMode(DrivingModeType mode) {
-    // Check if current speed is within the limit of the new mode
-    double newModeLimit = drivingMode.getMaxSpeedLimit(mode);
-    
-    if (speed > newModeLimit) {
-        display.addMessage("Reduce speed before changing mode", MessageType::WARNING);
-        return false;
-    }
-    
-    drivingMode.setCurrentMode(mode);
-    display.addMessage("Driving mode changed to " + drivingMode.getCurrentModeString(), MessageType::INFO);
-    return true;
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    return drivingMode.changeMode(mode, getSpeed());
 }
 
 double Vehicle::getCurrentMaxSpeed() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return drivingMode.getMaxSpeedLimit();
 }
 
 double Vehicle::getSpeed() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return speed;
 }
 
 double Vehicle::getDistanceTraveled() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return distanceTraveled;
 }
 
 double Vehicle::getBrakePressTime() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return brakePressTime;
 }
 
 bool Vehicle::isDoorLocked() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return doorLocked;
 }
 
 void Vehicle::setDoorLocked(bool locked) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     doorLocked = locked;
-    display.addMessage(locked ? "Doors locked" : "Doors unlocked", MessageType::INFO);
 }
 
 bool Vehicle::isSeatbeltOn() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return seatbeltOn;
 }
 
 void Vehicle::setSeatbeltOn(bool on) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     seatbeltOn = on;
-    display.addMessage(on ? "Seatbelt fastened" : "Seatbelt unfastened", MessageType::INFO);
 }
 
 bool Vehicle::isEngineRunning() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return engineRunning;
 }
 
 bool Vehicle::isBrakeActive() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return brakeActive;
 }
 
 bool Vehicle::isAcceleratorActive() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return acceleratorActive;
 }
 
 bool Vehicle::isLeftSignalOn() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return leftSignalOn;
 }
 
 void Vehicle::setLeftSignalOn(bool on) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     leftSignalOn = on;
-    if (on) {
-        rightSignalOn = false; // Turn off right signal when left is turned on
-    }
 }
 
 bool Vehicle::isRightSignalOn() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     return rightSignalOn;
 }
 
 void Vehicle::setRightSignalOn(bool on) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
     rightSignalOn = on;
-    if (on) {
-        leftSignalOn = false; // Turn off left signal when right is turned on
+}
+
+void Vehicle::setGear(const std::string& gear) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    if (gear == "P" || gear == "R" || gear == "N" || gear == "D") {
+        vehicleData->gear = gear;
+        
+        // Additional logic for gear changes
+        if (gear == "P") {
+            vehicleData->park = true;
+            vehicleData->speed = 0;
+        } else {
+            vehicleData->park = false;
+        }
     }
+}
+
+void Vehicle::setParking(bool on) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    
+    // Safety checks
+    if (on && vehicleData->speed > 0) {
+        vehicleData->warning = "Emergency parking brake activated!";
+        vehicleData->speed = 0;
+    }
+    
+    vehicleData->park = on;
 }
 
 Battery& Vehicle::getBattery() {
@@ -238,19 +235,34 @@ Display& Vehicle::getDisplay() {
 }
 
 std::string Vehicle::getStatusString() const {
-    std::stringstream ss;
-    ss << "Vehicle Status:" << std::endl;
-    ss << "  Speed: " << std::fixed << std::setprecision(1) << speed << " km/h" << std::endl;
-    ss << "  Distance Traveled: " << std::fixed << std::setprecision(2) << distanceTraveled << " km" << std::endl;
-    ss << "  Engine: " << (engineRunning ? "Running" : "Stopped") << std::endl;
-    ss << "  Driving Mode: " << drivingMode.getCurrentModeString() << std::endl;
-    ss << "  Doors: " << (doorLocked ? "Locked" : "Unlocked") << std::endl;
-    ss << "  Seatbelt: " << (seatbeltOn ? "Fastened" : "Unfastened") << std::endl;
-    ss << "  Turn Signals: ";
-    if (leftSignalOn) ss << "Left";
-    else if (rightSignalOn) ss << "Right";
-    else ss << "Off";
-    ss << std::endl;
-    
-    return ss.str();
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    return "Speed: " + std::to_string(speed) + " km/h\n" +
+           "Distance: " + std::to_string(distanceTraveled) + " km\n" +
+           "Battery: " + std::to_string(battery.getChargeLevel()) + "%\n" +
+           "Engine: " + (engineRunning ? "Running" : "Stopped") + "\n" +
+           "Doors: " + (doorLocked ? "Locked" : "Unlocked") + "\n" +
+           "Seatbelt: " + (seatbeltOn ? "On" : "Off");
+}
+
+void Vehicle::simulateFault(FaultType faultType, double severity) {
+    faultSim.simulateFault(faultType, severity);
+}
+
+void Vehicle::resetFaults() {
+    faultSim.resetFaults();
+}
+
+std::string Vehicle::getWeatherCondition() const {
+    return environment.getWeatherCondition();
+}
+
+void Vehicle::emergencyStop() {
+    safetySystem.activateEmergencyBrake();
+    speed = 0;
+    acceleratorActive = false;
+    brakeActive = true;
+}
+
+bool Vehicle::isEmergencyStopped() const {
+    return brakeActive && !engineRunning && speed == 0;
 }

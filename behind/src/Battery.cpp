@@ -40,6 +40,19 @@ double Battery::getCurrentCharge() const {
     return currentCharge;
 }
 
+void Battery::updateCharge(double deltaTime, double speed) {
+    currentCharge -= (speed * 0.01 + temperature * 0.005) * deltaTime;
+    currentCharge = std::max(0.0, std::min(currentCharge, capacity));
+}
+
+double Battery::getChargeLevel() const {
+    return currentCharge;
+}
+
+double Battery::getChargePercentage() const {
+    return (currentCharge / capacity) * 100.0;
+}
+
 double Battery::getTemperature() const {
     return temperature;
 }

@@ -17,8 +17,11 @@ private:
     double currentPower;    // Current power output
     double temperature;     // Engine temperature in Celsius
     bool overheated;        // Overheating flag
-    
+    double throttle;
+
 public:
+    double getThrottle() const { return throttle; }
+    void setThrottle(double value) { throttle = value; }
     /**
      * @brief Default constructor
      */

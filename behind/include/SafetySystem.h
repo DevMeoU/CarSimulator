@@ -15,8 +15,11 @@ private:
     bool adasActive;
     bool batteryMonitorActive;
     int airbagCount;
+    double brakePower;
     
 public:
+    double getBrakePower() const { return brakePower; }
+    void applyBrake(double intensity) { brakePower = intensity * 100; }
     /**
      * @brief Default constructor
      */

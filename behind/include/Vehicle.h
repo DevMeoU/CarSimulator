@@ -9,6 +9,8 @@
 #include "FaultSimulation.h"
 #include "Sensor.h"
 #include "Display.h"
+#include "VehicleData.h"
+#include <memory>
 #include <string>
 #include <atomic>
 
@@ -22,6 +24,7 @@ private:
     Engine engine;
     DrivingMode drivingMode;
     SafetySystem safetySystem;
+    std::shared_ptr<VehicleData> vehicleData;
     EnvironmentalCondition environment;
     FaultSimulation faultSim;
     Sensor sensor;
@@ -182,6 +185,27 @@ public:
     void setRightSignalOn(bool on);
     
     /**
+     * @brief Set vehicle gear
+     * @param gear Gear to set ("P", "R", "N", "D")
+     */
+    void setGear(const std::string& gear);
+    
+    /**
+     * @brief Set parking brake state
+     * @param on Whether parking brake is engaged
+     */
+    void setParking(bool on);
+    
+    /**
+     * @brief Update vehicle environment parameters
+     * @param temperature Ambient temperature in Celsius
+     * @param humidity Relative humidity percentage
+     * @param windSpeed Wind speed in km/h
+     * @param altitude Altitude in meters
+     */
+    void updateEnvironment(double temperature, double humidity, double windSpeed, double altitude);
+    
+    /**
      * @brief Get battery reference
      * @return Reference to battery
      */
@@ -233,7 +257,16 @@ public:
      * @brief Get vehicle status as string
      * @return Status string
      */
+    /**
+     * @brief Get vehicle status as string
+     * @return Status string
+     */
     std::string getStatusString() const;
+    void simulateFault(FaultType faultType, double severity);
+    void resetFaults();
+    std::string getWeatherCondition() const;
+    void emergencyStop();
+    bool isEmergencyStopped() const;
 };
 
 #endif // VEHICLE_H_UPDATED
