@@ -1,5 +1,5 @@
 #ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
+#define _WINSOCKAPI_ // Prevent inclusion of Winsock 1.x
 #include <windows.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -10,13 +10,20 @@
 #include <thread>
 #include <chrono>
 
-#include "../../server/cpp-httplib/httplib.h"
+#include <httplib.h>
 #include "../include/external/nlohmann/json.hpp"
 
 using json = nlohmann::json;
 
 ServerThread::ServerThread(std::shared_ptr<VehicleData> data, const std::string& url)
-    : vehicleData(data), serverUrl(url), running(false) {}
+    : vehicleData(data), running(false) {
+    size_t pos = url.find(':');
+    std::string host = url.substr(0, pos);
+    int port = std::stoi(url.substr(pos + 1));
+    cli = std::make_unique<::httplib::Client>(host, port);
+    cli->set_connection_timeout(2);
+    cli->set_read_timeout(2);
+}
 
 void ServerThread::start() {
     running = true;
@@ -76,11 +83,16 @@ json ServerThread::prepareData() {
 }
 
 void ServerThread::sendDataToServer(const json& data) {
-    httplib::Client cli(serverUrl);
-    
-    auto res = cli.Post("/data", data.dump(), "application/json");
-    
-    if (!res || res->status != 200) {
-        std::cerr << "Failed to send data to server" << std::endl;
+    if(!cli || !cli->is_socket_open()) {
+        std::cerr << "Server connection failed" << std::endl;
+        return;
+    }
+
+    auto res = cli->Post("/data", data.dump(), "application/json");
+
+    if (!res) {
+        std::cerr << "Network error: " << httplib::to_string(res.error()) << std::endl;
+    } else if (res->status != 200) {
+        std::cerr << "Server returned HTTP error: " << res->status << std::endl;
     }
 }

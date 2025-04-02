@@ -3367,8 +3367,8 @@ socket_t create_socket(const std::string &host, const std::string &ip, int port,
                        BindOrConnect bind_or_connect) {
   // Get address info
   const char *node = nullptr;
-  struct addrinfo hints;
-  struct addrinfo *result;
+  struct ::addrinfo hints;
+  struct ::addrinfo *result;
 
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_socktype = SOCK_STREAM;
@@ -3532,8 +3532,8 @@ inline bool is_connection_error() {
 }
 
 inline bool bind_ip_address(socket_t sock, const std::string &host) {
-  struct addrinfo hints;
-  struct addrinfo *result;
+  struct ::addrinfo hints;
+  struct ::addrinfo *result;
 
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = AF_UNSPEC;
@@ -5579,8 +5579,8 @@ inline std::string hosted_at(const std::string &hostname) {
 
 inline void hosted_at(const std::string &hostname,
                       std::vector<std::string> &addrs) {
-  struct addrinfo hints;
-  struct addrinfo *result;
+  struct ::addrinfo hints;
+  struct ::addrinfo *result;
 
   memset(&hints, 0, sizeof(struct addrinfo));
   hints.ai_family = AF_UNSPEC;

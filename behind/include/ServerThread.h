@@ -6,6 +6,7 @@
 #include <mutex>
 #include "VehicleData.h"
 #include "external/nlohmann/json.hpp"
+#include "../../server/cpp-httplib/httplib.h"
 
 using json = nlohmann::json;
 
@@ -24,6 +25,7 @@ private:
     
     std::shared_ptr<VehicleData> vehicleData;
     std::string serverUrl;
+    std::unique_ptr<::httplib::Client> cli;
     std::thread thread;
     bool running;
 };
