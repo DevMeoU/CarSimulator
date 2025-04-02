@@ -21,6 +21,7 @@ enum class WeatherType {
 class EnvironmentalCondition {
 public:
     std::string getWeatherCondition() const;
+
 private:
     double temperature;     // Celsius
     double altitude;        // meters
@@ -108,6 +109,26 @@ public:
      * @return Status string
      */
     std::string getStatusString() const;
+
+    /**
+     * @brief Calculate ambient temperature based on environmental factors
+     * @return Calculated ambient temperature in Celsius
+     */
+    double calculateAmbientTemperature() const;
+
+    /**
+     * @brief Get current humidity level
+     * @return Humidity percentage (0-100)
+     */
+    double getHumidity() const;
+
+    /**
+     * @brief Calculate battery temperature according to SAE J2931 standard
+     * @param temperature Current ambient temperature
+     * @param load Current battery load
+     * @return Calculated battery temperature in Celsius
+     */
+    double calculateBatteryTempSAEJ2931(double temperature, double load) const;
 };
 
 #endif // ENVIRONMENTAL_CONDITION_H

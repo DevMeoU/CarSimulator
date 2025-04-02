@@ -4,6 +4,8 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
+#include <chrono>
 
 Battery::Battery() 
     : capacity(75.0),       // 75 kWh as per Database.md
@@ -209,13 +211,14 @@ double Battery::calculateRemainingRange(DrivingModeType mode, const Environmenta
     return baseRange * totalFactor;
 }
 
-void Battery::updateTemperature(double ambientTemp, double load) {
+void Battery::updateTemperature(double ambientTemp, std::chrono::system_clock::time_point timestamp) {
     // Battery temperature tends to move toward ambient temperature
     // but increases with load (discharge/charge rate)
     double tempDiff = ambientTemp - temperature;
     
-    // Temperature change rate depends on the difference and load
-    double tempChangeRate = 0.1 * tempDiff + 5.0 * load;
+    // Temperature change rate depends on the difference and current load
+    double load = getCurrentCharge(); // Use current charge as load factor
+    double tempChangeRate = 0.1 * tempDiff + (load * 5.0);
     
     // Update temperature (limited change per update)
     temperature += std::max(-2.0, std::min(2.0, tempChangeRate));

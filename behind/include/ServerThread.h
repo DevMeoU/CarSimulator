@@ -17,6 +17,7 @@ public:
     
     void start();
     void stop();
+    bool ServerThread::isRunning() const;
     
 private:
     void threadFunction();

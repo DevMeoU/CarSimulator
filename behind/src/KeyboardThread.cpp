@@ -12,7 +12,7 @@
 #endif
 
 KeyboardThread::KeyboardThread(std::shared_ptr<VehicleData> data)
-    : vehicleData(data), running(false) {}
+    : running(false), vehicleData(data) {}
 
 void KeyboardThread::start() {
     running = true;

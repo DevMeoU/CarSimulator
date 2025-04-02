@@ -254,6 +254,12 @@ public:
     Display& getDisplay();
     
     /**
+     * @brief Get current battery load
+     * @return Battery load percentage (0-100)
+     */
+    double getBatteryLoad() const;
+    
+    /**
      * @brief Get vehicle status as string
      * @return Status string
      */

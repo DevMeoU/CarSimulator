@@ -95,6 +95,11 @@ void FaultSimulation::simulateFault(FaultType fault, double severity) {
 
 
 
+void FaultSimulation::resetFaults() {
+    currentFaults.clear();
+    faultActive = false;
+}
+
 void FaultSimulation::clearFault() {
     currentFaults.clear();
     faultActive = false;

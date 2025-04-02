@@ -15,6 +15,12 @@ SafetySystem::~SafetySystem() {
     // Cleanup if needed
 }
 
+bool SafetySystem::checkStartConditions(const VehicleData& data) const {
+    // Verify minimum battery level and safe temperature range
+    return (data.battery > 20.0 &&
+            airbagCount > 0);
+}
+
 // Getters
 bool SafetySystem::isAbsActive() const {
     return absActive;

@@ -115,3 +115,12 @@ std::string Display::getStatusString() const {
     
     return ss.str();
 }
+
+void Display::showStatus(double speed, double batteryLevel, double temperature) {
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(1);
+    ss << "Speed: " << speed << " km/h\n";
+    ss << "Battery: " << batteryLevel << "%\n";
+    ss << "Temp: " << temperature << "°C";
+    addMessage(ss.str(), MessageType::INFO);
+}

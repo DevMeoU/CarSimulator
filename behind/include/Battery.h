@@ -2,6 +2,7 @@
 #define BATTERY_H
 
 #include <string>
+#include <chrono>
 
 // Forward declarations
 class EnvironmentalCondition;
@@ -17,6 +18,7 @@ private:
     double voltage;         // V
     double currentCharge;   // Current charge level (0-1)
     double temperature;     // Battery temperature in Celsius
+    std::chrono::system_clock::time_point lastTempUpdate;
     double range;           // km
     bool charging;          // Charging flag
     
@@ -83,9 +85,9 @@ public:
     /**
      * @brief Update battery temperature based on ambient temperature and load
      * @param ambientTemp Ambient temperature in Celsius
-     * @param load Current load factor (0-1)
+     * @param timestamp Time of temperature reading
      */
-    void updateTemperature(double ambientTemp, double load);
+    void updateTemperature(double ambientTemp, std::chrono::system_clock::time_point timestamp);
     
     /**
      * @brief Check if battery temperature is within safe limits

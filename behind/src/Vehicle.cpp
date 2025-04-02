@@ -252,7 +252,13 @@ void Vehicle::resetFaults() {
 }
 
 std::string Vehicle::getWeatherCondition() const {
-    return environment.getWeatherCondition();
+    switch(environment.getWeather()) {
+        case WeatherType::CLEAR: return "Clear";
+        case WeatherType::RAIN: return "Rain";
+        case WeatherType::SNOW: return "Snow";
+        case WeatherType::FOG: return "Fog";
+        default: return "Unknown";
+    }
 }
 
 void Vehicle::emergencyStop() {

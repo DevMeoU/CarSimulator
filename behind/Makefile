@@ -11,6 +11,7 @@ SRCS := $(filter-out $(SRC_DIR)/create_ui.cpp $(SRC_DIR)/main_integrated.cpp, $(
 	$(SRC_DIR)/KeyboardThread.cpp \
 	$(SRC_DIR)/ServerThread.cpp \
 	$(SRC_DIR)/main.cpp
+
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS := $(OBJS:.o=.d)
 

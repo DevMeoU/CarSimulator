@@ -96,3 +96,7 @@ void ServerThread::sendDataToServer(const json& data) {
         std::cerr << "Server returned HTTP error: " << res->status << std::endl;
     }
 }
+
+bool ServerThread::isRunning() const {
+    return running;
+}

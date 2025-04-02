@@ -4,7 +4,7 @@
 #include "VehicleData.h"
 
 MainThread::MainThread(std::shared_ptr<VehicleData> data) 
-    : vehicleData(data), running(false) {}
+    : running(false), vehicleData(data) {}
 
 void MainThread::start() {
     running = true;
