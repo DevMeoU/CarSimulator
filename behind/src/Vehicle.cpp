@@ -23,8 +23,7 @@ Vehicle::Vehicle() :
     brakeActive(false),
     acceleratorActive(false), 
     leftSignalOn(false), 
-    rightSignalOn(false),
-    sensor(SensorType::SPEED, 1.0) {}
+    rightSignalOn(false) {}
 
 Vehicle::~Vehicle() {}
 

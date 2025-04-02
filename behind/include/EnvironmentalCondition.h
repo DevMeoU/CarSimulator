@@ -19,6 +19,8 @@ enum class WeatherType {
  * @brief Represents environmental conditions affecting vehicle performance
  */
 class EnvironmentalCondition {
+public:
+    std::string getWeatherCondition() const;
 private:
     double temperature;     // Celsius
     double altitude;        // meters

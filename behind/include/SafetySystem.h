@@ -1,6 +1,7 @@
 #ifndef SAFETY_SYSTEM_H
 #define SAFETY_SYSTEM_H
 
+#include "VehicleData.h"
 #include <string>
 #include <vector>
 
@@ -9,6 +10,8 @@
  * @brief Manages various safety systems of the vehicle
  */
 class SafetySystem {
+public:
+    bool checkStartConditions(const VehicleData& data) const;
 private:
     bool absActive;
     bool espActive;

@@ -25,7 +25,7 @@ enum class FaultType {
  */
 class FaultSimulation {
 private:
-    FaultType currentFault;
+    std::vector<FaultType> currentFaults;
     bool faultActive;
     
 public:
@@ -40,11 +40,12 @@ public:
     ~FaultSimulation();
     
     // Getters
-    FaultType getCurrentFault() const;
+    std::vector<FaultType> getCurrentFault() const;
     bool isFaultActive() const;
     
     // Setters
     void setCurrentFault(FaultType fault);
+    void addCurrentFault(FaultType fault);
     void setFaultActive(bool state);
     
     /**
