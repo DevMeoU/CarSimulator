@@ -3,11 +3,16 @@
         {
             "type": "cppbuild",
             "label": "C/C++: g++.exe build active file",
-            "command": "C:\\cygwin64\\bin\\g++.exe",
+            "command": "C:\\Strawberry\\c\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
+                "-std=c++17",
+                "-Wall",
                 "-I${workspaceFolder}\\behind\\include",
+                "-I${workspaceFolder}\\server\\cpp-httplib",
+                "-I${workspaceFolder}\\behind\\include\\external\\nlohmann",
+                "-D_WIN32_WINNT=0x0600",
                 "${file}",
                 "${workspaceFolder}\\behind\\src\\Battery.cpp",
                 "${workspaceFolder}\\behind\\src\\Display.cpp",
@@ -19,8 +24,15 @@
                 "${workspaceFolder}\\behind\\src\\Sensor.cpp",
                 "${workspaceFolder}\\behind\\src\\Utils.cpp",
                 "${workspaceFolder}\\behind\\src\\Vehicle.cpp",
+                "${workspaceFolder}\\behind\\src\\EnvironmentThread.cpp",
+                "${workspaceFolder}\\behind\\src\\MainThread.cpp",
+                "${workspaceFolder}\\behind\\src\\KeyboardThread.cpp",
+                "${workspaceFolder}\\behind\\src\\ServerThread.cpp",
                 "-o",
-                "${workspaceFolder}\\behind\\build\\${fileBasenameNoExtension}.exe"
+                "${workspaceFolder}\\behind\\build\\${fileBasenameNoExtension}.exe",
+                "-lstdc++",
+                "-lpthread",
+                "-lws2_32"
             ],
             "options": {
                 "cwd": "${fileDirname}"
