@@ -5,8 +5,8 @@
 #include <thread>
 #include <mutex>
 #include "VehicleData.h"
-#include "external/nlohmann/json.hpp"
-#include "../../server/cpp-httplib/httplib.h"
+#include "json.hpp"
+#include "httplib.h"
 
 using json = nlohmann::json;
 

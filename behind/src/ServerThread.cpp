@@ -1,23 +1,26 @@
 #ifdef _WIN32
-    #ifndef _WIN32_WINNT
-        #define _WIN32_WINNT 0x0600  // Windows Vista trở lên
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
     #endif
+
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0600  // Windows Vista hoặc mới hơn
+    #endif
+
+    // Bao gồm winsock2.h trước windows.h
     #include <winsock2.h>
-    #include <ws2tcpip.h>
-    #include <Windows.h>
-    #pragma comment(lib, "ws2_32.lib")
+    #include <ws2tcpip.h>  // Định nghĩa addrinfo, getaddrinfo, freeaddrinfo,...
+    #include <windows.h>
+    // Nếu dùng MSVC, pragma comment(lib, "ws2_32.lib") có tác dụng, nhưng không áp dụng cho MinGW.
 #else
     #include <sys/socket.h>
     #include <netdb.h>
+    #include <arpa/inet.h>
 #endif
-
 #include "ServerThread.h"
 #include "VehicleData.h"
 #include <thread>
 #include <chrono>
-
-#include <httplib.h>
-#include "json.hpp"
 
 using json = nlohmann::json;
 

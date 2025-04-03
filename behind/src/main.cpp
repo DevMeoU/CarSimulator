@@ -90,68 +90,71 @@ void environment_thread(Vehicle& vehicle) {
 
 int main() {
     // Initialize Winsock
-    WSADATA wsaData;
-    int wsaResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
-    if (wsaResult != 0) {
-        std::cerr << "WSAStartup failed: " << wsaResult << std::endl;
-        return 1;
-    }
+    // WSADATA wsaData;
+    // int wsaResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
+    // if (wsaResult != 0) {
+    //     std::cerr << "WSAStartup failed: " << wsaResult << std::endl;
+    //     return 1;
+    // }
 
-    try {
-        // Initialize shared data between threads
-        auto vehicleData = std::make_shared<VehicleData>();
-        vehicleData->running = true;
-        
-        // Initialize vehicle
-        Vehicle vehicle;
-        
-        // Start keyboard thread with error handling
-        thread keyboard_thread;
-        try {
-            keyboard_thread = thread(keyboard_handler, ref(vehicle));
-        } catch (const std::system_error& e) {
-            std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
-            WSACleanup();
-            return 1;
-        }
-        
-        // Start environment thread with error handling
-        thread env_thread;
-        try {
-            env_thread = thread(environment_thread, ref(vehicle));
-        } catch (const std::system_error& e) {
-            std::cerr << "Failed to start environment thread: " << e.what() << std::endl;
-            running = false;
-            keyboard_thread.join();
-            WSACleanup();
-            return 1;
-        }
-        
-        // Start server thread
-        ServerThread serverThread(vehicleData, "http://localhost:8080/data");
-        if (!serverThread.isRunning() || !vehicleData->running.load()) {
-            std::cerr << "Failed to start server thread" << std::endl;
-            running = false;
-            keyboard_thread.join();
-            env_thread.join();
-            WSACleanup();
-            return 1;
-        }
+    std::cout << "System Initialization!" << std::endl;
 
-        // Wait for threads to finish
-        keyboard_thread.join();
-        env_thread.join();
+    // try {
+    //     // Initialize shared data between threads
+    //     auto vehicleData = std::make_shared<VehicleData>();
+    //     vehicleData->running = true;
         
-        // Stop server thread
-        vehicleData->running = false;
-        serverThread.stop();
+    //     // Initialize vehicle
+    //     Vehicle vehicle;
+        
+    //     // Start keyboard thread with error handling
+    //     thread keyboard_thread;
+    //     try {
+    //         keyboard_thread = thread(keyboard_handler, ref(vehicle));
+    //     } catch (const std::system_error& e) {
+    //         std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
+    //         WSACleanup();
+    //         return 1;
+    //     }
+        
+    //     // Start environment thread with error handling
+    //     thread env_thread;
+    //     try {
+    //         env_thread = thread(environment_thread, ref(vehicle));
+    //     } catch (const std::system_error& e) {
+    //         std::cerr << "Failed to start environment thread: " << e.what() << std::endl;
+    //         running = false;
+    //         keyboard_thread.join();
+    //         WSACleanup();
+    //         return 1;
+    //     }
+        
+    //     // Start server thread
+    //     ServerThread serverThread(vehicleData, "http://localhost:8080/data");
+    //     if (!serverThread.isRunning() || !vehicleData->running.load()) {
+    //         std::cerr << "Failed to start server thread" << std::endl;
+    //         running = false;
+    //         keyboard_thread.join();
+    //         env_thread.join();
+    //         WSACleanup();
+    //         return 1;
+    //     }
 
-        WSACleanup();
-        return 0;
-    } catch (const std::exception& e) {
-        std::cerr << "Exception in main: " << e.what() << std::endl;
-        running = false;
-        WSACleanup();
-        return 1;
-    }
+    //     // Wait for threads to finish
+    //     keyboard_thread.join();
+    //     env_thread.join();
+        
+    //     // Stop server thread
+    //     vehicleData->running = false;
+    //     serverThread.stop();
+
+    //     WSACleanup();
+    //     return 0;
+    // } catch (const std::exception& e) {
+    //     std::cerr << "Exception in main: " << e.what() << std::endl;
+    //     running = false;
+    //     WSACleanup();
+    //     return 1;
+    // }
+    return 0;
 }

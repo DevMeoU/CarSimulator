@@ -1,11 +1,17 @@
+ifeq ($(OS),Windows_NT)
+$(info Running on Windows)
+CXX := C:\Strawberry\c\bin\g++.exe
+else
 CXX := g++
+endif
+
 WINDOWS_LIB = -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucrt" \
 			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um" \
 			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared" \
 			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\cppwinrt" \
 			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\winrt"
 
-CXXFLAGS := -std=c++17 -Wall -I./include -I../server/cpp-httplib -I./include/external/nlohmann
+CXXFLAGS := -std=c++17 -Wall -I./include -I../server/cpp-httplib -I./include/external/nlohmann -D_WIN32_WINNT=0x0600
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS := -lstdc++ -lpthread -lws2_32

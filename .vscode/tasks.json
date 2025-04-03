@@ -7,23 +7,20 @@
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
-                "-Iinclude",
+                "-I${workspaceFolder}\\behind\\include",
                 "${file}",
                 "${workspaceFolder}\\behind\\src\\Battery.cpp",
-                "${workspaceFolder}\\behind\\src\\DataManager.cpp",
-                "${workspaceFolder}\\behind\\src\\DataUpdater.cpp",
                 "${workspaceFolder}\\behind\\src\\Display.cpp",
                 "${workspaceFolder}\\behind\\src\\DrivingMode.cpp",
                 "${workspaceFolder}\\behind\\src\\Engine.cpp",
                 "${workspaceFolder}\\behind\\src\\EnvironmentalCondition.cpp",
                 "${workspaceFolder}\\behind\\src\\FaultSimulation.cpp",
-                "${workspaceFolder}\\behind\\src\\HttpServer.cpp",
                 "${workspaceFolder}\\behind\\src\\SafetySystem.cpp",
                 "${workspaceFolder}\\behind\\src\\Sensor.cpp",
                 "${workspaceFolder}\\behind\\src\\Utils.cpp",
                 "${workspaceFolder}\\behind\\src\\Vehicle.cpp",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${workspaceFolder}\\behind\\build\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
                 "cwd": "${fileDirname}"
