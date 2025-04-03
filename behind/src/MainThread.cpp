@@ -1,10 +1,16 @@
 #include "MainThread.h"
 #include <chrono>
 #include <cmath>
+#include <iostream>
+#include <ostream>
 #include "VehicleData.h"
 
 MainThread::MainThread(std::shared_ptr<VehicleData> data) 
     : running(false), vehicleData(data) {}
+
+MainThread::~MainThread() {
+    stop();
+}
 
 void MainThread::start() {
     running = true;
@@ -19,9 +25,15 @@ void MainThread::stop() {
 }
 
 void MainThread::threadFunction() {
-    while (running) {
-        updateVehicleState();
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    try {
+        while (running) {
+            updateVehicleState();
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "MainThread exception: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "MainThread unknown exception" << std::endl;
     }
 }
 

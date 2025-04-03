@@ -46,4 +46,7 @@ rebuild: clean all
 
 -include $(DEPS)
 
-.PHONY: all clean rebuild
+run: $(BUILD_DIR)/$(EXEC)
+	@$(BUILD_DIR)/$(EXEC)
+
+.PHONY: all clean rebuild run

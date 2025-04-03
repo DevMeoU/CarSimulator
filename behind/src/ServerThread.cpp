@@ -44,10 +44,16 @@ void ServerThread::stop() {
 }
 
 void ServerThread::threadFunction() {
-    while (running) {
-        json data = prepareData();
-        sendDataToServer(data);
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    try {
+        while (running) {
+            json data = prepareData();
+            sendDataToServer(data);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "ServerThread exception: " << e.what() << std::endl;
+    } catch (...) {
+        std::cerr << "ServerThread unknown exception" << std::endl;
     }
 }
 
