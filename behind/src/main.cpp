@@ -126,13 +126,14 @@ void environment_thread(Vehicle& vehicle) {
 }
 
 int main() {
-    // Initialize Winsock
+    // Initialize Winsock with error handling
     WSADATA wsaData;
     int wsaResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
     if (wsaResult != 0) {
-        std::cerr << "WSAStartup failed: " << wsaResult << std::endl;
+        std::cerr << "WSAStartup failed with error: " << wsaResult << std::endl;
         return 1;
     }
+    atexit([]() { WSACleanup(); });  // Ensure cleanup on exit
 
     std::cout << "System Initialization!" << std::endl;
 
@@ -145,26 +146,26 @@ int main() {
         Vehicle vehicle;
         
         // Start keyboard thread with error handling
-        // thread keyboard_thread;
-        // try {
-        //     keyboard_thread = thread(keyboard_handler, ref(vehicle));
-        // } catch (const std::system_error& e) {
-        //     std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
-        //     WSACleanup();
-        //     return 1;
-        // }
+        thread keyboard_thread;
+        try {
+            keyboard_thread = thread(keyboard_handler, ref(vehicle));
+        } catch (const std::system_error& e) {
+            std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
+            WSACleanup();
+            return 1;
+        }
         
         // Start environment thread with error handling
-        // thread env_thread;
-        // try {
-        //     env_thread = thread(environment_thread, ref(vehicle));
-        // } catch (const std::system_error& e) {
-        //     std::cerr << "Failed to start environment thread: " << e.what() << std::endl;
-        //     running = false;
-        //     keyboard_thread.join();
-        //     WSACleanup();
-        //     return 1;
-        // }
+        thread env_thread;
+        try {
+            env_thread = thread(environment_thread, ref(vehicle));
+        } catch (const std::system_error& e) {
+            std::cerr << "Failed to start environment thread: " << e.what() << std::endl;
+            running = false;
+            keyboard_thread.join();
+            WSACleanup();
+            return 1;
+        }
         
         // Kiểm tra trạng thái running trước khi khởi tạo
         if (!vehicleData->running.load()) {
@@ -201,20 +202,37 @@ int main() {
             return 1;
         }
 
-        // Wait for threads to finish
+        // Main loop with status checks
         while (vehicleData->running.load()) {
+            if (!serverThread.isRunning()) {
+                std::cerr << "Server thread stopped unexpectedly" << std::endl;
+                vehicleData->running = false;
+                break;
+            }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         }
         
-        // Stop server thread đúng cách
+        // Graceful shutdown sequence
         try {
             vehicleData->running = false;
+            
+            // Stop threads with timeout
+            auto stopWithTimeout = [](std::thread& t) {
+                if (t.joinable()) {
+                    if (t.joinable() && t.get_id() != std::this_thread::get_id()) {
+                        t.join();
+                    }
+                }
+            };
+            
+            stopWithTimeout(keyboard_thread);
+            stopWithTimeout(env_thread);
+            
             serverThread.stop();
-            std::cout << "Server thread stopped successfully" << std::endl;
+            std::cout << "All threads stopped successfully" << std::endl;
         } catch (const std::exception& e) {
-            std::cerr << "Error stopping server thread: " << e.what() << std::endl;
+            std::cerr << "Error during shutdown: " << e.what() << std::endl;
         }
-        serverThread.stop();
 
         WSACleanup();
         return 0;
