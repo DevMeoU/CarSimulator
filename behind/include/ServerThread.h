@@ -18,15 +18,19 @@ public:
     void start();
     void stop();
     bool isRunning() const;
+    bool isConnected() const;
     
 private:
     void threadFunction();
     json prepareData();
-    void sendDataToServer(const json& data);
+    bool sendWithRetry(const json& data, int maxRetries, int retryIntervalMs);
     
     std::shared_ptr<VehicleData> vehicleData;
     std::string serverUrl;
     std::unique_ptr<::httplib::Client> cli;
     std::thread thread;
     bool running;
+    bool connectionStatus;
+    std::string host;
+    int port;
 };

@@ -63,9 +63,9 @@ void keyboard_handler(Vehicle& vehicle) {
         double deltaTime = elapsed.count() / 1000.0;
         
         // Giảm tốc theo quán tính nếu không nhấn phím space
-        if (!(GetAsyncKeyState(VK_SPACE) & 0x8000)) {
-            vehicle.decelerate(0.2 * deltaTime);
-        }
+        // if (!(GetAsyncKeyState(VK_SPACE) & 0x8000)) {
+        //     vehicle.decelerate(0.2 * deltaTime);
+        // }
         
         vehicle.update(deltaTime);
         
@@ -145,56 +145,76 @@ int main() {
         Vehicle vehicle;
         
         // Start keyboard thread with error handling
-        thread keyboard_thread;
-        try {
-            keyboard_thread = thread(keyboard_handler, ref(vehicle));
-        } catch (const std::system_error& e) {
-            std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
-            WSACleanup();
-            return 1;
-        }
-        
-        // Start environment thread with error handling
-        thread env_thread;
-        try {
-            env_thread = thread(environment_thread, ref(vehicle));
-        } catch (const std::system_error& e) {
-            std::cerr << "Failed to start environment thread: " << e.what() << std::endl;
-            running = false;
-            keyboard_thread.join();
-            WSACleanup();
-            return 1;
-        }
-        
-        // Declare serverThread outside try block for proper scope
-        // ServerThread serverThread(vehicleData, "http://localhost:8080/data");
-        
-        // // Start server thread
+        // thread keyboard_thread;
         // try {
-        //     if (!serverThread.isRunning() || !vehicleData->running.load()) {
-        //         std::cerr << "Failed to start server thread" << std::endl;
-        //         running = false;
-        //         keyboard_thread.join();
-        //         env_thread.join();
-        //         WSACleanup();
-        //         return 1;
-        //     }
-        // } catch (const std::exception& e) {
-        //     std::cerr << "ServerThread initialization failed: " << e.what() << std::endl;
-        //     running = false;
-        //     keyboard_thread.join();
-        //     env_thread.join();
+        //     keyboard_thread = thread(keyboard_handler, ref(vehicle));
+        // } catch (const std::system_error& e) {
+        //     std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
         //     WSACleanup();
         //     return 1;
         // }
+        
+        // Start environment thread with error handling
+        // thread env_thread;
+        // try {
+        //     env_thread = thread(environment_thread, ref(vehicle));
+        // } catch (const std::system_error& e) {
+        //     std::cerr << "Failed to start environment thread: " << e.what() << std::endl;
+        //     running = false;
+        //     keyboard_thread.join();
+        //     WSACleanup();
+        //     return 1;
+        // }
+        
+        // Kiểm tra trạng thái running trước khi khởi tạo
+        if (!vehicleData->running.load()) {
+            std::cerr << "Vehicle data is not running, cannot start server thread" << std::endl;
+            WSACleanup();
+            return 1;
+        }
+
+        // Declare serverThread outside try block for proper scope
+        ServerThread serverThread(vehicleData, "http://localhost:8080");
+        
+        // Start server thread với xử lý exception chi tiết
+        try {
+            serverThread.start();
+            if (!serverThread.isRunning()) {
+                throw std::runtime_error("Server thread failed to start");
+            }
+            
+            std::cout << "Server thread started successfully" << std::endl;
+        } catch (const std::invalid_argument& e) {
+            std::cerr << "Invalid server configuration: " << e.what() << std::endl;
+            running = false;
+            WSACleanup();
+            return 1;
+        } catch (const std::runtime_error& e) {
+            std::cerr << "Server thread runtime error: " << e.what() << std::endl;
+            running = false;
+            WSACleanup();
+            return 1;
+        } catch (const std::exception& e) {
+            std::cerr << "Server thread initialization failed: " << e.what() << std::endl;
+            running = false;
+            WSACleanup();
+            return 1;
+        }
 
         // Wait for threads to finish
-        keyboard_thread.join();
-        env_thread.join();
+        while (vehicleData->running.load()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
         
-        // Stop server thread
-        vehicleData->running = false;
-        // serverThread.stop();
+        // Stop server thread đúng cách
+        try {
+            vehicleData->running = false;
+            serverThread.stop();
+            std::cout << "Server thread stopped successfully" << std::endl;
+        } catch (const std::exception& e) {
+            std::cerr << "Error stopping server thread: " << e.what() << std::endl;
+        }
+        serverThread.stop();
 
         WSACleanup();
         return 0;

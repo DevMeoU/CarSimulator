@@ -13,12 +13,61 @@
 
 // Thêm vào cuối file httplib.h
 #include <iostream>
-#include "./cpp-httplib/httplib.h"
+#include "httplib.h"
+#include "json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 #define PORT 8080
 #define HOST "localhost"
+
+// Biến lưu trữ dữ liệu JSON từ client
+extern std::string stored_json_data;
+std::string stored_json_data = "";
+
+void post_handler(const httplib::Request& req, httplib::Response& res) {
+    if (!req.has_header("Content-Type") || req.get_header_value("Content-Type") != "application/json") {
+        res.status = 400;
+        res.set_content("Invalid Content-Type", "text/plain");
+        return;
+    }
+
+    try {
+        // Parse và validate JSON trước khi lưu
+        json j = json::parse(req.body);
+        stored_json_data = req.body;
+        res.status = 200;
+        res.set_header("Content-Type", "application/json");
+        json response = {
+            {"status", "success"},
+            {"message", "Data received"}
+        };
+        res.set_content(response.dump(), "application/json");
+    } catch (const json::parse_error& e) {
+        res.status = 400;
+        res.set_header("Content-Type", "application/json");
+        json response = {
+            {"status", "error"},
+            {"message", "Invalid JSON format"}
+        };
+        res.set_content(response.dump(), "application/json");
+    } catch (const std::exception& e) {
+        res.status = 500;
+        res.set_header("Content-Type", "application/json");
+        json response = {
+            {"status", "error"},
+            {"message", "Internal server error"}
+        };
+        res.set_content(response.dump(), "application/json");
+    }
+}
+
+void get_handler(const httplib::Request& req, httplib::Response& res) {
+    res.status = 200;
+    res.set_header("Content-Type", "application/json");
+    res.set_content(stored_json_data.empty() ? "{}" : stored_json_data, "application/json");
+}
 
 int main() {
 #ifdef _WIN32
@@ -35,44 +84,29 @@ int main() {
     svr.set_mount_point("/", "../ui");
     svr.set_mount_point("/data", "../data");
 
-    // Biến lưu trữ dữ liệu JSON từ client
-    std::string stored_json_data;
-
     // Add POST handler for /data endpoint
-    svr.Post("/data", [&stored_json_data](const httplib::Request& req, httplib::Response& res) {
-        if (!req.has_header("Content-Type") || req.get_header_value("Content-Type") != "application/json") {
-            res.status = 400;
-            res.set_content("Invalid Content-Type", "text/plain");
-            return;
-        }
-
-        try {
-            // Lưu trữ dữ liệu JSON
-            stored_json_data = req.body;
-            res.status = 200;
-            res.set_content("Data received", "text/plain");
-        } catch (const std::exception& e) {
-            res.status = 400;
-            res.set_content("Invalid JSON data", "text/plain");
-        }
-    });
+    svr.Post("/api/data", post_handler);
 
     // Add GET handler for /data endpoint
-    svr.Get("/data", [&stored_json_data](const httplib::Request& req, httplib::Response& res) {
-        res.status = 200;
-        res.set_header("Content-Type", "application/json");
-        res.set_content(stored_json_data.empty() ? "{}" : stored_json_data, "application/json");
-    });
+    svr.Get("/api/data", get_handler);
 
     // User defined file extension and MIME type mappings
     svr.set_file_extension_and_mimetype_mapping("html", "text/html");
     svr.set_file_extension_and_mimetype_mapping("css", "text/css");
     svr.set_file_extension_and_mimetype_mapping("js", "application/javascript");
-    // svr.set_file_extension_and_mimetype_mapping("csv", "text/csv");
     svr.set_file_extension_and_mimetype_mapping("csv", "text/plain");
+    svr.set_file_extension_and_mimetype_mapping("json", "application/json");
+    svr.set_file_extension_and_mimetype_mapping("jpg", "image/jpeg");
+    svr.set_file_extension_and_mimetype_mapping("png", "image/png");
 
     // Thông báo khởi động
     cout << "Server đang chạy tại http://" << HOST << ":" << PORT << endl;
+    #ifdef _WIN32
+        system("start http://localhost:8080");
+    #elif __APPLE__
+        system("open http://localhost:8080");
+    #endif
+    
     svr.listen(HOST, PORT);
 
 #ifdef _WIN32

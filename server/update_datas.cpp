@@ -99,7 +99,9 @@ void write_csv(const std::string &filename, const std::unordered_map<std::string
     file.close();
 }
 
-// Hàm gửi dữ liệu qua HTTP POST tới endpoint "/update_csv"
+// Hàm gửi dữ liệu qua HTTP POST tới endpoint "/update_csv" dưới dạng JSON
+#include "json.hpp"
+
 void post_data(const std::string &url, const std::unordered_map<std::string, std::string> &data) {
     const int MAX_RETRIES = 3;
     const int RETRY_DELAY_MS = 1000;
@@ -107,13 +109,16 @@ void post_data(const std::string &url, const std::unordered_map<std::string, std
     httplib::Client cli("localhost", 8080);
     cli.set_connection_timeout(5); // 5 seconds timeout
     
-    httplib::Params params;
+    // Chuyển đổi dữ liệu sang JSON
+    nlohmann::json json_data;
     for (const auto &pair : data) {
-        params.emplace(pair.first, pair.second);
+        json_data[pair.first] = pair.second;
     }
+    std::string json_str = json_data.dump();
     
+    // Gửi request với Content-Type là application/json
     for (int retry = 0; retry < MAX_RETRIES; ++retry) {
-        auto res = cli.Post(url.c_str(), params);
+        auto res = cli.Post(url.c_str(), json_str, "application/json");
         if (res && res->status == 200) {
             std::cout << "Posted successfully: " << res->body << std::endl;
             return;

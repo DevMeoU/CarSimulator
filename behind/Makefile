@@ -11,7 +11,7 @@ WINDOWS_LIB = -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\ucr
 			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\cppwinrt" \
 			  -I"C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\winrt"
 
-CXXFLAGS := -std=c++17 -Wall -I./include -I../server/cpp-httplib -I./include/external/nlohmann -D_WIN32_WINNT=0x0600
+CXXFLAGS := -std=c++17 -Wall -I./include -I./include/external/cpp-httplib -I./include/external/nlohmann -D_WIN32_WINNT=0x0600
 
 ifeq ($(OS),Windows_NT)
 	LDFLAGS := -lstdc++ -lpthread -lws2_32
