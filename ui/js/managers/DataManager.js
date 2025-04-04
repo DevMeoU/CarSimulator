@@ -1,45 +1,65 @@
 class DataManager {
     constructor() {
         this.share_data = {
-            speed: 0,
-            mode: "eco",
-            battery: 100,
-            battery_temp: 25,
-            gear: 'N',
-            estimated_distance: 0,
-            distance_traveled: 0,
-            signal_left: 0,
-            signal_right: 0,
-            wind: 0,
+            abs_active: false,
             air_condition: 0,
-            plug_in: 0,
-            door_lock: 0,
-            seat_belt: 0,
-            parking_brake: 0,
-            brake: 0,
-            gas: 0,
-            warning: 0,
+            altitude: 0,
+            battery: 0,
+            battery_temp: 0,
+            brake: false,
+            brake_pressure: 0,
+            distance_traveled: 0,
+            door_lock: false,
+            engine_power: 0,
+            engine_temp: 0,
+            engine_torque: 0,
+            esp_active: false,
+            estimated_distance: 0,
+            gas: false,
+            gear: '',
+            mode: '',
+            park: false,
+            plug_in: false,
+            seat_belt: false,
+            signal_left: false,
+            signal_right: false,
+            speed: 0,
+            temperature: 0,
+            timestamp: 0,
+            warning: '',
+            weather: '',
+            wind: 0
         };
 
         this.keyMapping = {
-            "speed": "speed",
-            "mode": "mode",
+            "abs_active": "abs_active",
+            "air_condition": "air_condition",
+            "altitude": "altitude",
             "battery": "battery",
-            "battery-temp": "battery_temp",
-            "gear": "gear",
-            "estimated-distance": "estimated_distance",
-            "distance-traveled": "distance_traveled",
-            "signal-left": "signal_left",
-            "signal-right": "signal_right",
-            "wind": "wind",
-            "air-condition": "air_condition",
-            "plug-in": "plug_in",
-            "door-lock": "door_lock",
-            "seat-belt": "seat_belt",
+            "battery_temp": "battery_temp",
             "brake": "brake",
+            "brake_pressure": "brake_pressure",
+            "distance_traveled": "distance_traveled",
+            "door_lock": "door_lock",
+            "engine_power": "engine_power",
+            "engine_temp": "engine_temp",
+            "engine_torque": "engine_torque",
+            "esp_active": "esp_active",
+            "estimated_distance": "estimated_distance",
             "gas": "gas",
-            "parking-brake": "parking_brake",
+            "gear": "gear",
+            "mode": "mode",
+            "park": "park",
+            "plug_in": "plug_in",
+            "seat_belt": "seat_belt",
+            "signal_left": "signal_left",
+            "signal_right": "signal_right",
+            "speed": "speed",
+            "temperature": "temperature",
+            "timestamp": "timestamp",
             "warning": "warning",
+            "weather": "weather",
+            "wind": "wind"
         };
     }
 
@@ -48,7 +68,7 @@ class DataManager {
     }
 
     mappingData(data) {
-        if (!Array.isArray(data) || data.length === 0) return;
+        if ((!Array.isArray(data) || data.length === 0) && typeof(data) === "object") return data;
         
         const item = data[0];
         for (const [key, value] of Object.entries(item)) {
@@ -59,13 +79,16 @@ class DataManager {
                     continue;
                 }
                 
-                if (mappedKey === 'gear') {
-                    const validGears = ['P', 'R', 'N', 'D'];
-                    const gearValue = value.toString().toUpperCase();
-                    this.share_data[mappedKey] = validGears.includes(gearValue) ? gearValue : 'N';
-                } else if (typeof this.share_data[mappedKey] === 'number') {
+                const defaultType = typeof this.share_data[mappedKey];
+                if (defaultType === 'boolean') {
+                    this.share_data[mappedKey] = Boolean(value);
+                } else if (defaultType === 'number') {
                     const numValue = typeof value === 'number' ? value : parseFloat(value || '0');
                     this.share_data[mappedKey] = isNaN(numValue) ? 0 : numValue;
+                } else if (mappedKey === 'gear') {
+                    const validGears = ['P', 'R', 'N', 'D'];
+                    const gearValue = value.toString().toUpperCase();
+                    this.share_data[mappedKey] = validGears.includes(gearValue) ? gearValue : '';
                 } else {
                     this.share_data[mappedKey] = value.toString();
                 }
@@ -75,7 +98,7 @@ class DataManager {
 
     updateData(data) {
         if(data !== this.share_data) {
-            this.mappingData(data);
+            this.share_data = this.mappingData(data);
         }   
         console.log('Share_data', this.share_data);
         return this.share_data;

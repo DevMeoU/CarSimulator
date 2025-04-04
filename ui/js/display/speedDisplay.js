@@ -10,7 +10,8 @@ class SpeedDisplay {
 
     update(speed) {
         if (this.speedDisplay) {
-            this.speedDisplay.textContent = speed;
+            // Làm tròn tốc độ đến 1 chữ số thập phân và thêm đơn vị km/h
+            this.speedDisplay.textContent = `${speed.toFixed(1)} km/h`;
         } else {
             console.error('ERROR: #speed-indicator element not found in DOM');
             console.log('Check HTML for element with this class');

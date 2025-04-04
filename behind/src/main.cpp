@@ -22,7 +22,33 @@ using namespace std;
 
 std::atomic<bool> running{true};
 
-void keyboard_handler(Vehicle& vehicle) {
+// Lambda function for synchronizing vehicle data with state checking and caching
+auto updateVehicleData = [](Vehicle& vehicle, std::shared_ptr<VehicleData>& vehicleData) {
+    // Cache current states before locking to minimize lock time
+    double currentSpeed = vehicle.getSpeed();
+    bool currentBrake = vehicle.isBrakeActive();
+    bool currentGas = vehicle.isAcceleratorActive();
+    bool currentLeftSignal = vehicle.isLeftSignalOn();
+    bool currentRightSignal = vehicle.isRightSignalOn();
+    double currentEnginePower = vehicle.getEngine().getPower();
+    double currentEngineTemp = vehicle.getEngine().getTemperature();
+    double currentBatteryTemp = vehicle.getBattery().getTemperature();
+    
+    // Only lock when updating values
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    
+    // Only update if values have changed
+    if (vehicleData->speed != currentSpeed) vehicleData->speed = currentSpeed;
+    if (vehicleData->brake != currentBrake) vehicleData->brake = currentBrake;
+    if (vehicleData->gas != currentGas) vehicleData->gas = currentGas;
+    if (vehicleData->signal_left != currentLeftSignal) vehicleData->signal_left = currentLeftSignal;
+    if (vehicleData->signal_right != currentRightSignal) vehicleData->signal_right = currentRightSignal;
+    if (vehicleData->engine_power != currentEnginePower) vehicleData->engine_power = currentEnginePower;
+    if (vehicleData->engine_temp != currentEngineTemp) vehicleData->engine_temp = currentEngineTemp;
+    if (vehicleData->battery_temp != currentBatteryTemp) vehicleData->battery_temp = currentBatteryTemp;
+};
+
+void keyboard_handler(Vehicle& vehicle, std::shared_ptr<VehicleData>& vehicleData) {
     static std::unordered_map<int, bool> keyStates;
     static auto lastUpdate = std::chrono::steady_clock::now();
     static int threadID = 0;
@@ -68,6 +94,9 @@ void keyboard_handler(Vehicle& vehicle) {
         // }
         
         vehicle.update(deltaTime);
+        
+        // Đồng bộ dữ liệu
+        updateVehicleData(vehicle, vehicleData);
         
         // In thông số phương tiện
         std::cout << "Speed: " << vehicle.getSpeed() << " km/h" << std::endl;
@@ -145,10 +174,12 @@ int main() {
         // Initialize vehicle
         Vehicle vehicle;
         
+        // Sử dụng hàm đồng bộ dữ liệu đã được tối ưu hóa ở trên
+        
         // Start keyboard thread with error handling
         thread keyboard_thread;
         try {
-            keyboard_thread = thread(keyboard_handler, ref(vehicle));
+            keyboard_thread = thread(keyboard_handler, ref(vehicle), ref(vehicleData));
         } catch (const std::system_error& e) {
             std::cerr << "Failed to start keyboard thread: " << e.what() << std::endl;
             WSACleanup();

@@ -1,7 +1,7 @@
-import { updateTime } from '../time/time.js';
-import { initCsvHandler } from '../handlers/csvHandler.js';
-import { responseData } from '../handlers/fetchingData.js';
-import { updateShareData, default_data } from '../handlers/shareJsonData.js';
+import { updateTime } from '../time/Time.js';
+import { initCsvHandler } from '../handlers/CsvHandler.js';
+import { responseData } from '../handlers/FetchingData.js';
+import { updateShareData, default_data } from '../handlers/ShareJsonData.js';
 
 class AppManager {
     constructor() {

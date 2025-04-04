@@ -1,4 +1,4 @@
-import SignalDisplay from '../display/signalDisplay.js';
+import SignalDisplay from '../display/SignalDisplay.js';
 
 class SignalControl {
     constructor() {

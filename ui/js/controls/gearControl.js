@@ -1,5 +1,5 @@
-import GearDisplay from '../display/gearDisplay.js';
-import OdoDisplay from '../display/odoDisplay.js';
+import GearDisplay from '../display/GearDisplay.js';
+import OdoDisplay from '../display/OdoDisplay.js';
 
 class GearControl {
     constructor() {

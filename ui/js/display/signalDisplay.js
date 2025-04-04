@@ -5,8 +5,12 @@ class SignalDisplay {
     }
 
     update(signalLeft, signalRight) {
+        // Chuyển đổi boolean thành số nguyên
+        const leftSignal = signalLeft === true ? 1 : 0;
+        const rightSignal = signalRight === true ? 1 : 0;
+
         // Check event listener conflicts
-        if (signalLeft === 1 && signalRight === 1) {
+        if (leftSignal === 1 && rightSignal === 1) {
             if (this.signalLeft && this.signalRight) {
                 this.signalLeft.classList.toggle('active', true);
                 this.signalRight.classList.toggle('active', true);
@@ -18,14 +22,14 @@ class SignalDisplay {
 
         // Handle left signal
         if (this.signalLeft) {
-            this.signalLeft.classList.toggle('active', signalLeft === 1);
+            this.signalLeft.classList.toggle('active', leftSignal === 1);
         } else {
             console.error('ERROR: #signal-left element not found in DOM');
         }
 
         // Handle right signal
         if (this.signalRight) {
-            this.signalRight.classList.toggle('active', signalRight === 1);
+            this.signalRight.classList.toggle('active', rightSignal === 1);
         } else {
             console.error('ERROR: #signal-right element not found in DOM');
         }

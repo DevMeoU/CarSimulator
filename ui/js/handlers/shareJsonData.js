@@ -1,6 +1,6 @@
 import DisplayManager from '../managers/DisplayManager.js';
 import DataManager from '../managers/DataManager.js';
-import { updateMode } from './modeHandler.js';
+import { updateMode } from './ModeHandler.js';
 
 const displayManager = new DisplayManager();
 const dataManager = new DataManager();

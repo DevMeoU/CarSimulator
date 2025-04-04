@@ -1,4 +1,4 @@
-import { updateShareData } from './shareJsonData.js';
+import { updateShareData } from './ShareJsonData.js';
 
 async function initCsvHandler() {
     try {

@@ -1,4 +1,4 @@
-import ModeControl from '../controls/modeControl.js';
+import ModeControl from '../controls/ModeControl.js';
 
 const modeControl = new ModeControl();
 

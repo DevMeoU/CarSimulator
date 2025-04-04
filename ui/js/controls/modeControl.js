@@ -1,4 +1,4 @@
-import ModeDisplay from '../display/modeDisplay.js';
+import ModeDisplay from '../display/ModeDisplay.js';
 
 class ModeControl {
     constructor() {

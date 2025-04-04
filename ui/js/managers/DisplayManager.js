@@ -1,15 +1,18 @@
 import AirConditionDisplay from '../display/AirConditionDisplay.js';
-import BatteryDisplay from '../display/batteryDisplay.js';
-import BatteryTempDisplay from '../display/batteryTempDisplay.js';
+import BatteryDisplay from '../display/BatteryDisplay.js';
+import BatteryTempDisplay from '../display/BatteryTempDisplay.js';
 import DoorLockDisplay from '../display/DoorLockDisplay.js';
+import EnginePowerDisplay from '../display/EnginePowerDisplay.js';
 import FanDisplay from '../display/FanDisplay.js';
-import GearDisplay from '../display/gearDisplay.js';
-import ModeDisplay from '../display/modeDisplay.js';
-import OdoDisplay from '../display/odoDisplay.js';
-import PedalDisplay from '../display/pedalDisplay.js';
-import SignalDisplay from '../display/signalDisplay.js';
-import SpeedDisplay from '../display/speedDisplay.js';
+import GearDisplay from '../display/GearDisplay.js';
+import ModeDisplay from '../display/ModeDisplay.js';
+import OdoDisplay from '../display/OdoDisplay.js';
+import PedalDisplay from '../display/PedalDisplay.js';
+import SafetySystemDisplay from '../display/SafetySystemDisplay.js';
+import SignalDisplay from '../display/SignalDisplay.js';
+import SpeedDisplay from '../display/SpeedDisplay.js';
 import WarningDisplay from '../display/WarningDisplay.js';
+import NumberUtils from '../utils/NumberUtils.js';
 
 class DisplayManager {
     constructor() {
@@ -25,21 +28,25 @@ class DisplayManager {
         this.fanDisplay = new FanDisplay();
         this.modeDisplay = new ModeDisplay();
         this.warningDisplay = new WarningDisplay();
+        this.enginePowerDisplay = new EnginePowerDisplay();
+        this.safetySystemDisplay = new SafetySystemDisplay();
     }
 
     updates(data) {
-        this.batteryDisplay.update(data.battery);
-        this.batteryTempDisplay.update(data.battery_temp);
+        this.batteryDisplay.update(NumberUtils.roundBattery(data.battery));
+        this.batteryTempDisplay.update(NumberUtils.roundTemperature(data.battery_temp));
         this.signalDisplay.update(data.signal_left, data.signal_right);
-        this.speedDisplay.update(data.speed);
+        this.speedDisplay.update(NumberUtils.roundSpeed(data.speed));
         this.gearDisplay.update(data.gear);
-        this.pedalDisplay.update(data.brake, data.gas);
-        this.odoDisplay.update(data.distance_traveled, data.estimated_distance);
+        this.pedalDisplay.update(NumberUtils.roundPedal(data.brake), NumberUtils.roundPedal(data.gas));
+        this.odoDisplay.update(NumberUtils.roundDistance(data.distance_traveled), NumberUtils.roundDistance(data.estimated_distance));
         this.doorLockDisplay.update(data.door_lock);
         this.airConditionDisplay.update(data.air_condition);
         this.fanDisplay.update(data.wind);
         this.modeDisplay.update(data.mode);
         this.warningDisplay.update(data.warning);
+        this.enginePowerDisplay.update(NumberUtils.roundEngine(data.engine_power), NumberUtils.roundEngine(data.engine_torque), NumberUtils.roundTemperature(data.engine_temp));
+        this.safetySystemDisplay.update(data.abs_active, data.esp_active)
     }
 }
 
