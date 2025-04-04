@@ -22,12 +22,7 @@ endif
 SRC_DIR := src
 BUILD_DIR := build
 
-SRCS := $(filter-out $(SRC_DIR)/create_ui.cpp $(SRC_DIR)/main_integrated.cpp, $(wildcard $(SRC_DIR)/*.cpp)) \
-	$(SRC_DIR)/EnvironmentThread.cpp \
-	$(SRC_DIR)/MainThread.cpp \
-	$(SRC_DIR)/KeyboardThread.cpp \
-	$(SRC_DIR)/ServerThread.cpp \
-	$(SRC_DIR)/main.cpp
+SRCS := $(filter-out $(SRC_DIR)/create_ui.cpp $(SRC_DIR)/main_integrated.cpp, $(wildcard $(SRC_DIR)/*.cpp))
 
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))
 DEPS := $(OBJS:.o=.d)
