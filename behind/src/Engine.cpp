@@ -8,7 +8,7 @@ Engine::Engine()
     : power(150.0),         // 150 kW as per Database.md
       maxTorque(320.0),     // 320 Nm as per Database.md
       currentPower(0.0),    // No power output when initialized
-      temperature(25.0),    // Normal operating temperature
+      temperature(35.0),    // Adjusted to more realistic operating temperature
       overheated(false) {
 }
 

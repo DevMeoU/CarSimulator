@@ -86,6 +86,12 @@ public:
      * @param intensity Acceleration intensity (0-1)
      */
     void accelerate(double intensity);
+
+    /**
+     * @brief Decelerate with specified intensity
+     * @param intensity Deceleration intensity (0-1)
+     */
+    void decelerate(double intensity);
     
     /**
      * @brief Change driving mode
@@ -273,6 +279,9 @@ public:
     std::string getWeatherCondition() const;
     void emergencyStop();
     bool isEmergencyStopped() const;
+    
+    // Additional methods from Vehicle.cpp
+
 };
 
 #endif // VEHICLE_H_UPDATED

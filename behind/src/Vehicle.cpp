@@ -13,17 +13,37 @@
 
 Vehicle::Vehicle() :
     vehicleData(std::make_shared<VehicleData>()),
-    sensor(SensorType::SPEED, 1.0),
-    speed(0),
-    distanceTraveled(0),
-    brakePressTime(0),
-    doorLocked(true),
-    seatbeltOn(false), 
-    engineRunning(false), 
-    brakeActive(false),
-    acceleratorActive(false), 
-    leftSignalOn(false), 
-    rightSignalOn(false) {}
+    sensor(SensorType::SPEED, 1.0) {
+        vehicleData->speed = 0;
+        vehicleData->distance_traveled = 0;
+        vehicleData->brake = false;
+        vehicleData->door_lock = true;
+        vehicleData->seat_belt = false;
+        vehicleData->running = false;
+        vehicleData->brake = false;
+        vehicleData->gas = false;
+        vehicleData->signal_left = false;
+        vehicleData->signal_right = false;
+        vehicleData->abs_active = false;
+        vehicleData->air_condition = 0;
+        vehicleData->altitude = 0;
+        vehicleData->battery = 0;
+        vehicleData->battery_temp = 0;
+        vehicleData->brake_pressure = 0;
+        vehicleData->engine_power = 0;
+        vehicleData->engine_temp = 0;
+        vehicleData->engine_torque = 0;
+        vehicleData->esp_active = false;
+        vehicleData->estimated_distance = 0;
+        vehicleData->gear = "";
+        vehicleData->mode = "";
+        vehicleData->park = false;
+        vehicleData->plug_in = false;
+        vehicleData->temperature = 0;
+        vehicleData->warning = "";
+        vehicleData->weather = "";
+        vehicleData->wind = 0;
+    }
 
 Vehicle::~Vehicle() {}
 
@@ -31,26 +51,33 @@ void Vehicle::update(double deltaTime) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
     // Update vehicle speed based on acceleration/brake state
-    if (acceleratorActive && !brakeActive) {
-        speed += engine.getThrottle() * deltaTime;
-    } else if (brakeActive && !acceleratorActive) {
-        speed -= safetySystem.getBrakePower() * deltaTime;
+    if (vehicleData->gas && !vehicleData->brake) {
+        vehicleData->speed += engine.getThrottle() * deltaTime;
+    } else if (vehicleData->brake && !vehicleData->gas) {
+        vehicleData->speed -= safetySystem.getBrakePower() * deltaTime;
     }
     
     // Apply speed limits
-    speed = std::max(0.0, std::min(speed, drivingMode.getMaxSpeedLimit()));
+    vehicleData->speed = std::max(0.0, std::min(vehicleData->speed, drivingMode.getMaxSpeedLimit()));
     
     // Update distance traveled
-    distanceTraveled += speed * deltaTime / 3600; // Convert from km/h to km/s
+    vehicleData->distance_traveled += vehicleData->speed * deltaTime / 3600; // Convert from km/h to km/s
     
     // Update battery state
-    battery.updateCharge(deltaTime, speed);
+    battery.updateCharge(deltaTime, vehicleData->speed);
     
     // Update sensor readings
-    sensor.update(speed);
+    sensor.update(vehicleData->speed);
     
     // Update display
-    display.showStatus(speed, battery.getChargePercentage(), distanceTraveled);
+    display.showStatus(vehicleData->speed, battery.getChargePercentage(), vehicleData->distance_traveled);
+    
+    // Update auxiliary parameters
+    vehicleData->battery_temp = battery.getTemperature();
+    vehicleData->brake_pressure = safetySystem.getBrakePower();
+    vehicleData->safetyStatus = safetySystem.getStatusString();
+    vehicleData->environmentTemp = environment.getTemperature();
+    vehicleData->isSafe = safetySystem.checkStartConditions(*vehicleData);
 }
 
 bool Vehicle::startEngine() {
@@ -61,7 +88,7 @@ bool Vehicle::startEngine() {
         return false;
     }
     
-    engineRunning = true;
+    vehicleData->running = true;
     engine.start();
     return true;
 }
@@ -69,21 +96,20 @@ bool Vehicle::startEngine() {
 void Vehicle::stopEngine() {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
-    engineRunning = false;
+    vehicleData->running = false;
     engine.stop();
-    speed = 0;
+    vehicleData->speed = 0;
 }
 
 void Vehicle::pressBrake(double seconds) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    brakePressTime = seconds;
-    brakeActive = true;
+    vehicleData->brake = true;
 }
 
 void Vehicle::brake(double intensity) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
-    brakeActive = true;
+    vehicleData->brake = true;
     safetySystem.applyBrake(intensity);
 }
 
@@ -92,6 +118,13 @@ void Vehicle::accelerate(double intensity) {
     
     acceleratorActive = true;
     engine.setThrottle(intensity);
+}
+
+void Vehicle::decelerate(double intensity) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+
+    acceleratorActive = false;
+    engine.setThrottle(-intensity);
 }
 
 bool Vehicle::changeDrivingMode(DrivingModeType mode) {

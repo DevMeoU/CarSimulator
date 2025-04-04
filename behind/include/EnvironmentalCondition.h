@@ -128,6 +128,11 @@ public:
      * @return Calculated battery temperature in Celsius
      */
     double calculateBatteryTempSAEJ2931(double temperature, double load) const;
+    
+    // Air conditioning methods
+    void setAirConditioningLevel(int level);
+    int getAirConditioningLevel() const;
 };
+;
 
 #endif // ENVIRONMENTAL_CONDITION_H

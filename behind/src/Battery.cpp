@@ -10,8 +10,8 @@
 Battery::Battery() 
     : capacity(75.0),       // 75 kWh as per Database.md
       voltage(400.0),       // 400 V as per Database.md
-      currentCharge(1.0),   // Start with full charge
-      temperature(25.0),    // Normal operating temperature
+      currentCharge(0.8),   // Start with 80% charge (more realistic)
+      temperature(30.0),    // Normal operating temperature (adjusted for realistic conditions)
       range(450.0),         // 450 km as per Database.md
       charging(false) {
 }

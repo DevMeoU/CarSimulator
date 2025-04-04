@@ -36,6 +36,10 @@ struct VehicleData {
     
     // Cảnh báo
     std::string warning;
+    std::string safetyStatus;
+    double environmentTemp;
+    bool isSafe;
+    long long timestamp_ms;
     
     // Thông số động cơ
     double engine_power;
