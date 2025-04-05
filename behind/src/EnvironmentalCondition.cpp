@@ -3,9 +3,20 @@
 #include <cmath>
 #include <string>
 
-EnvironmentalCondition::EnvironmentalCondition() 
-    : temperature(20.0), humidity(50.0), altitude(0.0), slope(0.0), 
-      roughness(0.1), load(0.0), windSpeed(0.0), weather(WeatherType::CLEAR) {}
+EnvironmentalCondition::EnvironmentalCondition() {
+    // Khởi tạo giá trị mặc định
+    temperature = 20.0;
+    humidity = 50.0;
+    altitude = 0.0;
+    slope = 0.0;
+    roughness = 0.1;
+    load = 0.0;
+    windSpeed = 0.0;
+    weather = WeatherType::CLEAR;
+    
+    // Tạo giá trị ngẫu nhiên dựa trên thời tiết
+    generateRandomWeatherValues();
+}
 
 EnvironmentalCondition::EnvironmentalCondition(double temp, double alt, WeatherType weather)
     : temperature(temp), humidity(50.0), altitude(alt), slope(0.0),
@@ -31,7 +42,10 @@ void EnvironmentalCondition::setSlope(double slope) { this->slope = slope; }
 void EnvironmentalCondition::setRoughness(double roughness) { this->roughness = roughness; }
 void EnvironmentalCondition::setLoad(double load) { this->load = load; }
 void EnvironmentalCondition::setWindSpeed(double speed) { windSpeed = speed; }
-void EnvironmentalCondition::setWeather(WeatherType weather) { this->weather = weather; }
+void EnvironmentalCondition::setWeather(WeatherType weather) { 
+    this->weather = weather;
+    generateRandomWeatherValues();
+}
 
 void EnvironmentalCondition::setAirConditioningLevel(int level) {
     if (level < 0 || level > 1) {
@@ -106,8 +120,34 @@ double EnvironmentalCondition::calculateVisibility() const {
     }
 }
 
+void EnvironmentalCondition::generateRandomWeatherValues() {
+    // Tạo giá trị ngẫu nhiên phù hợp với từng loại thời tiết
+    switch(weather) {
+        case WeatherType::CLEAR:
+            temperature = 20.0 + (rand() % 15); // 20-35°C
+            humidity = 30 + (rand() % 40); // 30-70%
+            windSpeed = 0 + (rand() % 10); // 0-10 m/s
+            break;
+        case WeatherType::RAIN:
+            temperature = 15.0 + (rand() % 10); // 15-25°C
+            humidity = 70 + (rand() % 30); // 70-100%
+            windSpeed = 5 + (rand() % 15); // 5-20 m/s
+            break;
+        case WeatherType::SNOW:
+            temperature = -10.0 + (rand() % 15); // -10 to 5°C
+            humidity = 60 + (rand() % 30); // 60-90%
+            windSpeed = 3 + (rand() % 12); // 3-15 m/s
+            break;
+        case WeatherType::FOG:
+            temperature = 5.0 + (rand() % 10); // 5-15°C
+            humidity = 80 + (rand() % 20); // 80-100%
+            windSpeed = 0 + (rand() % 5); // 0-5 m/s
+            break;
+    }
+}
+
 double EnvironmentalCondition::calculateAmbientTemperature() const {
-    // Simplified ambient temperature calculation
+    // Tính toán nhiệt độ môi trường theo công thức trong depend.md
     return temperature - (0.0065 * altitude) + (0.1 * windSpeed);
 }
 

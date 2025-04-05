@@ -7,8 +7,15 @@ void KeyboardHandler::threadFunction() {
     
     static std::unordered_map<int, bool> keyStates;
     static std::unordered_map<int, bool> toggleStates;
-    static auto lastUpdate = std::chrono::steady_clock::now();
-    static auto lastVehicleUpdate = std::chrono::steady_clock::now();
+    static std::unordered_map<int, std::chrono::steady_clock::time_point> keyPressTimes;
+    static std::chrono::steady_clock::time_point lastUpdate;
+    static std::chrono::steady_clock::time_point lastVehicleUpdate;
+    static bool initialized = false;
+    if (!initialized) {
+        lastUpdate = std::chrono::steady_clock::now();
+        lastVehicleUpdate = std::chrono::steady_clock::now();
+        initialized = true;
+    }
 
     while (running) {
         try {
@@ -19,49 +26,75 @@ void KeyboardHandler::threadFunction() {
             if (elapsed.count() >= 50) {
                 lastUpdate = now;
                 
-                auto checkKey = [&](int key, auto action, const char* actionName, bool isToggle = false) {
-                    bool currentState = (GetAsyncKeyState(key) & 0x8000) != 0;
-                    if (currentState && !keyStates[key]) {
-                        try {
-                            if (isToggle) {
-                                toggleStates[key] = !toggleStates[key];
-                                std::cout << "[Keyboard] Key pressed: " << (key < 32 ? std::to_string(key) : std::string(1, static_cast<char>(key)))
-                                          << " (" << actionName << ": " << (toggleStates[key] ? "ON" : "OFF") << ")" << std::endl;
-                            } else {
-                                std::cout << "[Keyboard] Key pressed: " << (key < 32 ? std::to_string(key) : std::string(1, static_cast<char>(key)))
-                                          << " (" << actionName << ")" << std::endl;
+                std::function<void(int, std::function<void(bool)>, const char*, bool)> checkKey = 
+                    [&](int key, std::function<void(bool)> action, const char* actionName, bool isToggle = false) {
+                        bool currentState = (GetAsyncKeyState(key) & 0x8000) != 0;
+                        if (currentState && !keyStates[key]) {
+                            keyPressTimes[key] = std::chrono::steady_clock::now();
+                            try {
+                                if (isToggle) {
+                                    toggleStates[key] = !toggleStates[key];
+                                    std::cout << "[Keyboard] Key pressed: " << (key < 32 ? std::to_string(key) : std::string(1, static_cast<char>(key)))
+                                              << " (" << actionName << ": " << (toggleStates[key] ? "ON" : "OFF") << ")" << std::endl;
+                                } else {
+                                    std::cout << "[Keyboard] Key pressed: " << (key < 32 ? std::to_string(key) : std::string(1, static_cast<char>(key)))
+                                              << " (" << actionName << ")" << std::endl;
+                                }
+                                action(isToggle ? toggleStates[key] : true);
+                            } catch (const std::exception& e) {
+                                std::cerr << "[Keyboard] Error executing action '" << actionName << "': " << e.what() << std::endl;
                             }
-                            action(isToggle ? toggleStates[key] : true);
-                        } catch (const std::exception& e) {
-                            std::cerr << "[Keyboard] Error executing action '" << actionName << "': " << e.what() << std::endl;
+                            keyStates[key] = currentState;
                         }
-                    }
-                    keyStates[key] = currentState;
-                };
+                    };
+                
                 
                 // Phím SPACE: Tăng tốc xe với gia tốc 0.5
-                checkKey(VK_SPACE, [&](bool) { vehicle.accelerate(0.5); }, "accelerate");
-                // Phím ENTER: Phanh xe với lực phanh 2
-                checkKey(VK_RETURN, [&](bool) { vehicle.brake(2); }, "brake");
-                // Phím P: Chuyển sang chế độ lái (Park)
-                checkKey('D', [&](bool) { vehicle.setGear("P"); }, "park gear");
-                // Phím D: Chuyển sang chế độ lái (Drive)
-                checkKey('D', [&](bool) { vehicle.setGear("D"); }, "drive gear");
+                checkKey(VK_SPACE, [&](bool success) { 
+                    if (success) {
+                        auto now = std::chrono::steady_clock::now();
+                        auto pressDuration = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressTimes[VK_SPACE]);
+                        if (pressDuration.count() >= 200) {
+                            std::cout << "Accelerating with turbo..." << std::endl;
+                            if (vehicleData->seat_belt || vehicleData->speed < 20) {
+                                vehicle.accelerate(0.5);
+                            } else {
+                                vehicleData->warning = "WARNING: Seat belt not fastened at high speed!";
+                            }
+                        }
+                    }
+                }, "accelerate (space)", false);
+                checkKey(VK_RETURN, [&](bool success) { 
+                    if (success) {
+                        vehicle.brake(2); 
+                        vehicle.decelerate(1);
+                        if (vehicleData->speed > 100 && vehicleData->brake_pressure < 50) {
+                            vehicleData->warning = "WARNING: Low brake pressure at high speed!";
+                        }
+                    }
+                }, "brake (enter)", false);
+                checkKey('D', [&](bool success) { if (success) vehicle.setGear("P"); }, "park gear", false);
+                checkKey('D', [&](bool success) { if (success) vehicle.setGear("D"); }, "drive gear", false);
                 // Phím R: Chuyển sang chế độ lùi (Reverse)
-                checkKey('R', [&](bool) { vehicle.setGear("R"); }, "reverse gear");
-                // Phím N: Chuyển sang chế độ trung gian (Neutral)
-                checkKey('N', [&](bool) { vehicle.setGear("N"); }, "neutral gear");
-                // Phím P: Bật/tắt phanh tay (toggle)
-                checkKey('P', [&](bool state) { vehicle.setParking(state); }, "parking", true);
-                // Phím V: Bật/tắt đèn xi nhan trái (toggle)
+                checkKey('R', [&](bool success) { 
+                    if (success && vehicleData->speed <= 10) {
+                        vehicle.setGear("R"); 
+                    } else if (success) {
+                        vehicleData->warning = "WARNING: Cannot shift to reverse at high speed!";
+                    }
+                }, "reverse gear", false);
+                checkKey('N', [&](bool success) { if (success) vehicle.setGear("N"); }, "neutral gear", false);
+                checkKey('P', [&](bool state) { 
+                    if (vehicleData->speed == 0 || state) {
+                        vehicle.setParking(state); 
+                    } else {
+                        vehicleData->warning = "WARNING: Cannot release parking brake while moving!";
+                    }
+                }, "parking", true);
                 checkKey('V', [&](bool state) { vehicle.setLeftSignalOn(state); }, "left signal", true);
-                // Phím B: Bật/tắt đèn xi nhan phải (toggle)
                 checkKey('B', [&](bool state) { vehicle.setRightSignalOn(state); }, "right signal", true);
-                // Phím L: Khóa/mở khóa cửa xe (toggle)
                 checkKey('L', [&](bool state) { vehicle.setDoorLocked(state); }, "door lock", true);
-                // Phím S: Bật/tắt dây an toàn (toggle)
                 checkKey('S', [&](bool state) { vehicle.setSeatbeltOn(state); }, "seat belt", true);
-                // Phím A: Bật/tắt điều hòa không khí (toggle)
                 checkKey('A', [&](bool state) { 
                     try {
                         vehicle.getEnvironment().setAirConditioningLevel(state ? 1 : 0);
@@ -69,18 +102,13 @@ void KeyboardHandler::threadFunction() {
                         std::cerr << "[Keyboard] Error setting air conditioning: " << e.what() << std::endl;
                     }
                 }, "air conditioning", true);
-                // Phím H: Bật/tắt đèn cảnh báo nguy hiểm (toggle)
                 checkKey('H', [&](bool state) { vehicle.setLeftSignalOn(state);
                 vehicle.setRightSignalOn(state); }, "hazard lights", true);
                 
-                // Phím 1: Chuyển sang chế độ lái thường (Normal mode)
-                checkKey('1', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::NORMAL); }, "normal mode");
-                // Phím 2: Chuyển sang chế độ thể thao (Sport mode)
-                checkKey('2', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::SPORT); }, "sport mode");
-                // Phím 3: Chuyển sang chế độ tiết kiệm nhiên liệu (Eco mode)
-                checkKey('3', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::ECO); }, "eco mode");
-                // Phím 4: Chuyển sang chế độ tuyết/địa hình (Snow/Offroad mode)
-                checkKey('4', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::SNOW_OFFROAD); }, "snow/offroad mode");
+                checkKey('1', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::NORMAL); }, "normal mode", false);
+                checkKey('2', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::SPORT); }, "sport mode", false);
+                checkKey('3', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::ECO); }, "eco mode", false);
+                checkKey('4', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::SNOW_OFFROAD); }, "snow/offroad mode", false);
             }
             
             // Update vehicle state at a fixed interval

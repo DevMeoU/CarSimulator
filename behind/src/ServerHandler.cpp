@@ -17,14 +17,40 @@ void ServerHandler::threadFunction() {
             }
 
             nlohmann::json data = {
-                {"speed", vehicleData->speed},
+                {"abs_active", false},
+                {"air_condition", vehicleData->air_condition},
+                {"altitude", vehicleData->altitude},
+                {"battery", vehicleData->battery},
+                {"battery_temp", vehicleData->battery_temp},
                 {"brake", vehicleData->brake},
-                {"gas", vehicleData->gas},
-                {"signal_left", vehicleData->signal_left},
-                {"signal_right", vehicleData->signal_right},
+                {"brake_pressure", vehicleData->brake_pressure},
+                {"distance_traveled", vehicleData->distance_traveled},
+                {"door_lock", vehicleData->door_lock},
                 {"engine_power", vehicleData->engine_power},
                 {"engine_temp", vehicleData->engine_temp},
-                {"battery_temp", vehicleData->battery_temp}
+                {"engine_torque", vehicleData->engine_torque},
+                {"esp_active", false},
+                {"estimated_distance", vehicleData->estimated_distance},
+                {"gas", vehicleData->gas},
+                {"gear", vehicleData->gear},
+                {"mode", vehicleData->mode},
+                {"park", vehicleData->park},
+                {"plug_in", vehicleData->plug_in},
+                {"seat_belt", vehicleData->seat_belt},
+                {"signal_left", vehicleData->signal_left},
+                {"signal_right", vehicleData->signal_right},
+                {"speed", vehicleData->speed},
+                {"temperature", vehicleData->temperature},
+                {"timestamp", std::to_string(vehicleData->timestamp_ms)},
+                // {"warning", vehicleData->warning},
+                {"Speed", vehicleData->speed},
+                {"Distance", vehicleData->distance_traveled},
+                {"Battery", vehicleData->battery},
+                {"Engine", "Running"},
+                {"Doors", vehicleData->door_lock ? "Locked" : "Unlocked"},
+                {"Seatbelt", vehicleData->seat_belt ? "On" : "Off"},
+                {"weather", vehicleData->weather},
+                {"wind", vehicleData->wind}
             };
 
             std::cout << "[Server] Sending vehicle data..." << std::endl;

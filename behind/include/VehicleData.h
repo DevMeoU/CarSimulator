@@ -48,6 +48,9 @@ struct VehicleData {
     
     // Thông số phanh
     double brake_pressure;
+    
+    // Thông số pin
+    double battery_drop_rate;
     bool abs_active;
     bool esp_active;
 };

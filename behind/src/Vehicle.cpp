@@ -1,3 +1,8 @@
+#include <iostream>
+#include <string>
+#include <atomic>
+#include <mutex>
+#include <cmath>
 #include "Vehicle.h"
 #include "Battery.h"
 #include "Engine.h"
@@ -7,15 +12,12 @@
 #include "FaultSimulation.h"
 #include "Sensor.h"
 #include "Display.h"
-#include <string>
-#include <atomic>
-#include <mutex>
 
 Vehicle::Vehicle() :
     vehicleData(std::make_shared<VehicleData>()),
     sensor(SensorType::SPEED, 1.0) {
-        vehicleData->speed = 0;
-        vehicleData->distance_traveled = 0;
+        vehicleData->speed = 0.0;
+        vehicleData->distance_traveled = 0.0;
         vehicleData->brake = false;
         vehicleData->door_lock = true;
         vehicleData->seat_belt = false;
@@ -27,7 +29,7 @@ Vehicle::Vehicle() :
         vehicleData->abs_active = false;
         vehicleData->air_condition = 0;
         vehicleData->altitude = 0;
-        vehicleData->battery = 0;
+        vehicleData->battery = 0.0;
         vehicleData->battery_temp = 0;
         vehicleData->brake_pressure = 0;
         vehicleData->engine_power = 0;
@@ -53,30 +55,70 @@ void Vehicle::update(double deltaTime) {
     // Update vehicle speed based on acceleration/brake state
     if (vehicleData->gas && !vehicleData->brake) {
         vehicleData->speed += engine.getThrottle() * deltaTime;
+        vehicleData->speed = std::max(0.0, vehicleData->speed); // Ensure speed doesn't go negative
     } else if (vehicleData->brake && !vehicleData->gas) {
         vehicleData->speed -= safetySystem.getBrakePower() * deltaTime;
+        vehicleData->speed = std::max(0.0, vehicleData->speed); // Ensure speed doesn't go negative
+    } else if (!vehicleData->gas && !vehicleData->brake) {
+        // Natural deceleration when neither gas nor brake is pressed
+        vehicleData->speed *= 0.98; // Gradual deceleration
+        if (vehicleData->speed < 0.1) vehicleData->speed = 0; // Stop completely when very slow
     }
     
     // Apply speed limits
-    vehicleData->speed = std::max(0.0, std::min(vehicleData->speed, drivingMode.getMaxSpeedLimit()));
+    vehicleData->speed = std::round(std::max(0.0, std::min(vehicleData->speed, drivingMode.getMaxSpeedLimit())) * 10) / 10;
     
     // Update distance traveled
-    vehicleData->distance_traveled += vehicleData->speed * deltaTime / 3600; // Convert from km/h to km/s
+    vehicleData->distance_traveled = std::round((vehicleData->distance_traveled + vehicleData->speed * deltaTime / 3600) * 100) / 100;
     
     // Update battery state
     battery.updateCharge(deltaTime, vehicleData->speed);
+    vehicleData->battery = std::round(battery.getChargePercentage() * 100) / 100;
+    
+    // Calculate estimated distance based on battery and speed (electric vehicle formula)
+    double energy_efficiency = 8 - 0.05 * vehicleData->speed;
+    vehicleData->estimated_distance = std::round((vehicleData->battery * energy_efficiency / 100) * 100) / 100;
+    
+    // Calculate engine temperature with safety checks
+    double ambient_temp = environment.getTemperature();
+    vehicleData->engine_temp = std::round((ambient_temp + vehicleData->engine_power / 10) * 10) / 10;
+    
+    // Reduce engine power if overheating (from depend.md)
+    if (vehicleData->engine_temp > 100) {
+        vehicleData->engine_power *= 0.8;
+    }
+    
+    // Calculate battery drop rate with efficiency factor (from depend.md)
+    vehicleData->battery_drop_rate = std::round((vehicleData->engine_power * 0.1 + vehicleData->air_condition * 2) * 100) / 100;
+    
+    // Battery temperature calculation with efficiency factor (from depend.md)
+    vehicleData->battery_temp = std::round((25 + (vehicleData->battery - 50) * 0.2) * 10) / 10;
     
     // Update sensor readings
     sensor.update(vehicleData->speed);
     
-    // Update display
+    // Generate warnings based on conditions (from depend.md)
+    if (vehicleData->battery < 20 && !vehicleData->plug_in) {
+        vehicleData->warning = "Cảnh báo: Pin yếu!";
+    } else if (vehicleData->battery_temp > 50) {
+        vehicleData->warning = "Cảnh báo: Quá nhiệt pin!";
+    } else if (vehicleData->engine_temp > 120) {
+        vehicleData->warning = "Cảnh báo: Động cơ quá nhiệt!";
+    } else if (!vehicleData->seat_belt && vehicleData->speed > 0) {
+        vehicleData->warning = "Cảnh báo: Chưa thắt dây an toàn!";
+    } else if (!vehicleData->door_lock && vehicleData->speed > 20) {
+        vehicleData->warning = "Cảnh báo: Cửa chưa khóa!";
+    } else {
+        vehicleData->warning = "";
+    }
+    
+    // Update display with additional warnings
     display.showStatus(vehicleData->speed, battery.getChargePercentage(), vehicleData->distance_traveled);
     
     // Update auxiliary parameters
-    vehicleData->battery_temp = battery.getTemperature();
-    vehicleData->brake_pressure = safetySystem.getBrakePower();
+    vehicleData->brake_pressure = std::round(safetySystem.getBrakePower() * 100) / 100;
     vehicleData->safetyStatus = safetySystem.getStatusString();
-    vehicleData->environmentTemp = environment.getTemperature();
+    vehicleData->environmentTemp = std::round(ambient_temp * 10) / 10;
     vehicleData->isSafe = safetySystem.checkStartConditions(*vehicleData);
 }
 
@@ -146,17 +188,17 @@ double Vehicle::getCurrentMaxSpeed() const {
 
 double Vehicle::getSpeed() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    return speed;
+    return std::round(speed * 10) / 10;
 }
 
 double Vehicle::getDistanceTraveled() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    return distanceTraveled;
+    return std::round(distanceTraveled * 100) / 100;
 }
 
 double Vehicle::getBatteryLoad() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    return battery.getCurrentLoad();
+    return std::round(battery.getCurrentLoad() * 100) / 100;
 }
 
 double Vehicle::getBrakePressTime() const {

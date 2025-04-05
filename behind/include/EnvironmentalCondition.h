@@ -132,6 +132,11 @@ public:
     // Air conditioning methods
     void setAirConditioningLevel(int level);
     int getAirConditioningLevel() const;
+    
+    /**
+     * @brief Generate random weather values based on current weather type
+     */
+    void generateRandomWeatherValues();
 };
 ;
 

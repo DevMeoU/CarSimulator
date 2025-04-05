@@ -7,11 +7,12 @@ void EnvironmentHandler::threadFunction() {
     while (running) {
         std::cout << "[Environment] Reading sensor data..." << std::endl;
         EnvironmentalCondition env;
+        env.setWeather(static_cast<WeatherType>(rand() % 4)); // Random weather type
         Sensor tempSensor(SensorType::TEMPERATURE);
         Sensor altSensor(SensorType::ALTITUDE);
 
-        double temperature = tempSensor.readValue();
-        double altitude = altSensor.readValue();
+        double temperature = std::round(tempSensor.readValue() * 10) / 10; // Làm tròn đến 1 chữ số thập phân
+        double altitude = std::round(altSensor.readValue()); // Làm tròn đến số nguyên
 
         std::cout << "[Environment] Updating environment - Temperature: " << temperature << "°C, Altitude: " << altitude << "m" << std::endl;
         
