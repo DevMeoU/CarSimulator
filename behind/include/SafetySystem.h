@@ -22,7 +22,12 @@ private:
     
 public:
     double getBrakePower() const { return brakePower; }
-    void applyBrake(double intensity) { brakePower = intensity * 100; }
+    void applyBrake(double intensity) { 
+        // Apply brake force with realistic deceleration
+        // intensity 0-1 maps to deceleration -6 to -9 m/s²
+        // Convert to km/h/s by multiplying by 3.6
+        brakePower = (6.0 + (intensity * 3.0)) * 3.6;
+    }
     /**
      * @brief Default constructor
      */

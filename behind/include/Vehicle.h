@@ -30,16 +30,16 @@ private:
     Sensor sensor;
     Display display;
     
-    double speed;                // Current speed in km/h
-    double distanceTraveled;     // Total distance traveled in km
-    double brakePressTime;       // Time brake has been pressed in seconds
-    bool doorLocked;             // Whether doors are locked
-    bool seatbeltOn;             // Whether seatbelt is fastened
-    bool engineRunning;          // Whether engine is running
-    bool brakeActive;            // Whether brake is currently active
-    bool acceleratorActive;      // Whether accelerator is currently active
-    bool leftSignalOn;           // Whether left turn signal is on
-    bool rightSignalOn;          // Whether right turn signal is on
+    static double speed;                // Current speed in km/h
+    static double distanceTraveled;     // Total distance traveled in km
+    static double brakePressTime;       // Time brake has been pressed in seconds
+    static bool doorLocked;             // Whether doors are locked
+    static bool seatbeltOn;             // Whether seatbelt is fastened
+    static bool engineRunning;          // Whether engine is running
+    static bool brakeActive;            // Whether brake is currently active
+    static bool acceleratorActive;      // Whether accelerator is currently active
+    static bool leftSignalOn;           // Whether left turn signal is on
+    static bool rightSignalOn;          // Whether right turn signal is on
 
 public:
     /**

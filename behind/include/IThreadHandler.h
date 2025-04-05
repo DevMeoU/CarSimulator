@@ -4,6 +4,7 @@
 #include <atomic>
 #include <thread>
 #include <memory>
+#include "ThreadPriority.h"
 
 /**
  * @class IThreadHandler
@@ -34,6 +35,12 @@ public:
      * @return Thread ID
      */
     virtual std::thread::id getThreadId() const = 0;
+
+    /**
+     * @brief Set thread priority
+     * @param priority New thread priority
+     */
+    virtual void setPriority(ThreadPriority priority) = 0;
 
 protected:
     /**

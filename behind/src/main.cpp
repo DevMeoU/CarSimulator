@@ -51,10 +51,15 @@ int main() {
         auto environmentHandler = std::make_shared<EnvironmentHandler>(vehicleData, vehicle);
         auto serverHandler = std::make_shared<ServerHandler>(vehicleData, "localhost", 8080);
 
-        // Add handlers to manager
+        // Add handlers to manager with priorities
         threadManager.addHandler("keyboard", keyboardHandler);
         threadManager.addHandler("environment", environmentHandler);
         threadManager.addHandler("server", serverHandler);
+
+        // Set thread priorities
+        threadManager.setThreadPriority("keyboard", ThreadPriority::HIGHEST);      // Độ ưu tiên cao nhất cho xử lý phím
+        threadManager.setThreadPriority("server", ThreadPriority::ABOVE_NORMAL);   // Độ ưu tiên trên trung bình cho gửi dữ liệu
+        threadManager.setThreadPriority("environment", ThreadPriority::LOWEST);     // Độ ưu tiên thấp nhất cho môi trường
 
         // Start all threads
         if (!threadManager.startAll()) {

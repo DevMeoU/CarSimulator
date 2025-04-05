@@ -74,6 +74,14 @@ std::shared_ptr<IThreadHandler> ThreadManager::getHandler(const std::string& nam
     return (it != handlers.end()) ? it->second : nullptr;
 }
 
+void ThreadManager::setThreadPriority(const std::string& name, ThreadPriority priority) {
+    auto handler = getHandler(name);
+    if (!handler) {
+        throw std::runtime_error("Thread handler with name '" + name + "' not found");
+    }
+    handler->setPriority(priority);
+}
+
 bool ThreadManager::areAllThreadsRunning() const {
     std::lock_guard<std::mutex> lock(mutex);
     

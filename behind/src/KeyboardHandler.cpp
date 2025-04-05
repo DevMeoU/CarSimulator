@@ -23,54 +23,87 @@ void KeyboardHandler::threadFunction() {
             auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdate);
             auto vehicleElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastVehicleUpdate);
             
-            if (elapsed.count() >= 50) {
+            if (elapsed.count() >= 16) { // ~60 key checks per second
                 lastUpdate = now;
                 
                 std::function<void(int, std::function<void(bool)>, const char*, bool)> checkKey = 
                     [&](int key, std::function<void(bool)> action, const char* actionName, bool isToggle = false) {
                         bool currentState = (GetAsyncKeyState(key) & 0x8000) != 0;
-                        if (currentState && !keyStates[key]) {
-                            keyPressTimes[key] = std::chrono::steady_clock::now();
-                            try {
+                        bool wasPressed = keyStates[key];
+                        
+                        if (currentState) {
+                            if (!wasPressed) {
+                                // Key just pressed
+                                keyPressTimes[key] = std::chrono::steady_clock::now();
                                 if (isToggle) {
                                     toggleStates[key] = !toggleStates[key];
                                     std::cout << "[Keyboard] Key pressed: " << (key < 32 ? std::to_string(key) : std::string(1, static_cast<char>(key)))
                                               << " (" << actionName << ": " << (toggleStates[key] ? "ON" : "OFF") << ")" << std::endl;
+                                    action(toggleStates[key]);
                                 } else {
                                     std::cout << "[Keyboard] Key pressed: " << (key < 32 ? std::to_string(key) : std::string(1, static_cast<char>(key)))
                                               << " (" << actionName << ")" << std::endl;
+                                    action(true);
                                 }
-                                action(isToggle ? toggleStates[key] : true);
-                            } catch (const std::exception& e) {
-                                std::cerr << "[Keyboard] Error executing action '" << actionName << "': " << e.what() << std::endl;
+                            } else {
+                                // Key being held
+                                if (!isToggle) {
+                                    action(true);
+                                }
                             }
-                            keyStates[key] = currentState;
+                        } else if (wasPressed) {
+                            // Key just released
+                            if (!isToggle) {
+                                action(false);
+                            }
                         }
+                        
+                        keyStates[key] = currentState;
                     };
-                
-                
+
+                // Phím ESC: Thoát khỏi chương trình
+                checkKey(VK_ESCAPE, [&](bool) { running = false; }, "exit", false);
                 // Phím SPACE: Tăng tốc xe với gia tốc 0.5
-                checkKey(VK_SPACE, [&](bool success) { 
+                checkKey(VK_SPACE, [&](bool success) {
                     if (success) {
                         auto now = std::chrono::steady_clock::now();
                         auto pressDuration = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressTimes[VK_SPACE]);
-                        if (pressDuration.count() >= 200) {
-                            std::cout << "Accelerating with turbo..." << std::endl;
+                        // Thời gian phản hồi 100-300ms
+                        if (pressDuration.count() >= 100) {
                             if (vehicleData->seat_belt || vehicleData->speed < 20) {
-                                vehicle.accelerate(0.5);
+                                // Gia tốc 2.78 m/s² để đạt 100km/h trong 10s
+                                vehicle.accelerate(2.78);
+                                std::cout << "[Keyboard] Accelerating at 2.78 m/s²" << std::endl;
                             } else {
                                 vehicleData->warning = "WARNING: Seat belt not fastened at high speed!";
                             }
                         }
+                    } else {
+                        // Khi nhả ga, áp dụng phanh tái sinh với gia tốc âm -2 m/s²
+                        vehicle.decelerate(2.0);
+                        std::cout << "[Keyboard] Regenerative braking at -2.0 m/s²" << std::endl;
                     }
                 }, "accelerate (space)", false);
                 checkKey(VK_RETURN, [&](bool success) { 
+                    auto now = std::chrono::steady_clock::now();
+                    auto pressDuration = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressTimes[VK_RETURN]);
+                    
                     if (success) {
-                        vehicle.brake(2); 
-                        vehicle.decelerate(1);
-                        if (vehicleData->speed > 100 && vehicleData->brake_pressure < 50) {
-                            vehicleData->warning = "WARNING: Low brake pressure at high speed!";
+                        // Thời gian phản hồi phanh khi nhấn
+                        if (pressDuration.count() >= 100) {
+                            // Gia tốc phanh -7.5 m/s² (trung bình của -6 đến -9)
+                            vehicle.brake(7.5);
+                            vehicleData->brake = true;
+                            std::cout << "[Keyboard] Braking at -7.5 m/s²" << std::endl;
+                            if (vehicleData->speed > 100 && vehicleData->brake_pressure < 50) {
+                                vehicleData->warning = "WARNING: Low brake pressure at high speed!";
+                            }
                         }
+                    } else if (pressDuration.count() >= 100) {
+                        // Thời gian phản hồi khi nhả phanh
+                        vehicle.brake(0);
+                        vehicleData->brake = false;
+                        std::cout << "[Keyboard] Brake released" << std::endl;
                     }
                 }, "brake (enter)", false);
                 checkKey('D', [&](bool success) { if (success) vehicle.setGear("P"); }, "park gear", false);
@@ -117,7 +150,6 @@ void KeyboardHandler::threadFunction() {
                 double deltaTime = vehicleElapsed.count() / 1000.0;
                 
                 try {
-                    vehicle.update(deltaTime);
                     // Update vehicle data with latest state
                     std::lock_guard<std::mutex> lock(vehicleData->mutex);
                     // Update core vehicle parameters with thread-safe calculations
@@ -150,6 +182,7 @@ void KeyboardHandler::threadFunction() {
                     vehicleData->esp_active = safetySystem.isEspActive();
                     vehicleData->brake = vehicle.isBrakeActive();
                     vehicleData->gas = vehicle.isAcceleratorActive();
+                    std::cout << "[Keyboard] Gas: " << (vehicleData->gas? "ON" : "OFF") << std::endl;
                     vehicleData->door_lock = vehicle.isDoorLocked();
                     vehicleData->plug_in = vehicle.getBattery().isCharging();
                     vehicleData->seat_belt = vehicle.isSeatbeltOn();
@@ -165,12 +198,15 @@ void KeyboardHandler::threadFunction() {
                     vehicleData->timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
                         std::chrono::system_clock::now().time_since_epoch()).count();
                     vehicleData->warning = vehicle.getStatusString();
+
+                    /* Update vehicle state */
+                    vehicle.update(deltaTime);
                 } catch (const std::exception& e) {
                     std::cerr << "[Keyboard] Error updating vehicle state: " << e.what() << std::endl;
                 }
             }
             
-            std::this_thread::sleep_for(std::chrono::milliseconds(5));
+            std::this_thread::sleep_for(std::chrono::milliseconds(1)); // Reduce sleep time for faster key response
         } catch (const std::exception& e) {
             std::cerr << "[Keyboard] Critical error in thread loop: " << e.what() << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(100)); // Prevent tight error loop

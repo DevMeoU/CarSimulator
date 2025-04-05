@@ -13,6 +13,18 @@
 #include "Sensor.h"
 #include "Display.h"
 
+// Initialize static members
+double Vehicle::speed = 0.0;
+double Vehicle::distanceTraveled = 0.0;
+double Vehicle::brakePressTime = 0.0;
+bool Vehicle::doorLocked = true;
+bool Vehicle::seatbeltOn = false;
+bool Vehicle::engineRunning = false;
+bool Vehicle::brakeActive = false;
+bool Vehicle::acceleratorActive = false;
+bool Vehicle::leftSignalOn = false;
+bool Vehicle::rightSignalOn = false;
+
 Vehicle::Vehicle() :
     vehicleData(std::make_shared<VehicleData>()),
     sensor(SensorType::SPEED, 1.0) {
@@ -51,18 +63,42 @@ Vehicle::~Vehicle() {}
 
 void Vehicle::update(double deltaTime) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    
+
     // Update vehicle speed based on acceleration/brake state
     if (vehicleData->gas && !vehicleData->brake) {
-        vehicleData->speed += engine.getThrottle() * deltaTime;
-        vehicleData->speed = std::max(0.0, vehicleData->speed); // Ensure speed doesn't go negative
+        // Apply throttle to speed, accumulating over time
+        double acceleration = engine.getThrottle() * 3.6; // Convert to km/h
+        vehicleData->speed += acceleration * deltaTime;
+        // Update member variables
+        speed = vehicleData->speed;
+        acceleratorActive = true;
+        brakeActive = false;
     } else if (vehicleData->brake && !vehicleData->gas) {
-        vehicleData->speed -= safetySystem.getBrakePower() * deltaTime;
+        double deceleration = safetySystem.getBrakePower() * 3.6; // Convert to km/h
+        vehicleData->speed -= deceleration * deltaTime;
         vehicleData->speed = std::max(0.0, vehicleData->speed); // Ensure speed doesn't go negative
+        // Update member variables
+        speed = vehicleData->speed;
+        acceleratorActive = false;
+        brakeActive = true;
     } else if (!vehicleData->gas && !vehicleData->brake) {
         // Natural deceleration when neither gas nor brake is pressed
-        vehicleData->speed *= 0.98; // Gradual deceleration
+        double naturalDeceleration = vehicleData->speed * 0.02; // 2% speed loss per update
+        vehicleData->speed -= naturalDeceleration;
         if (vehicleData->speed < 0.1) vehicleData->speed = 0; // Stop completely when very slow
+        // Update member variables
+        speed = vehicleData->speed;
+        acceleratorActive = false;
+        brakeActive = false;
+    } else if (vehicleData->gas && vehicleData->brake) {
+        // If both gas and brake are pressed, prioritize brake for safety
+        double deceleration = safetySystem.getBrakePower() * 3.6; // Convert to km/h
+        vehicleData->speed -= deceleration * deltaTime;
+        vehicleData->speed = std::max(0.0, vehicleData->speed); // Ensure speed doesn't go negative
+        // Update member variables
+        speed = vehicleData->speed;
+        acceleratorActive = false;
+        brakeActive = true;
     }
     
     // Apply speed limits
@@ -143,15 +179,11 @@ void Vehicle::stopEngine() {
     vehicleData->speed = 0;
 }
 
-void Vehicle::pressBrake(double seconds) {
-    std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    vehicleData->brake = true;
-}
-
 void Vehicle::brake(double intensity) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
-    vehicleData->brake = true;
+    // Khi intensity > 0 là đang phanh, intensity = 0 là nhả phanh
+    vehicleData->brake = (intensity > 0);
     safetySystem.applyBrake(intensity);
 }
 
@@ -159,6 +191,8 @@ void Vehicle::accelerate(double intensity) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
     acceleratorActive = true;
+    vehicleData->gas = true;
+    // Call the engine's setThrottle method with the given intensity
     engine.setThrottle(intensity);
 }
 
@@ -166,6 +200,7 @@ void Vehicle::decelerate(double intensity) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
 
     acceleratorActive = false;
+    vehicleData->gas = false;
     engine.setThrottle(-intensity);
 }
 

@@ -1,6 +1,10 @@
 #ifndef THREAD_HANDLERS_H
 #define THREAD_HANDLERS_H
 
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+
 #include "BaseThreadHandler.h"
 #include "Vehicle.h"
 #include "httplib.h"

@@ -8,6 +8,7 @@
 #include <mutex>
 #include "IThreadHandler.h"
 #include "VehicleData.h"
+#include "ThreadPriority.h"
 
 /**
  * @class ThreadManager
@@ -20,6 +21,13 @@ public:
      * @param vehicleData Shared vehicle data
      */
     explicit ThreadManager(std::shared_ptr<VehicleData> vehicleData);
+    
+    /**
+     * @brief Set thread priority
+     * @param name Thread name
+     * @param priority Thread priority
+     */
+    void setThreadPriority(const std::string& name, ThreadPriority priority);
     
     /**
      * @brief Destructor
