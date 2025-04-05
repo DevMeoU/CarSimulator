@@ -103,6 +103,18 @@ public:
     bool activateEmergencyBrake();
     
     /**
+     * @brief Check if there is a brake system error
+     * @return true if there is a brake system error, false otherwise
+     */
+    bool hasBrakeSystemError() const;
+
+    /**
+     * @brief Check if there is a general system error
+     * @return true if there is a system error, false otherwise
+     */
+    bool hasSystemError() const;
+
+    /**
      * @brief Get safety system status as string
      * @return Status string
      */

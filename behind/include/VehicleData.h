@@ -53,4 +53,8 @@ struct VehicleData {
     double battery_drop_rate;
     bool abs_active;
     bool esp_active;
+    
+    double getNormalizedBattery() const {
+        return battery * 100.0; // Convert to percentage (0-100)
+    }
 };

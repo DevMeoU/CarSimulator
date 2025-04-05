@@ -178,6 +178,50 @@ bool SafetySystem::activateEmergencyBrake() {
     return true;
 }
 
+bool SafetySystem::hasBrakeSystemError() const {
+    // Check for brake system errors by monitoring ABS status and brake power
+    if (absActive && brakePower < 1.0) {
+        // ABS is active but brake power is too low
+        return true;
+    }
+    
+    // Check if brake power is within normal operating range (0-324 km/h/s)
+    if (brakePower < 0.0 || brakePower > 324.0) {
+        return true;
+    }
+    
+    return false;
+}
+
+bool SafetySystem::hasSystemError() const {
+    // Check for any critical system errors
+    
+    // Check brake system
+    if (hasBrakeSystemError()) {
+        return true;
+    }
+    
+    // Check ESP system
+    if (espActive && !absActive) {
+        // ESP is active but ABS is not - potential system conflict
+        return true;
+    }
+    
+    // Check ADAS system
+    if (adasActive && !batteryMonitorActive) {
+        // ADAS requires battery monitoring
+        return true;
+    }
+    
+    // Check airbag system
+    if (airbagCount <= 0) {
+        // No functional airbags
+        return true;
+    }
+    
+    return false;
+}
+
 std::string SafetySystem::getStatusString() const {
     std::stringstream ss;
     ss << "Safety Systems Status:" << std::endl;

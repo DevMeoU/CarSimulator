@@ -115,6 +115,12 @@ public:
     double calculateChargingTime(double targetLevel, bool fastCharging) const;
     
     /**
+     * @brief Check if there is a charging error
+     * @return true if there is a charging error, false otherwise
+     */
+    bool hasChargingError() const;
+
+    /**
      * @brief Get battery status as string
      * @return Status string
      */

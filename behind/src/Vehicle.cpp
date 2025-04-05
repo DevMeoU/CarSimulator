@@ -12,6 +12,7 @@
 #include "FaultSimulation.h"
 #include "Sensor.h"
 #include "Display.h"
+#include "WarningMessages.h"
 
 // Initialize static members
 double Vehicle::speed = 0.0;
@@ -34,32 +35,36 @@ Vehicle::Vehicle() :
         vehicleData->door_lock = true;
         vehicleData->seat_belt = false;
         vehicleData->running = false;
-        vehicleData->brake = false;
         vehicleData->gas = false;
         vehicleData->signal_left = false;
         vehicleData->signal_right = false;
         vehicleData->abs_active = false;
-        vehicleData->air_condition = 0;
-        vehicleData->altitude = 0;
-        vehicleData->battery = 0.0;
-        vehicleData->battery_temp = 0;
-        vehicleData->brake_pressure = 0;
-        vehicleData->engine_power = 0;
-        vehicleData->engine_temp = 0;
-        vehicleData->engine_torque = 0;
-        vehicleData->esp_active = false;
-        vehicleData->estimated_distance = 0;
-        vehicleData->gear = "";
-        vehicleData->mode = "";
-        vehicleData->park = false;
-        vehicleData->plug_in = false;
-        vehicleData->temperature = 0;
-        vehicleData->warning = "";
-        vehicleData->weather = "";
-        vehicleData->wind = 0;
+        vehicleData->air_condition = 22.0;  // Nhiệt độ điều hòa mặc định 22°C
+        vehicleData->altitude = 0.0;        // Độ cao mặc định là mực nước biển
+        vehicleData->battery = 100.0;       // Pin đầy khi khởi động
+        vehicleData->battery_temp = 25.0;   // Nhiệt độ pin ở mức an toàn
+        vehicleData->brake_pressure = 0.0;  // Áp suất phanh ban đầu
+        vehicleData->engine_power = 0.0;    // Công suất động cơ ban đầu
+        vehicleData->engine_temp = 25.0;    // Nhiệt độ động cơ ở mức an toàn
+        vehicleData->engine_torque = 0.0;   // Mô-men xoắn ban đầu
+        vehicleData->esp_active = false;    // ESP chưa kích hoạt
+        vehicleData->estimated_distance = 0.0; // Quãng đường ước tính
+        vehicleData->gear = "P";            // Số P khi khởi động
+        vehicleData->mode = "NORMAL";        // Chế độ lái thường
+        vehicleData->park = true;           // Đang đỗ xe
+        vehicleData->plug_in = false;       // Chưa cắm sạc
+        vehicleData->temperature = 25.0;    // Nhiệt độ môi trường
+        vehicleData->warning = "";          // Không có cảnh báo
+        vehicleData->weather = "CLEAR";      // Thời tiết quang đãng
+        vehicleData->wind = 0.0;           // Không có gió
     }
 
 Vehicle::~Vehicle() {}
+
+double Vehicle::getNormalizedBattery() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    return std::round(vehicleData->battery) / 100.0;
+}
 
 void Vehicle::update(double deltaTime) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
@@ -109,7 +114,8 @@ void Vehicle::update(double deltaTime) {
     
     // Update battery state
     battery.updateCharge(deltaTime, vehicleData->speed);
-    vehicleData->battery = std::round(battery.getChargePercentage() * 100) / 100;
+    vehicleData->battery = std::round(battery.getChargePercentage());
+    std::cout << "Battery Charge: " << vehicleData->battery << "%" << std::endl;
     
     // Calculate estimated distance based on battery and speed (electric vehicle formula)
     double energy_efficiency = 8 - 0.05 * vehicleData->speed;
@@ -135,17 +141,17 @@ void Vehicle::update(double deltaTime) {
     
     // Generate warnings based on conditions (from depend.md)
     if (vehicleData->battery < 20 && !vehicleData->plug_in) {
-        vehicleData->warning = "Cảnh báo: Pin yếu!";
+        vehicleData->warning = WARNING_LOW_BATTERY;
     } else if (vehicleData->battery_temp > 50) {
-        vehicleData->warning = "Cảnh báo: Quá nhiệt pin!";
+        vehicleData->warning = WARNING_BATTERY_TEMP_HIGH;
     } else if (vehicleData->engine_temp > 120) {
-        vehicleData->warning = "Cảnh báo: Động cơ quá nhiệt!";
+        vehicleData->warning = WARNING_HIGH_ENGINE_TEMP;
     } else if (!vehicleData->seat_belt && vehicleData->speed > 0) {
-        vehicleData->warning = "Cảnh báo: Chưa thắt dây an toàn!";
+        vehicleData->warning = WARNING_SEATBELT_HIGH_SPEED;
     } else if (!vehicleData->door_lock && vehicleData->speed > 20) {
-        vehicleData->warning = "Cảnh báo: Cửa chưa khóa!";
+        vehicleData->warning = WARNING_SYSTEM_ERROR;
     } else {
-        vehicleData->warning = "";
+        vehicleData->warning = WARNING_NONE;
     }
     
     // Update display with additional warnings
@@ -355,14 +361,41 @@ Display& Vehicle::getDisplay() {
     return display;
 }
 
-std::string Vehicle::getStatusString() const {
+std::string Vehicle::getWarningMessages() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    return "Speed: " + std::to_string(speed) + " km/h\n" +
-           "Distance: " + std::to_string(distanceTraveled) + " km\n" +
-           "Battery: " + std::to_string(battery.getChargeLevel()) + "%\n" +
-           "Engine: " + (engineRunning ? "Running" : "Stopped") + "\n" +
-           "Doors: " + (doorLocked ? "Locked" : "Unlocked") + "\n" +
-           "Seatbelt: " + (seatbeltOn ? "On" : "Off");
+    
+    // Return appropriate warning based on vehicle state
+    if (!seatbeltOn && speed > 20) {
+        return WARNING_SEATBELT_HIGH_SPEED;
+    } else if (speed > 100 && safetySystem.getBrakePower() < 50) {
+        return WARNING_LOW_BRAKE_PRESSURE;
+    } else if (speed > 0 && vehicleData->park) {
+        return WARNING_PARKING_WHILE_MOVING;
+    } else if (speed > 10 && vehicleData->gear == "R") {
+        return WARNING_REVERSE_HIGH_SPEED;
+    } else if (battery.getChargeLevel() < 20) {
+        return WARNING_LOW_BATTERY;
+    } else if (engine.getTemperature() > 90) {
+        return WARNING_HIGH_ENGINE_TEMP;
+    } else if (battery.getTemperature() > 50) {
+        return WARNING_BATTERY_TEMP_HIGH;
+    // } else if (safetySystem.getOilPressure() < 30) {
+    //     return WARNING_LOW_OIL_PRESSURE;
+    } else if (environment.getAltitude() > 3000) {
+        return WARNING_HIGH_ALTITUDE;
+    } else if (environment.getTemperature() > 40 || environment.getTemperature() < -10) {
+        return WARNING_EXTREME_TEMPERATURE;
+    } else if (environment.getWeather() == WeatherType::SNOW || environment.getWeather() == WeatherType::FOG) {
+        return WARNING_SEVERE_WEATHER;
+    } else if (battery.hasChargingError()) {
+        return WARNING_CHARGING_ERROR;
+    } else if (safetySystem.hasBrakeSystemError()) {
+        return WARNING_BRAKE_SYSTEM;
+    } else if (safetySystem.hasSystemError()) {
+        return WARNING_SYSTEM_ERROR;
+    }
+    
+    return WARNING_NONE;
 }
 
 void Vehicle::simulateFault(FaultType faultType, double severity) {

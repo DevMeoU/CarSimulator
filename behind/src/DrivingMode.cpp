@@ -7,10 +7,10 @@ DrivingMode::DrivingMode()
     : currentMode(DrivingModeType::NORMAL) {
     
     // Initialize max speed limits as per Operation.md
-    maxSpeedLimits[DrivingModeType::NORMAL] = 150.0;      // 150 km/h
-    maxSpeedLimits[DrivingModeType::SPORT] = 180.0;       // 180 km/h
-    maxSpeedLimits[DrivingModeType::ECO] = 120.0;         // 120 km/h
-    maxSpeedLimits[DrivingModeType::SNOW_OFFROAD] = 80.0; // 80 km/h
+    maxSpeedLimits[DrivingModeType::NORMAL] = 220.0;      // 220 km/h
+    maxSpeedLimits[DrivingModeType::SPORT] = 265.0;       // 265 km/h
+    maxSpeedLimits[DrivingModeType::ECO] = 180.0;         // 180 km/h
+    maxSpeedLimits[DrivingModeType::SNOW_OFFROAD] = 120.0; // 120 km/h
     
     // Initialize power factors
     powerFactors[DrivingModeType::NORMAL] = 0.9;      // 90% of max power

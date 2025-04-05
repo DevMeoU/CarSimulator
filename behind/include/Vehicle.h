@@ -94,6 +94,12 @@ public:
     void decelerate(double intensity);
     
     /**
+     * @brief Get current warning messages based on vehicle state
+     * @return String containing the warning message
+     */
+    std::string getWarningMessages() const;
+
+    /**
      * @brief Change driving mode
      * @param mode New driving mode
      * @return true if mode changed successfully, false otherwise
@@ -189,6 +195,12 @@ public:
      * @param on New signal state
      */
     void setRightSignalOn(bool on);
+    
+    /**
+     * @brief Get normalized battery percentage (0.0 to 1.0)
+     * @return Normalized battery value
+     */
+    double getNormalizedBattery() const;
     
     /**
      * @brief Set vehicle gear

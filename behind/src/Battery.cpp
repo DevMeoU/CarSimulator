@@ -10,8 +10,8 @@
 Battery::Battery() 
     : capacity(75.0),       // 75 kWh as per Database.md
       voltage(400.0),       // 400 V as per Database.md
-      currentCharge(0.8),   // Start with 80% charge (more realistic)
-      temperature(30.0),    // Normal operating temperature (adjusted for realistic conditions)
+      currentCharge(0.8),   // Start with 80% charge (0.8 = 80%, value range: 0.0-1.0)
+      temperature(35.0),    // Normal operating temperature (below warning threshold of 45°C)
       range(450.0),         // 450 km as per Database.md
       charging(false) {
 }
@@ -19,8 +19,8 @@ Battery::Battery()
 Battery::Battery(double capacity, double voltage, double range)
     : capacity(capacity),
       voltage(voltage),
-      currentCharge(1.0),
-      temperature(25.0),
+      currentCharge(0.8),   // Consistent with default constructor
+      temperature(35.0),    // Consistent with default constructor
       range(range),
       charging(false) {
 }
@@ -43,12 +43,20 @@ double Battery::getCurrentCharge() const {
 }
 
 void Battery::updateCharge(double deltaTime, double speed) {
-    currentCharge -= (speed * 0.01 + temperature * 0.005) * deltaTime;
-    currentCharge = std::max(0.0, std::min(currentCharge, capacity));
+    // Tính toán mức tiêu hao pin dựa trên:
+    // - Tốc độ: 0.0001667 kWh/km (tính theo % capacity) để đạt 450km với pin 75kWh
+    // - Nhiệt độ: 0.00002 kWh/°C (tính theo % capacity)
+    // - Thời gian: deltaTime để cập nhật theo thời gian thực
+    double speedConsumption = (speed * 0.0001667) / capacity;
+    double tempConsumption = (temperature * 0.00002) / capacity;
+    currentCharge -= (speedConsumption + tempConsumption) * deltaTime;
+    
+    // Đảm bảo giá trị nằm trong khoảng hợp lệ (0-1)
+    currentCharge = std::max(0.0, std::min(1.0, currentCharge));
 }
 
 double Battery::getCurrentLoad() const {
-    return currentCharge * 100;
+    return getChargePercentage();
 }
 
 double Battery::getChargeLevel() const {
@@ -56,7 +64,7 @@ double Battery::getChargeLevel() const {
 }
 
 double Battery::getChargePercentage() const {
-    return (currentCharge / capacity) * 100.0;
+    return currentCharge * 100.0;
 }
 
 double Battery::getTemperature() const {
@@ -216,24 +224,31 @@ double Battery::calculateRemainingRange(DrivingModeType mode, const Environmenta
 }
 
 void Battery::updateTemperature(double ambientTemp, std::chrono::system_clock::time_point timestamp) {
-    // Battery temperature tends to move toward ambient temperature
-    // but increases with load (discharge/charge rate)
+    // Cập nhật nhiệt độ pin dựa trên:
+    // - Nhiệt độ môi trường
+    // - Tải sử dụng pin
+    // - Thời gian từ lần cập nhật trước
     double tempDiff = ambientTemp - temperature;
     
-    // Temperature change rate depends on the difference and current load
-    double load = getCurrentCharge(); // Use current charge as load factor
+    // Tốc độ thay đổi nhiệt độ phụ thuộc vào:
+    // - Chênh lệch nhiệt độ với môi trường (0.1°C/s)
+    // - Tải sử dụng (tăng 5°C khi tải đầy)
+    double load = getCurrentLoad() / 100.0; // Chuyển đổi phần trăm thành tỷ lệ
     double tempChangeRate = 0.1 * tempDiff + (load * 5.0);
     
-    // Update temperature (limited change per update)
+    // Giới hạn tốc độ thay đổi nhiệt độ (-2°C đến +2°C mỗi lần cập nhật)
     temperature += std::max(-2.0, std::min(2.0, tempChangeRate));
     
-    // Ensure temperature stays within realistic bounds
-    temperature = std::max(-20.0, std::min(80.0, temperature));
+    // Đảm bảo nhiệt độ nằm trong giới hạn an toàn
+    // Theo Database.md: Cảnh báo ở 45°C, ngắt ở 60°C
+    temperature = std::max(-20.0, std::min(60.0, temperature));
 }
 
 bool Battery::checkTemperature() const {
-    // Check if temperature is within safe limits
-    // As per Database.md, warning at 45°C, critical at 60°C
+    // Kiểm tra nhiệt độ pin có nằm trong giới hạn an toàn
+    // Theo Database.md:
+    // - Cảnh báo khi nhiệt độ > 45°C
+    // - Ngắt sạc khi nhiệt độ > 60°C
     return temperature < 45.0;
 }
 
@@ -257,30 +272,33 @@ double Battery::calculateChargingTime(double targetLevel, bool fastCharging) con
         return 0.0;
     }
     
-    // Based on Database.md:
-    // Fast charging: 0-80% in 30 minutes
-    // AC charging: 7.4 kW (8 hours for full charge)
+    // Tính thời gian sạc dựa trên Database.md:
+    // - Sạc nhanh DC: 0-80% trong 30 phút
+    // - Sạc AC: 7.4 kW (8 giờ để sạc đầy)
     
     if (fastCharging) {
-        // Fast charging rate is not linear - it slows down after 80%
+        // Tốc độ sạc nhanh không tuyến tính - chậm lại sau 80%
         if (targetLevel <= 0.8) {
-            // Simple linear calculation for 0-80%
+            // Tính tuyến tính cho 0-80%
+            // Công thức: (Phần trăm cần sạc / 80%) * 30 phút
             return (chargeNeeded / 0.8) * 30.0;
         } else {
-            // Time to reach 80%
-            double timeTo80Percent = (0.8 - currentCharge) / 0.8 * 30.0;
+            // Thời gian để đạt 80%
+            double timeTo80Percent = std::max(0.0, (0.8 - currentCharge)) / 0.8 * 30.0;
             
-            // Remaining charge needed after 80%
+            // Phần còn lại cần sạc sau 80%
             double remainingCharge = targetLevel - 0.8;
             
-            // Charging slows down significantly after 80%
+            // Sạc chậm hơn đáng kể sau 80% (gấp đôi thời gian)
+            // 20% còn lại mất 60 phút
             double timeAfter80Percent = remainingCharge / 0.2 * 60.0;
             
-            return std::max(0.0, timeTo80Percent) + timeAfter80Percent;
+            return timeTo80Percent + timeAfter80Percent;
         }
     } else {
-        // AC charging - linear rate
-        // 8 hours for full charge (0-100%)
+        // Sạc AC - tốc độ tuyến tính
+        // 8 giờ để sạc đầy (0-100%)
+        // Công thức: (Phần trăm cần sạc) * 8 giờ * 60 phút
         return chargeNeeded * 8.0 * 60.0;
     }
 }
@@ -296,4 +314,23 @@ std::string Battery::getStatusString() const {
     ss << "  Charging: " << (charging ? "Yes" : "No") << std::endl;
     
     return ss.str();
+}
+
+bool Battery::hasChargingError() const {
+    // Check for charging-related errors
+    if (charging) {
+        // Critical temperature while charging
+        if (temperature > 60.0) return true;
+        
+        // Attempting to charge a full battery
+        if (currentCharge >= 1.0) return true;
+        
+        // Temperature rising too quickly during charging
+        if (temperature > 45.0) return true;
+    }
+    
+    // Check for extremely low charge level
+    if (currentCharge < 0.05) return true;
+    
+    return false;
 }

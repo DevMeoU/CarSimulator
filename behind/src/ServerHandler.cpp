@@ -20,7 +20,7 @@ void ServerHandler::threadFunction() {
                 {"abs_active", false},
                 {"air_condition", vehicleData->air_condition},
                 {"altitude", vehicleData->altitude},
-                {"battery", vehicleData->battery},
+                {"battery", vehicleData->getNormalizedBattery()},
                 {"battery_temp", vehicleData->battery_temp},
                 {"brake", vehicleData->brake},
                 {"brake_pressure", vehicleData->brake_pressure},
@@ -42,18 +42,16 @@ void ServerHandler::threadFunction() {
                 {"speed", vehicleData->speed},
                 {"temperature", vehicleData->temperature},
                 {"timestamp", std::to_string(vehicleData->timestamp_ms)},
-                // {"warning", vehicleData->warning},
-                {"Speed", vehicleData->speed},
-                {"Distance", vehicleData->distance_traveled},
-                {"Battery", vehicleData->battery},
-                {"Engine", "Running"},
-                {"Doors", vehicleData->door_lock ? "Locked" : "Unlocked"},
-                {"Seatbelt", vehicleData->seat_belt ? "On" : "Off"},
+                {"warning", vehicleData->warning},
+                {"timestamp", std::to_string(vehicleData->timestamp_ms)},
                 {"weather", vehicleData->weather},
                 {"wind", vehicleData->wind}
             };
 
             std::cout << "[Server] Sending vehicle data..." << std::endl;
+
+            std::cout << "Data: " << data.dump() << std::endl;
+
             auto res = cli->Post("/api/data", data.dump(), "application/json");
             
             if (res && res->status == 200) {

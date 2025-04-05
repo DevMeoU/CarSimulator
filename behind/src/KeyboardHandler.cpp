@@ -1,4 +1,5 @@
 #include "ThreadHandlers.h"
+#include "WarningMessages.h"
 #include <Windows.h>
 #include <iostream>
 
@@ -75,7 +76,7 @@ void KeyboardHandler::threadFunction() {
                                 vehicle.accelerate(2.78);
                                 std::cout << "[Keyboard] Accelerating at 2.78 m/s²" << std::endl;
                             } else {
-                                vehicleData->warning = "WARNING: Seat belt not fastened at high speed!";
+                                vehicleData->warning = WARNING_SEATBELT_HIGH_SPEED;
                             }
                         }
                     } else {
@@ -96,7 +97,7 @@ void KeyboardHandler::threadFunction() {
                             vehicleData->brake = true;
                             std::cout << "[Keyboard] Braking at -7.5 m/s²" << std::endl;
                             if (vehicleData->speed > 100 && vehicleData->brake_pressure < 50) {
-                                vehicleData->warning = "WARNING: Low brake pressure at high speed!";
+                                vehicleData->warning = WARNING_LOW_BRAKE_PRESSURE;
                             }
                         }
                     } else if (pressDuration.count() >= 100) {
@@ -113,7 +114,7 @@ void KeyboardHandler::threadFunction() {
                     if (success && vehicleData->speed <= 10) {
                         vehicle.setGear("R"); 
                     } else if (success) {
-                        vehicleData->warning = "WARNING: Cannot shift to reverse at high speed!";
+                        vehicleData->warning = WARNING_REVERSE_HIGH_SPEED;
                     }
                 }, "reverse gear", false);
                 checkKey('N', [&](bool success) { if (success) vehicle.setGear("N"); }, "neutral gear", false);
@@ -121,7 +122,7 @@ void KeyboardHandler::threadFunction() {
                     if (vehicleData->speed == 0 || state) {
                         vehicle.setParking(state); 
                     } else {
-                        vehicleData->warning = "WARNING: Cannot release parking brake while moving!";
+                        vehicleData->warning = WARNING_PARKING_WHILE_MOVING;
                     }
                 }, "parking", true);
                 checkKey('V', [&](bool state) { vehicle.setLeftSignalOn(state); }, "left signal", true);
@@ -182,7 +183,6 @@ void KeyboardHandler::threadFunction() {
                     vehicleData->esp_active = safetySystem.isEspActive();
                     vehicleData->brake = vehicle.isBrakeActive();
                     vehicleData->gas = vehicle.isAcceleratorActive();
-                    std::cout << "[Keyboard] Gas: " << (vehicleData->gas? "ON" : "OFF") << std::endl;
                     vehicleData->door_lock = vehicle.isDoorLocked();
                     vehicleData->plug_in = vehicle.getBattery().isCharging();
                     vehicleData->seat_belt = vehicle.isSeatbeltOn();
@@ -197,7 +197,7 @@ void KeyboardHandler::threadFunction() {
                     // Update timestamp and warning
                     vehicleData->timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
                         std::chrono::system_clock::now().time_since_epoch()).count();
-                    vehicleData->warning = vehicle.getStatusString();
+                    vehicleData->warning = vehicle.getWarningMessages();
 
                     /* Update vehicle state */
                     vehicle.update(deltaTime);
