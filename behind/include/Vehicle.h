@@ -218,9 +218,11 @@ public:
      */
     void setGear(const std::string& gear);
     
-
-    
-
+    /**
+     * @brief Get current vehicle gear
+     * @return Current gear ("P", "R", "N", "D")
+     */
+    std::string getGear() const;
     
     /**
      * @brief Set parking brake state
