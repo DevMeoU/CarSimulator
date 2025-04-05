@@ -30,6 +30,14 @@ private:
     Sensor sensor;
     Display display;
     
+    // Engine parameters
+    double power;          // Engine power in kW
+    double maxTorque;      // Maximum torque in Nm
+    double currentPower;   // Current power output in kW
+    double temperature;    // Engine temperature in °C
+    bool overheated;       // Overheating status
+    std::string gear;      // Current gear position
+    
     static double speed;                // Current speed in km/h
     static double distanceTraveled;     // Total distance traveled in km
     static double brakePressTime;       // Time brake has been pressed in seconds
@@ -196,6 +204,8 @@ public:
      */
     void setRightSignalOn(bool on);
     
+
+    
     /**
      * @brief Get normalized battery percentage (0.0 to 1.0)
      * @return Normalized battery value
@@ -207,6 +217,10 @@ public:
      * @param gear Gear to set ("P", "R", "N", "D")
      */
     void setGear(const std::string& gear);
+    
+
+    
+
     
     /**
      * @brief Set parking brake state

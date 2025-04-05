@@ -124,3 +124,10 @@ void Display::showStatus(double speed, double batteryLevel, double temperature) 
     ss << "Temp: " << temperature << "°C";
     addMessage(ss.str(), MessageType::INFO);
 }
+
+void Display::showGear(const std::string& gear) {
+    std::stringstream ss;
+    std::string displayGear = gear.empty() ? "N" : gear;
+    ss << "Current Gear: " << displayGear;
+    addMessage(ss.str(), MessageType::INFO);
+}

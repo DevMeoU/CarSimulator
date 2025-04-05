@@ -28,7 +28,10 @@ bool Vehicle::rightSignalOn = false;
 
 Vehicle::Vehicle() :
     vehicleData(std::make_shared<VehicleData>()),
-    sensor(SensorType::SPEED, 1.0) {
+    sensor(SensorType::SPEED, 1.0),
+    engine(150.0, 320.0),  // Initialize engine with 150 kW power and 320 Nm torque
+    gear("P")            // Default gear is Park
+    {
         vehicleData->speed = 0.0;
         vehicleData->distance_traveled = 0.0;
         vehicleData->brake = false;
@@ -115,7 +118,6 @@ void Vehicle::update(double deltaTime) {
     // Update battery state
     battery.updateCharge(deltaTime, vehicleData->speed);
     vehicleData->battery = std::round(battery.getChargePercentage());
-    std::cout << "Battery Charge: " << vehicleData->battery << "%" << std::endl;
     
     // Calculate estimated distance based on battery and speed (electric vehicle formula)
     double energy_efficiency = 8 - 0.05 * vehicleData->speed;
@@ -302,6 +304,11 @@ void Vehicle::setRightSignalOn(bool on) {
     rightSignalOn = on;
 }
 
+std::string Vehicle::getGear() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    return vehicleData->gear;
+}
+
 void Vehicle::setGear(const std::string& gear) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     if (gear == "P" || gear == "R" || gear == "N" || gear == "D") {
@@ -314,6 +321,14 @@ void Vehicle::setGear(const std::string& gear) {
         } else {
             vehicleData->park = false;
         }
+        
+        // Update display with new gear information
+        display.showGear(gear);
+        
+        // Log gear change for debugging
+        std::cout << "[Vehicle] Gear changed to: " << gear << std::endl;
+    } else {
+        std::cerr << "[Vehicle] Invalid gear: " << gear << std::endl;
     }
 }
 

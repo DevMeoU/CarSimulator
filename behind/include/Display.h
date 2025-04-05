@@ -49,6 +49,12 @@ public:
     void clearMessages();
     
     /**
+     * @brief Display current gear information
+     * @param gear The current gear as string
+     */
+    void showGear(const std::string& gear);
+    
+    /**
      * @brief Clear messages of a specific type
      * @param type Message type to clear
      */

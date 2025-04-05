@@ -11,7 +11,7 @@ class WarningDisplay {
         };
     }
 
-    update(warningStatus) {
+    update(warningMessages) {
         if (!this.warningElement) {
             console.error('Warning element not found in DOM');
             return;
@@ -23,9 +23,9 @@ class WarningDisplay {
             return;
         }
         
-        if (warningStatus >= 1) {
+        if (warningMessages !== null) {
             this.warningElement.classList.add('active');
-            this.warningElement.textContent = this.warningMessages[warningStatus] || 'CẢNH BÁO KHÔNG XÁC ĐỊNH';
+            this.warningElement.textContent = warningMessages || 'CẢNH BÁO KHÔNG XÁC ĐỊNH';
             this.warningElement.style.display = 'inline-flex';
             warningAlert.style.display = 'inline-flex';
         } else {

@@ -107,7 +107,7 @@ void KeyboardHandler::threadFunction() {
                         std::cout << "[Keyboard] Brake released" << std::endl;
                     }
                 }, "brake (enter)", false);
-                checkKey('D', [&](bool success) { if (success) vehicle.setGear("P"); }, "park gear", false);
+                checkKey('P', [&](bool success) { if (success) vehicle.setGear("P"); }, "park gear", false);
                 checkKey('D', [&](bool success) { if (success) vehicle.setGear("D"); }, "drive gear", false);
                 // Phím R: Chuyển sang chế độ lùi (Reverse)
                 checkKey('R', [&](bool success) { 
@@ -155,7 +155,7 @@ void KeyboardHandler::threadFunction() {
                     std::lock_guard<std::mutex> lock(vehicleData->mutex);
                     // Update core vehicle parameters with thread-safe calculations
                     vehicleData->speed = vehicle.getSpeed();
-                    vehicleData->gear = vehicleData->gear;
+                    vehicleData->gear = vehicle.getGear();
                     vehicleData->mode = vehicleData->mode;
                     
                     // Update battery and energy consumption data
