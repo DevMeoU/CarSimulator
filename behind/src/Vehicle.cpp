@@ -87,6 +87,22 @@ double Vehicle::getNormalizedBattery() const {
     return std::round(vehicleData->battery) / 100.0;
 }
 
+double Vehicle::getDecelerationRate(DrivingModeType oldMode, DrivingModeType newMode) {
+    // Define deceleration rates for different mode transitions (km/h per second)
+    const std::map<std::pair<DrivingModeType, DrivingModeType>, double> rateMap = {
+        {{DrivingModeType::SPORT, DrivingModeType::ECO}, 15.0},
+        {{DrivingModeType::SPORT, DrivingModeType::NORMAL}, 10.0},
+        {{DrivingModeType::ECO, DrivingModeType::SNOW_OFFROAD}, 8.0},
+        {{DrivingModeType::NORMAL, DrivingModeType::SNOW_OFFROAD}, 6.0},
+        {{DrivingModeType::NORMAL, DrivingModeType::ECO}, 12.0},
+        {{DrivingModeType::ECO, DrivingModeType::NORMAL}, 5.0},
+        {{DrivingModeType::SNOW_OFFROAD, DrivingModeType::ECO}, 4.0}
+    };
+
+    auto it = rateMap.find({oldMode, newMode});
+    return (it != rateMap.end()) ? it->second : 5.0; // Default deceleration
+}
+
 void Vehicle::update(double deltaTime) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
 
@@ -142,8 +158,34 @@ void Vehicle::update(double deltaTime) {
         brakeActive = true;
     }
     
-    // Apply speed limits
-    vehicleData->speed = std::round(std::max(0.0, std::min(vehicleData->speed, drivingMode.getMaxSpeedLimit())) * 10) / 10;
+    // Track previous driving mode
+    static DrivingModeType previousMode = drivingMode.getCurrentMode();
+
+    // Check for driving mode change
+    if (drivingMode.getCurrentMode() != previousMode) {
+        // Calculate target speed based on new mode
+        double targetSpeed = std::min(vehicleData->speed, drivingMode.getMaxSpeedLimit());
+        
+        // Calculate deceleration rate based on mode transition
+        double decelerationRate = getDecelerationRate(previousMode, drivingMode.getCurrentMode());
+        
+        // Apply progressive speed reduction
+        if (vehicleData->speed > targetSpeed) {
+            vehicleData->speed -= decelerationRate * deltaTime;
+            vehicleData->speed = std::max(targetSpeed, vehicleData->speed);
+            
+            // Cập nhật thông số khi giảm tốc
+            battery.updateCharge(-deltaTime * 0.2, vehicleData->speed); // Phanh tái sinh
+            vehicleData->engine_power *= 0.95; // Giảm công suất động cơ
+            vehicleData->battery_drop_rate *= 0.8; // Giảm tốc độ tiêu hao pin
+        }
+        
+        previousMode = drivingMode.getCurrentMode();
+    }
+    else {
+        // Apply normal speed limits
+        vehicleData->speed = std::round(std::max(0.0, std::min(vehicleData->speed, drivingMode.getMaxSpeedLimit())) * 10) / 10;
+    }
     
     // Update distance traveled
     vehicleData->distance_traveled = std::round((vehicleData->distance_traveled + vehicleData->speed * deltaTime / 3600) * 100) / 100;

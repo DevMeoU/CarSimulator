@@ -12,7 +12,8 @@ class DoorLockDisplay {
             if (icon) icon.style.display = 'none';
         });
 
-        const showIcon = (index) => {
+        const showIcon = (isLock) => {
+            const index = isLock ? 0 : 1;
             if (lockIcons[index]) {
                 lockIcons[index].style.display = 'inline';
                 lockIcons[index].classList.add('active'); // Add active class
@@ -22,8 +23,8 @@ class DoorLockDisplay {
         showIcon(status);
 
         if (this.element && this.element instanceof HTMLElement) {
-            this.element.textContent = (status === 1) ? 'Locked' : 'Unlocked';
-            this.element.style.color = (status === 1) ? 'red' : 'green';
+            this.element.textContent = status ? 'Locked' : 'Unlocked';
+            this.element.style.color = status ? 'red' : 'green';
         }
     }
 }
