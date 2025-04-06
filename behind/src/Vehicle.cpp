@@ -27,10 +27,16 @@ bool Vehicle::leftSignalOn = false;
 bool Vehicle::rightSignalOn = false;
 
 Vehicle::Vehicle() :
-    vehicleData(std::make_shared<VehicleData>()),
-    sensor(SensorType::SPEED, 1.0),
+    battery(75.0, 400.0, 450.0),  // Initialize battery with 75 kWh capacity, 400V, 450km range
     engine(150.0, 320.0),  // Initialize engine with 150 kW power and 320 Nm torque
-    gear("P")            // Default gear is Park
+    drivingMode(),  // Uses default constructor which starts in NORMAL mode
+    safetySystem(),  // Initialize safety system with default settings
+    vehicleData(std::make_shared<VehicleData>()),
+    environment(),  // Initialize environmental conditions
+    faultSim(),  // Initialize fault simulation system
+    sensor(SensorType::SPEED, 1.0),  // Initialize speed sensor with 1.0 update rate
+    display(),  // Initialize display system
+    gear("P")  // Default gear is Park
     {
         vehicleData->speed = 0.0;
         vehicleData->distance_traveled = 0.0;
@@ -53,7 +59,7 @@ Vehicle::Vehicle() :
         vehicleData->esp_active = false;    // ESP chưa kích hoạt
         vehicleData->estimated_distance = 0.0; // Quãng đường ước tính
         vehicleData->gear = "P";            // Số P khi khởi động
-        vehicleData->mode = "NORMAL";        // Chế độ lái thường
+        vehicleData->mode = drivingMode.getCurrentModeString();  // Đồng bộ mode với DrivingMode
         vehicleData->park = true;           // Đang đỗ xe
         vehicleData->plug_in = false;       // Chưa cắm sạc
         vehicleData->temperature = 25.0;    // Nhiệt độ môi trường
@@ -71,6 +77,9 @@ double Vehicle::getNormalizedBattery() const {
 
 void Vehicle::update(double deltaTime) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
+
+    // Initialize natural deceleration rate
+    double naturalDeceleration = 0.0;
 
     // Update vehicle speed based on acceleration/brake state
     if (vehicleData->gas && !vehicleData->brake) {
@@ -91,9 +100,21 @@ void Vehicle::update(double deltaTime) {
         brakeActive = true;
     } else if (!vehicleData->gas && !vehicleData->brake) {
         // Natural deceleration when neither gas nor brake is pressed
-        double naturalDeceleration = vehicleData->speed * 0.02; // 2% speed loss per update
+        naturalDeceleration = vehicleData->speed * 0.02; // 2% speed loss per update
         vehicleData->speed -= naturalDeceleration;
-        if (vehicleData->speed < 0.1) vehicleData->speed = 0; // Stop completely when very slow
+        if (vehicleData->speed < 2.5) vehicleData->speed = 0; // Stop completely when very slow
+        // Update member variables
+        speed = vehicleData->speed;
+        acceleratorActive = false;
+        brakeActive = false;
+    }
+
+    // Giới hạn tốc độ cho số lùi
+    if (vehicleData->gear == "R" && vehicleData->speed > 25.0) {
+        vehicleData->speed = 25.0;
+        speed = vehicleData->speed;
+        vehicleData->speed -= naturalDeceleration;
+        if (vehicleData->speed < 2.5) vehicleData->speed = 0; // Stop completely when very slow
         // Update member variables
         speed = vehicleData->speed;
         acceleratorActive = false;
@@ -142,9 +163,7 @@ void Vehicle::update(double deltaTime) {
     sensor.update(vehicleData->speed);
     
     // Generate warnings based on conditions (from depend.md)
-    if (vehicleData->battery < 20 && !vehicleData->plug_in) {
-        vehicleData->warning = WARNING_LOW_BATTERY;
-    } else if (vehicleData->battery_temp > 50) {
+    if (vehicleData->battery_temp > 50) {
         vehicleData->warning = WARNING_BATTERY_TEMP_HIGH;
     } else if (vehicleData->engine_temp > 120) {
         vehicleData->warning = WARNING_HIGH_ENGINE_TEMP;
@@ -152,6 +171,8 @@ void Vehicle::update(double deltaTime) {
         vehicleData->warning = WARNING_SEATBELT_HIGH_SPEED;
     } else if (!vehicleData->door_lock && vehicleData->speed > 20) {
         vehicleData->warning = WARNING_SYSTEM_ERROR;
+    } else if (vehicleData->battery < 20 && !vehicleData->plug_in) {
+        vehicleData->warning = WARNING_LOW_BATTERY;
     } else {
         vehicleData->warning = WARNING_NONE;
     }
@@ -164,6 +185,25 @@ void Vehicle::update(double deltaTime) {
     vehicleData->safetyStatus = safetySystem.getStatusString();
     vehicleData->environmentTemp = std::round(ambient_temp * 10) / 10;
     vehicleData->isSafe = safetySystem.checkStartConditions(*vehicleData);
+    
+    // Update mode and gear status
+    vehicleData->mode = drivingMode.getCurrentModeString();
+    // Ensure gear status is synchronized between static member and vehicleData
+    vehicleData->gear = gear;
+    
+    // Update environmental conditions
+    vehicleData->wind = environment.getWindSpeed();
+    vehicleData->weather = environment.getWeatherString();
+    vehicleData->altitude = environment.getAltitude();
+    
+    // Update safety system status
+    vehicleData->abs_active = safetySystem.isAbsActive();
+    vehicleData->esp_active = safetySystem.isEspActive();
+    
+    // Update timestamp
+    vehicleData->timestamp_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()
+    ).count();
 }
 
 bool Vehicle::startEngine() {
@@ -198,6 +238,12 @@ void Vehicle::brake(double intensity) {
 void Vehicle::accelerate(double intensity) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     
+    // Kiểm tra hộp số trước khi tăng tốc
+    if (gear == "P" || gear == "N") {
+        vehicleData->warning = WARNING_INVALID_GEAR_ACCELERATION;
+        return;
+    }
+    
     acceleratorActive = true;
     vehicleData->gas = true;
     // Call the engine's setThrottle method with the given intensity
@@ -214,7 +260,13 @@ void Vehicle::decelerate(double intensity) {
 
 bool Vehicle::changeDrivingMode(DrivingModeType mode) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    return drivingMode.changeMode(mode, getSpeed());
+    double& currentSpeed = vehicleData->speed;
+    bool success = drivingMode.changeMode(mode, currentSpeed);
+    if (success) {
+        vehicleData->mode = DrivingMode::getModeString(mode);
+        std::cout << "[Vehicle] Successfully changed mode to: " << vehicleData->mode << std::endl;
+    }
+    return success;
 }
 
 void Vehicle::updateEnvironment(double temperature, double humidity, double windSpeed, double altitude) {
@@ -231,7 +283,7 @@ double Vehicle::getCurrentMaxSpeed() const {
 
 double Vehicle::getSpeed() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
-    return std::round(speed * 10) / 10;
+    return std::round(vehicleData->speed * 10) / 10;
 }
 
 double Vehicle::getDistanceTraveled() const {
@@ -311,13 +363,27 @@ std::string Vehicle::getGear() const {
 
 void Vehicle::setGear(const std::string& gear) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    
+    // Kiểm tra điều kiện tốc độ trước khi cho phép chuyển số
+    if (vehicleData->speed > 0 && (gear == "P" || gear == "N")) {
+        vehicleData->warning = WARNING_INVALID_GEAR_CHANGE;
+        return;
+    }
+    
     if (gear == "P" || gear == "R" || gear == "N" || gear == "D") {
+        this->gear = gear;
         vehicleData->gear = gear;
         
         // Additional logic for gear changes
         if (gear == "P") {
             vehicleData->park = true;
             vehicleData->speed = 0;
+        } else if (gear == "R") {
+            vehicleData->park = false;
+            // Giới hạn tốc độ tối đa cho số lùi là 25 km/h
+            if (vehicleData->speed > 25.0) {
+                vehicleData->speed = 25.0;
+            }
         } else {
             vehicleData->park = false;
         }
@@ -327,6 +393,7 @@ void Vehicle::setGear(const std::string& gear) {
         
         // Log gear change for debugging
         std::cout << "[Vehicle] Gear changed to: " << gear << std::endl;
+        std::cout << "[Vehicle] Current gear in vehicleData: " << vehicleData->gear << std::endl;
     } else {
         std::cerr << "[Vehicle] Invalid gear: " << gear << std::endl;
     }
@@ -388,7 +455,7 @@ std::string Vehicle::getWarningMessages() const {
         return WARNING_PARKING_WHILE_MOVING;
     } else if (speed > 10 && vehicleData->gear == "R") {
         return WARNING_REVERSE_HIGH_SPEED;
-    } else if (battery.getChargeLevel() < 20) {
+    } else if (battery.getChargePercentage() < 20) {
         return WARNING_LOW_BATTERY;
     } else if (engine.getTemperature() > 90) {
         return WARNING_HIGH_ENGINE_TEMP;

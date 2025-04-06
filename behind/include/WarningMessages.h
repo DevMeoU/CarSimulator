@@ -25,6 +25,10 @@
 #define WARNING_BATTERY_TEMP_HIGH "WARNING: Battery temperature too high"
 #define WARNING_LOW_RANGE "WARNING: Low battery range"
 
+// Gear warnings
+#define WARNING_INVALID_GEAR_ACCELERATION "WARNING: Cannot accelerate in Park or Neutral gear"
+#define WARNING_INVALID_GEAR_CHANGE "WARNING: Cannot change gear while vehicle is moving"
+
 // Default warning
 #define WARNING_UNDEFINED "UNDEFINED WARNING"
 

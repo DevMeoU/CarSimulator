@@ -71,6 +71,10 @@ void KeyboardHandler::threadFunction() {
                         auto pressDuration = std::chrono::duration_cast<std::chrono::milliseconds>(now - keyPressTimes[VK_SPACE]);
                         // Thời gian phản hồi 100-300ms
                         if (pressDuration.count() >= 100) {
+                            if (vehicleData->gear == "P" || vehicleData->gear == "N") {
+                                std::cout << "[Keyboard] Cannot accelerate in " << vehicleData->gear << " gear" << std::endl;
+                                return;
+                            }
                             if (vehicleData->seat_belt || vehicleData->speed < 20) {
                                 // Gia tốc 2.78 m/s² để đạt 100km/h trong 10s
                                 vehicle.accelerate(2.78);
@@ -139,10 +143,37 @@ void KeyboardHandler::threadFunction() {
                 checkKey('H', [&](bool state) { vehicle.setLeftSignalOn(state);
                 vehicle.setRightSignalOn(state); }, "hazard lights", true);
                 
-                checkKey('1', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::NORMAL); }, "normal mode", false);
-                checkKey('2', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::SPORT); }, "sport mode", false);
-                checkKey('3', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::ECO); }, "eco mode", false);
-                checkKey('4', [&](bool) { vehicle.changeDrivingMode(DrivingModeType::SNOW_OFFROAD); }, "snow/offroad mode", false);
+                checkKey('1', [&](bool success) { 
+                    if (success) {
+                        std::cout << "[Keyboard] Attempting to change to Normal mode" << std::endl;
+                        if (!vehicle.changeDrivingMode(DrivingModeType::NORMAL)) {
+                            std::cout << "[Keyboard] Cannot change to Normal mode: Speed too high" << std::endl;
+                        }
+                    }
+                }, "normal mode", false);
+                checkKey('2', [&](bool success) { 
+                    if (success) {
+                        std::cout << "[Keyboard] Attempting to change to Sport mode" << std::endl;
+                        if (!vehicle.changeDrivingMode(DrivingModeType::SPORT)) {
+                            std::cout << "[Keyboard] Cannot change to Sport mode: Speed too high" << std::endl;
+                        }
+                    }
+                }, "sport mode", false);
+                checkKey('3', [&](bool success) { 
+                    if (success) {
+                        std::cout << "[Keyboard] Attempting to change to Eco mode" << std::endl;
+                        if (!vehicle.changeDrivingMode(DrivingModeType::ECO)) {
+                            std::cout << "[Keyboard] Cannot change to Eco mode: Speed too high" << std::endl;
+                        }
+                    }
+                }, "eco mode", false);
+                checkKey('4', [&](bool success) { 
+                    if (success) {
+                        if (!vehicle.changeDrivingMode(DrivingModeType::SNOW_OFFROAD)) {
+                            std::cout << "[Keyboard] Cannot change to Snow/Offroad mode: Speed too high" << std::endl;
+                        }
+                    }
+                }, "snow/offroad mode", false);
             }
             
             // Update vehicle state at a fixed interval
@@ -156,7 +187,7 @@ void KeyboardHandler::threadFunction() {
                     // Update core vehicle parameters with thread-safe calculations
                     vehicleData->speed = vehicle.getSpeed();
                     vehicleData->gear = vehicle.getGear();
-                    vehicleData->mode = vehicleData->mode;
+                    vehicleData->mode = vehicle.getDrivingMode().getCurrentModeString();
                     
                     // Update battery and energy consumption data
                     vehicleData->battery = vehicle.getBattery().getChargeLevel();

@@ -53,7 +53,7 @@ public:
      * @param currentSpeed Current vehicle speed
      * @return true if mode change was successful, false otherwise
      */
-    bool changeMode(DrivingModeType newMode, double currentSpeed);
+    bool changeMode(DrivingModeType newMode, double& currentSpeed);
     
     /**
      * @brief Adjust power based on current driving mode

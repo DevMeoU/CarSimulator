@@ -2,6 +2,7 @@
 #include <cmath>
 #include <sstream>
 #include <iomanip>
+#include <iostream>
 
 DrivingMode::DrivingMode()
     : currentMode(DrivingModeType::NORMAL) {
@@ -55,15 +56,29 @@ void DrivingMode::setCurrentMode(DrivingModeType mode) {
     currentMode = mode;
 }
 
-bool DrivingMode::changeMode(DrivingModeType newMode, double currentSpeed) {
-    // Check if current speed exceeds the max speed limit of the new mode
+bool DrivingMode::changeMode(DrivingModeType newMode, double& currentSpeed) {
+    // Lưu tốc độ ban đầu
+    double originalSpeed = currentSpeed;
+    
+    // Nếu tốc độ hiện tại vượt quá giới hạn của chế độ mới
     if (currentSpeed > maxSpeedLimits.at(newMode)) {
-        // Cannot change mode at high speed as per Operation.md
-        return false;
+        // Tính toán tỷ lệ giảm tốc dựa trên chênh lệch tốc độ
+        double speedDiff = currentSpeed - maxSpeedLimits.at(newMode);
+        double adjustmentFactor = 0.8; // Hệ số điều chỉnh tốc độ (80%)
+        
+        // Điều chỉnh tốc độ dần dần
+        currentSpeed = currentSpeed - (speedDiff * adjustmentFactor);
+        
+        // Đảm bảo tốc độ không thấp hơn giới hạn của chế độ mới
+        currentSpeed = std::max(maxSpeedLimits.at(newMode), currentSpeed);
+        
+        std::cout << "Speed gradually adjusting from " << originalSpeed << " to " << currentSpeed
+                  << " km/h to match " << getModeString(newMode) << " mode limit" << std::endl;
     }
     
-    // Change mode
+    // Thay đổi chế độ
     currentMode = newMode;
+    std::cout << "Driving mode changed to: " << getModeString(newMode) << std::endl;
     return true;
 }
 
