@@ -28,7 +28,8 @@ class DataManager {
             timestamp: 0,
             warning: '',
             weather: '',
-            wind: 0
+            wind: 0,
+            fan: 0
         };
 
         this.keyMapping = {
@@ -59,7 +60,8 @@ class DataManager {
             "timestamp": "timestamp",
             "warning": "warning",
             "weather": "weather",
-            "wind": "wind"
+            "wind": "wind",
+            "fan": "fan"
         };
     }
 

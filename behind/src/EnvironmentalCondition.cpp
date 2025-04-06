@@ -47,16 +47,7 @@ void EnvironmentalCondition::setWeather(WeatherType weather) {
     generateRandomWeatherValues();
 }
 
-void EnvironmentalCondition::setAirConditioningLevel(int level) {
-    if (level < 0 || level > 1) {
-        throw std::invalid_argument("Air conditioning level must be 0 (off) or 1 (on)");
-    }
-    // In a real implementation, this would affect temperature/humidity calculations
-}
 
-int EnvironmentalCondition::getAirConditioningLevel() const {
-    return 0; // Default to off
-}
 
 std::string EnvironmentalCondition::getWeatherCondition() const {
     switch(weather) {

@@ -29,7 +29,9 @@ struct VehicleData {
     
     // Thông số môi trường
     double wind;
+    double fan;
     double air_condition;
+    bool ac_state;
     double temperature;
     double altitude;
     std::string weather;

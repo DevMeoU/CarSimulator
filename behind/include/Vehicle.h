@@ -37,6 +37,9 @@ private:
     double temperature;    // Engine temperature in °C
     bool overheated;       // Overheating status
     std::string gear;      // Current gear position
+    double air_conditioning_level; // Current air conditioning level in degrees Celsius
+    
+
     
     static double speed;                // Current speed in km/h
     static double distanceTraveled;     // Total distance traveled in km
@@ -199,12 +202,34 @@ public:
     bool isRightSignalOn() const;
     
     /**
+     * @brief Set air conditioning level
+     * @param level Air conditioning level (16.0-30.0 degrees Celsius)
+     */
+    void setAirConditioningLevel(double level);
+    
+    /**
+     * @brief Get current air conditioning level
+     * @return Air conditioning level in degrees Celsius
+     */
+    double getAirConditioningLevel() const;
+    
+    /**
      * @brief Set right turn signal state
      * @param on New signal state
      */
     void setRightSignalOn(bool on);
-    
 
+    /**
+     * @brief Get fan speed level
+     * @return Fan speed level (0-5)
+     */
+    double getFan() const;
+
+    /**
+     * @brief Set fan speed level
+     * @param level Fan speed level (0-5)
+     */
+    void setFan(double level);
     
     /**
      * @brief Get normalized battery percentage (0.0 to 1.0)

@@ -66,9 +66,21 @@ Vehicle::Vehicle() :
         vehicleData->warning = "";          // Không có cảnh báo
         vehicleData->weather = "CLEAR";      // Thời tiết quang đãng
         vehicleData->wind = 0.0;           // Không có gió
+        vehicleData->fan = 0.0;            // Quạt gió tắt
     }
 
 Vehicle::~Vehicle() {}
+
+void Vehicle::setAirConditioningLevel(double level) {
+    if (level != 0.0 && (level < 16.0 || level > 32.0)) {
+        throw std::invalid_argument("Air conditioning level must be 0.0 (OFF) or between 16.0 and 32.0 (ON)");
+    }
+    air_conditioning_level = level;
+}
+
+double Vehicle::getAirConditioningLevel() const {
+    return air_conditioning_level;
+}
 
 double Vehicle::getNormalizedBattery() const {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
@@ -195,6 +207,14 @@ void Vehicle::update(double deltaTime) {
     vehicleData->wind = environment.getWindSpeed();
     vehicleData->weather = environment.getWeatherString();
     vehicleData->altitude = environment.getAltitude();
+    
+    // Synchronize air_condition and ac_state value from environment to vehicleData
+    vehicleData->ac_state = getAirConditioningLevel() > 0;
+    double currentAC = getAirConditioningLevel();
+    vehicleData->air_condition = currentAC;
+    setAirConditioningLevel(currentAC); // Ensure consistency
+    
+    // Không cập nhật mức quạt gió tự động nữa vì đã được điều khiển bởi người dùng
     
     // Update safety system status
     vehicleData->abs_active = safetySystem.isAbsActive();
@@ -354,6 +374,17 @@ bool Vehicle::isRightSignalOn() const {
 void Vehicle::setRightSignalOn(bool on) {
     std::lock_guard<std::mutex> lock(vehicleData->mutex);
     rightSignalOn = on;
+}
+
+double Vehicle::getFan() const {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    return vehicleData->fan;
+}
+
+void Vehicle::setFan(double level) {
+    std::lock_guard<std::mutex> lock(vehicleData->mutex);
+    // Giới hạn mức quạt từ 0-5
+    vehicleData->fan = std::max(0.0, std::min(5.0, level));
 }
 
 std::string Vehicle::getGear() const {

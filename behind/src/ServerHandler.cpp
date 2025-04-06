@@ -19,6 +19,7 @@ void ServerHandler::threadFunction() {
             nlohmann::json data = {
                 {"abs_active", false},
                 {"air_condition", vehicleData->air_condition},
+                {"ac_state", vehicleData->ac_state},
                 {"altitude", vehicleData->altitude},
                 {"battery", vehicleData->getNormalizedBattery()},
                 {"battery_temp", vehicleData->battery_temp},
@@ -45,7 +46,8 @@ void ServerHandler::threadFunction() {
                 {"warning", vehicleData->warning},
                 {"timestamp", std::to_string(vehicleData->timestamp_ms)},
                 {"weather", vehicleData->weather},
-                {"wind", vehicleData->wind}
+                {"wind", vehicleData->wind},
+                {"fan", vehicleData->fan}
             };
 
             std::cout << "[Server] Sending vehicle data..." << std::endl;

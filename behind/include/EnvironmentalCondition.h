@@ -129,15 +129,11 @@ public:
      */
     double calculateBatteryTempSAEJ2931(double temperature, double load) const;
     
-    // Air conditioning methods
-    void setAirConditioningLevel(int level);
-    int getAirConditioningLevel() const;
-    
+
     /**
      * @brief Generate random weather values based on current weather type
      */
     void generateRandomWeatherValues();
 };
-;
 
 #endif // ENVIRONMENTAL_CONDITION_H

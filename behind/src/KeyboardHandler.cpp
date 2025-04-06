@@ -11,10 +11,12 @@ void KeyboardHandler::threadFunction() {
     static std::unordered_map<int, std::chrono::steady_clock::time_point> keyPressTimes;
     static std::chrono::steady_clock::time_point lastUpdate;
     static std::chrono::steady_clock::time_point lastVehicleUpdate;
+    static double currentFan = 0.0;
     static bool initialized = false;
     if (!initialized) {
         lastUpdate = std::chrono::steady_clock::now();
         lastVehicleUpdate = std::chrono::steady_clock::now();
+        currentFan = vehicle.getFan();
         initialized = true;
     }
 
@@ -135,13 +137,85 @@ void KeyboardHandler::threadFunction() {
                 checkKey('S', [&](bool state) { vehicle.setSeatbeltOn(state); }, "seat belt", true);
                 checkKey('A', [&](bool state) { 
                     try {
-                        vehicle.getEnvironment().setAirConditioningLevel(state ? 1 : 0);
+                        // Khi bật điều hòa, đặt giá trị mặc định là 22 độ
+                        // Khi tắt điều hòa, đặt giá trị là 0
+                        double newValue = state ? 22.0 : 0.0;
+                        vehicle.setAirConditioningLevel(newValue);
+                        {
+                            std::lock_guard<std::mutex> lock(vehicleData->mutex);
+                            vehicleData->air_condition = newValue;
+                            vehicleData->ac_state = state;
+                        }
+                        std::cout << "[Keyboard] AC " << (state ? "ON (22°C)" : "OFF") << std::endl;
                     } catch (const std::exception& e) {
                         std::cerr << "[Keyboard] Error setting air conditioning: " << e.what() << std::endl;
                     }
                 }, "air conditioning", true);
                 checkKey('H', [&](bool state) { vehicle.setLeftSignalOn(state);
                 vehicle.setRightSignalOn(state); }, "hazard lights", true);
+                
+                // Điều khiển quạt gió và điều hòa bằng phím mũi tên
+                checkKey(VK_LEFT, [&](bool success) {
+                    static bool wasPressed = false;
+                    if (success) {
+                        wasPressed = true;
+                    } else if (wasPressed) {
+                        wasPressed = false;
+                        if (currentFan > 0) {
+                            currentFan = std::max(0.0, currentFan - 1.0);
+                            vehicle.setFan(currentFan);
+                            vehicleData->fan = currentFan;
+                            std::cout << "[Keyboard] Fan speed decreased to " << currentFan << std::endl;
+                        }
+                    }
+                }, "decrease fan", false);
+                
+                checkKey(VK_RIGHT, [&](bool success) {
+                    static bool wasPressed = false;
+                    if (success) {
+                        wasPressed = true;
+                    } else if (wasPressed) {
+                        wasPressed = false;
+                        if (currentFan < 5.0) {
+                            currentFan = std::min(5.0, currentFan + 1.0);
+                            vehicle.setFan(currentFan);
+                            vehicleData->fan = currentFan;
+                            std::cout << "[Keyboard] Fan speed increased to " << currentFan << std::endl;
+                        }
+                    }
+                }, "increase fan", false);
+                
+                checkKey(VK_UP, [&](bool success) {
+                    static bool wasPressed = false;
+                    if (success) {
+                        wasPressed = true;
+                    } else if (wasPressed && vehicleData->ac_state) {
+                        wasPressed = false;
+                        double currentTemp = vehicle.getAirConditioningLevel();
+                        if (currentTemp < 32.0) {
+                            double newTemp = std::min(32.0, currentTemp + 0.5);
+                            vehicle.setAirConditioningLevel(newTemp);
+                            vehicleData->air_condition = newTemp;
+                            std::cout << "[Keyboard] AC temperature increased to " << newTemp << std::endl;
+                        }
+                    }
+                }, "increase AC temp", false);
+                
+                checkKey(VK_DOWN, [&](bool success) {
+                    static bool wasPressed = false;
+                    if (success) {
+                        wasPressed = true;
+                    } else if (wasPressed && vehicleData->ac_state) {
+                        wasPressed = false;
+                        double currentTemp = vehicle.getAirConditioningLevel();
+                        if (currentTemp > 16.0) {
+                            double newTemp = std::max(16.0, currentTemp - 0.5);
+                            vehicle.setAirConditioningLevel(newTemp);
+                            vehicleData->air_condition = newTemp;
+                            std::cout << "[Keyboard] AC temperature decreased to " << newTemp << std::endl;
+                        }
+                    }
+                }, "decrease AC temp", false);
                 
                 checkKey('1', [&](bool success) { 
                     if (success) {
@@ -219,7 +293,7 @@ void KeyboardHandler::threadFunction() {
                     vehicleData->seat_belt = vehicle.isSeatbeltOn();
                     
                     // Update environmental conditions
-                    vehicleData->air_condition = vehicle.getEnvironment().getAirConditioningLevel();
+                    vehicleData->air_condition = vehicle.getAirConditioningLevel();
                     vehicleData->altitude = environment.getAltitude();
                     vehicleData->temperature = environment.getTemperature();
                     vehicleData->weather = environment.getWeatherCondition();

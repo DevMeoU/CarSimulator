@@ -42,7 +42,7 @@ class DisplayManager {
         this.odoDisplay.update(NumberUtils.roundDistance(data.distance_traveled), NumberUtils.roundDistance(data.estimated_distance));
         this.doorLockDisplay.update(data.door_lock);
         this.airConditionDisplay.update(data.air_condition);
-        this.fanDisplay.update(data.wind);
+        this.fanDisplay.update(data.fan);
         this.modeDisplay.update(data.mode);
         this.warningDisplay.update(data.warning);
         this.enginePowerDisplay.update(NumberUtils.roundEngine(data.engine_power), NumberUtils.roundEngine(data.engine_torque), NumberUtils.roundTemperature(data.engine_temp));
