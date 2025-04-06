@@ -1,22 +1,13 @@
 class ModeDisplay {
     constructor() {
-        this.ecoModeDisplay = document.getElementsByClassName('mode-eco-indicator')[0];
-        this.sportModeDisplay = document.getElementsByClassName('mode-sport-indicator')[0];
+        this.modeDisplay = document.querySelector('.mode-text');
     }
 
     update(mode) {
-        if (this.ecoModeDisplay && this.sportModeDisplay) {
-            if (mode === 'eco') {
-                this.ecoModeDisplay.classList.add('active');
-            } else {
-                this.ecoModeDisplay.classList.remove('active');
-            }
-            
-            if (mode === 'sport') {
-                this.sportModeDisplay.classList.add('active'); 
-            } else {
-                this.sportModeDisplay.classList.remove('active'); 
-            }
+        if (this.modeDisplay) {
+            this.modeDisplay.textContent = mode.toUpperCase();
+            this.modeDisplay.classList.add('active');
+
         }
     }
 }

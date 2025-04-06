@@ -15,9 +15,15 @@
  * MODE INDICATOR BASE STYLES
  * Style cơ bản cho các mode indicator
  */
-.mode-eco-indicator,
-.mode-sport-indicator {
-    width: 100px;
+.mode-text {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: #2c2c2c;
+    color: #ffffff;
+    width: 150px;
     height: 50px;
     display: flex;
     align-items: center;
@@ -36,38 +42,32 @@
  * ECO MODE INDICATOR
  * Style cho chế độ Eco
  */
-.mode-eco-indicator {
-    border-color: #27ae60;
+.mode-text.normal {
+    border: 2px solid #4a90e2;
+    color: #4a90e2;
 }
 
-.mode-eco-indicator:hover {
-    background: rgba(39, 174, 96, 0.1);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+.mode-text.sport {
+    border: 2px solid #ff4757;
+    color: #ff4757;
 }
 
-.mode-eco-indicator.active {
-    background: rgba(39, 174, 96, 0.2);
-    border-width: 3px;
-    transform: scale(1.1);
+.mode-text.eco {
+    border: 2px solid #00ff00;
+    color: #00ff00;
+}
+
+.mode-text.snow_offroad {
+    border: 2px solid #f1c40f;
+    color: #f1c40f;
 }
 
 /*
  * SPORT MODE INDICATOR
  * Style cho chế độ Sport
  */
-.mode-sport-indicator {
-    border-color: #e67e22;
-}
-
-.mode-sport-indicator:hover {
-    background: rgba(230, 126, 34, 0.1);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-}
-
-.mode-sport-indicator.active {
-    background: rgba(230, 126, 34, 0.2);
-    border-width: 3px;
-    transform: scale(1.1);
+.mode-text.active {
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 15px currentColor;
+    width: 200px;
 }
