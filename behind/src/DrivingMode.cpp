@@ -3,6 +3,8 @@
 #include <sstream>
 #include <iomanip>
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 DrivingMode::DrivingMode()
     : currentMode(DrivingModeType::NORMAL) {
@@ -57,23 +59,32 @@ void DrivingMode::setCurrentMode(DrivingModeType mode) {
 }
 
 bool DrivingMode::changeMode(DrivingModeType newMode, double& currentSpeed) {
-    // Lưu tốc độ ban đầu
-    double originalSpeed = currentSpeed;
-    
     // Nếu tốc độ hiện tại vượt quá giới hạn của chế độ mới
     if (currentSpeed > maxSpeedLimits.at(newMode)) {
-        // Tính toán tỷ lệ giảm tốc dựa trên chênh lệch tốc độ
-        double speedDiff = currentSpeed - maxSpeedLimits.at(newMode);
-        double adjustmentFactor = 0.8; // Hệ số điều chỉnh tốc độ (80%)
+        // Hiển thị cảnh báo
+        std::cout << "Cannot change mode at high speed. Gradually reducing speed..." << std::endl;
         
-        // Điều chỉnh tốc độ dần dần
-        currentSpeed = currentSpeed - (speedDiff * adjustmentFactor);
+        // Giảm tốc độ từ từ 5 km/h mỗi giây
+        const double DECREMENT_RATE = 5.0; // 5 km/h mỗi giây
+        const double TIME_STEP = 0.1; // Giảm tốc mỗi 0.1 giây
         
-        // Đảm bảo tốc độ không thấp hơn giới hạn của chế độ mới
-        currentSpeed = std::max(maxSpeedLimits.at(newMode), currentSpeed);
+        // Giảm tốc độ theo từng bước nhỏ để mượt mà hơn
+        while (currentSpeed > maxSpeedLimits.at(newMode)) {
+            double speedDecrement = DECREMENT_RATE * TIME_STEP;
+            currentSpeed -= speedDecrement;
+            
+            // Đảm bảo tốc độ không thấp hơn giới hạn của chế độ mới
+            currentSpeed = std::max(maxSpeedLimits.at(newMode), currentSpeed);
+            
+            std::cout << "Speed gradually reducing to " << std::fixed << std::setprecision(1) << currentSpeed 
+                      << " km/h to match " << getModeString(newMode) << " mode limit" << std::endl;
+            
+            // Thêm delay thực tế thay vì giả lập
+            std::this_thread::sleep_for(std::chrono::milliseconds(static_cast<int>(TIME_STEP * 1000)));
+        }
         
-        std::cout << "Speed gradually adjusting from " << originalSpeed << " to " << currentSpeed
-                  << " km/h to match " << getModeString(newMode) << " mode limit" << std::endl;
+        std::cout << "Speed reduced to acceptable level for " 
+                  << getModeString(newMode) << " mode" << std::endl;
     }
     
     // Thay đổi chế độ

@@ -196,6 +196,14 @@ public:
     void setLeftSignalOn(bool on);
     
     /**
+     * @brief Calculate deceleration rate when changing driving modes
+     * @param oldMode Previous driving mode
+     * @param newMode New driving mode
+     * @return Deceleration rate in km/h per second
+     */
+    double getDecelerationRate(DrivingModeType oldMode, DrivingModeType newMode);
+    
+    /**
      * @brief Check if right turn signal is on
      * @return true if on, false otherwise
      */

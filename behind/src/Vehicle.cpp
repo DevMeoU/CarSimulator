@@ -195,8 +195,8 @@ void Vehicle::update(double deltaTime) {
     vehicleData->battery = std::round(battery.getChargePercentage());
     
     // Calculate estimated distance based on battery and speed (electric vehicle formula)
-    double energy_efficiency = 8 - 0.05 * vehicleData->speed;
-    vehicleData->estimated_distance = std::round((vehicleData->battery * energy_efficiency / 100) * 100) / 100;
+    double energy_efficiency = 8 - 0.05 * vehicleData->speed; // kWh/100 km
+    vehicleData->estimated_distance = std::round((vehicleData->battery * energy_efficiency) * 100) / 100; // Tính quãng đường còn đi được (km)
     
     // Calculate engine temperature with safety checks
     double ambient_temp = environment.getTemperature();
