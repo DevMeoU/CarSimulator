@@ -11,6 +11,7 @@
 @import 'components/indicators/indicators.css';
 @import 'components/pedals/pedals.css';
 @import 'components/modes/modes.css';
+@import 'components/error/error.css';
 
 /* 
  * RESET & BASE STYLES

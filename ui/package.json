@@ -1,0 +1,14 @@
+{
+  "name": "car-simulator-ui",
+  "version": "1.0.0",
+  "description": "UI for Car Simulator",
+  "scripts": {
+    "dev": "npx tailwindcss -i ./css/components/error/error.css -o ./css/dist/error.css --watch",
+    "build": "npx tailwindcss -i ./css/components/error/error.css -o ./css/dist/error.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.0",
+    "postcss": "^8.4.21",
+    "autoprefixer": "^10.4.14"
+  }
+}
