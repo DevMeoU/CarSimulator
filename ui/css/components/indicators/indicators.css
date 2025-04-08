@@ -9,6 +9,10 @@
     margin: 5px;
     text-shadow: var(--text-shadow);
     transition: all 0.3s ease-in-out;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: column;
 }
 /*
  * DISTANCE TRAVELLED INDICATOR
@@ -47,6 +51,10 @@
     /* gap: 2px; */
     height: 8px;
     width: 100%;
+    min-width: 150px;
+    max-width: 300px;
+    min-height: 8px;
+    max-height: 8px;
     margin-top: 5px;
     margin-bottom: 15px;
 }
@@ -151,7 +159,7 @@
 }
 
 .speed-indicator {
-    display: flex;
+    display: block;
     align-items: center;
     flex-direction: row;
     text-align: center;
@@ -261,6 +269,14 @@
     color: var(--text-color);
 }
 
+.air-condition-label > span {
+   display: block;
+   width: 70px;
+   height: 24px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+}
 /***************************************************************
  * Dashboard Right Position Indicators 
  ***************************************************************/

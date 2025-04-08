@@ -100,6 +100,7 @@ int main() {
     svr.set_file_extension_and_mimetype_mapping("png", "image/png");
 
     // Thông báo khởi động
+    system("cls && chcp 65001>nul");
     cout << "Server đang chạy tại http://" << HOST << ":" << PORT << endl;
     #ifdef _WIN32
         system("start http://localhost:8080");
