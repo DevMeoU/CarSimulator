@@ -1,82 +1,74 @@
-# Hướng dẫn sử dụng chương trình mô phỏng xe điện
+# Hệ thống mô phỏng xe đa luồng (Car Simulator)
 
 ## Giới thiệu
 
-Chương trình mô phỏng xe điện này được phát triển dựa trên tài liệu Operation.md và Database.md. Chương trình mô phỏng hoạt động của một xe điện với các chức năng như khởi động xe, chuyển chế độ lái, cảnh báo an toàn, và mô phỏng các điều kiện môi trường ảnh hưởng đến hiệu suất xe.
+Hệ thống mô phỏng xe đa luồng là một ứng dụng mô phỏng hoạt động của xe điện với các tính năng và chức năng thực tế. Hệ thống được thiết kế với kiến trúc đa luồng để mô phỏng đồng thời nhiều khía cạnh của xe, bao gồm môi trường, trạng thái xe, tương tác người dùng và giao tiếp với server.
 
-## Cấu trúc thư mục
+## Tính năng chính
+
+- Mô phỏng hoạt động xe điện với 4 chế độ lái (Normal, Sport, Eco, Snow/Off-road)
+- Giả lập môi trường và điều kiện thời tiết ảnh hưởng đến hiệu suất xe
+- Giao diện người dùng trực quan với thông số kỹ thuật thời gian thực
+- Hệ thống cảnh báo an toàn thông minh
+- Giao tiếp với server HTTP để theo dõi trạng thái xe
+
+## Cài đặt
+
+### Yêu cầu hệ thống
+
+- Hệ điều hành: Windows hoặc Linux/WSL
+- Trình biên dịch C++ hỗ trợ C++17 (g++ hoặc MSVC)
+- Thư viện libcurl
+- Thư viện pthread
+
+### Biên dịch và chạy
+
+```bash
+# Biên dịch
+make
+
+# Chạy với server mặc định
+./vehicle_simulation
+
+# Chạy với server tùy chỉnh
+./vehicle_simulation http://example.com/api/data
+```
+
+## Điều khiển
+
+- **SPACE**: Tăng tốc
+- **B**: Phanh
+- **P**: Bật/tắt phanh tay
+- **L**: Khóa/mở cửa
+- **S**: Thắt/mở dây an toàn
+- **LEFT/RIGHT ARROW**: Xi-nhan trái/phải
+- **1-4**: Chuyển đổi chế độ lái
+- **ESC**: Thoát
+
+## Cấu trúc dự án
 
 ```
-ElectricVehicleSimulation/
-├── bin/                  # Thư mục chứa file thực thi
-├── include/              # Thư mục chứa các file header (.h)
-├── obj/                  # Thư mục chứa các file object (.o)
-├── src/                  # Thư mục chứa các file nguồn (.cpp)
-└── Makefile              # File Makefile để biên dịch chương trình
+├── behind/           # Mã nguồn backend
+├── data/            # Dữ liệu và cấu hình
+├── docs/            # Tài liệu
+├── server/          # Mã nguồn server
+├── ui/              # Giao diện người dùng
+└── README.md        # Tài liệu này
 ```
 
-## Yêu cầu hệ thống
+## Tài liệu chi tiết
 
-- Hệ điều hành: Linux (đã được kiểm thử trên Ubuntu)
-- Trình biên dịch: g++ (hỗ trợ C++17)
-- Công cụ: make
+Xem thêm trong thư mục `docs/` để biết thông tin chi tiết về:
 
-## Cách biên dịch
+- Kiến trúc hệ thống (`documentation.md`)
+- Thông số kỹ thuật (`Database.md`)
+- Quy trình vận hành (`Operation.md`)
+- Hướng dẫn sử dụng (`user_guide.md`)
 
-1. Giải nén file ElectricVehicleSimulation.zip:
-   ```
-   unzip ElectricVehicleSimulation.zip
-   ```
+## Đóng góp
 
-2. Di chuyển vào thư mục ElectricVehicleSimulation:
-   ```
-   cd ElectricVehicleSimulation
-   ```
+Mọi đóng góp đều được hoan nghênh. Vui lòng tạo issue hoặc pull request để cải thiện dự án.
 
-3. Biên dịch chương trình:
-   ```
-   make
-   ```
+## Giấy phép
 
-4. Chạy chương trình:
-   ```
-   ./bin/ElectricVehicleSimulation
-   ```
-
-## Các chức năng chính
-
-Chương trình cung cấp một menu tương tác cho phép bạn kiểm tra các chức năng khác nhau của xe điện:
-
-1. **Kiểm tra yêu cầu khởi động xe**: Mô phỏng các điều kiện cần thiết để khởi động xe như khóa cửa và nhả phanh tay.
-
-2. **Kiểm tra chế độ lái và giới hạn tốc độ**: Mô phỏng các chế độ lái khác nhau (Normal, Sport, Eco, Snow/Off-road) và giới hạn tốc độ tương ứng.
-
-3. **Kiểm tra cảnh báo dây an toàn**: Mô phỏng hệ thống cảnh báo khi xe di chuyển mà không thắt dây an toàn.
-
-4. **Kiểm tra cảnh báo tốc độ cao**: Mô phỏng hệ thống cảnh báo khi tốc độ vượt quá 120 km/h.
-
-5. **Kiểm tra tác động của điều kiện môi trường**: Mô phỏng ảnh hưởng của các điều kiện môi trường như nhiệt độ, độ cao, thời tiết đến hiệu suất xe.
-
-6. **Kiểm tra pin và tính toán phạm vi**: Mô phỏng hệ thống pin và tính toán phạm vi hoạt động dựa trên điều kiện hiện tại.
-
-7. **Kiểm tra mô phỏng lỗi**: Mô phỏng các tình huống lỗi như ngắt kết nối cảm biến, quá nhiệt động cơ, sự cố pin, mất phanh.
-
-8. **Chạy mô phỏng hoàn chỉnh**: Chạy một mô phỏng hoàn chỉnh của một chu kỳ lái xe, bao gồm khởi động, lái xe trong thành phố, lái xe trên đường cao tốc, thay đổi điều kiện môi trường, và dừng xe.
-
-## Các class chính
-
-1. **Vehicle**: Class chính quản lý toàn bộ hệ thống xe.
-2. **Engine**: Quản lý động cơ điện.
-3. **Battery**: Quản lý pin và hệ thống sạc.
-4. **DrivingMode**: Quản lý các chế độ lái.
-5. **SafetySystem**: Quản lý các hệ thống an toàn.
-6. **EnvironmentalCondition**: Mô phỏng các điều kiện môi trường.
-7. **FaultSimulation**: Mô phỏng lỗi và sự cố.
-8. **Sensor**: Quản lý các cảm biến trên xe.
-9. **Display**: Hiển thị thông báo và cảnh báo.
-
-## Lưu ý
-
-- Chương trình này là một mô phỏng và không kết nối với phần cứng thực tế.
-- Các công thức tính toán được áp dụng để mô phỏng hoạt động thực tế của xe điện.
-- Chương trình có thể được mở rộng để thêm các tính năng mới hoặc cải thiện các tính năng hiện có.
+Dự án này được phân phối dưới giấy phép thuộc về Deesol
